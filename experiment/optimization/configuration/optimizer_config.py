@@ -8,16 +8,6 @@ from experiment.hyperparams import base_config
 @dataclasses.dataclass
 class BaseOptimizerConfig(base_config.Config):
   """Base optimizer config.
-
-  Attributes:
-  -----------
-  - clipnorm: float >= 0 or None. If not None, Gradients will be clipped when
-    their L2 norm exceeds this value.
-  - clipvalue: float >= 0 or None. If not None, Gradients will be clipped when
-    their absolute value exceeds this value.
-  - global_clipnorm: float >= 0 or None. If not None, gradient of all
-  weights is
-    clipped so that their global norm is no higher than this value
   """
   clipnorm: Optional[float] = None
   clipvalue: Optional[float] = None
@@ -29,13 +19,6 @@ class SGDConfig(BaseOptimizerConfig):
   """Configuration for SGD optimizer.
 
   The attributes for this class matches the arguments of tf.keras.optimizer.SGD.
-
-  Attribute:
-  ----------
-  - name: name of the optimizer
-  - decay: decay rate for SGD optimizer.
-  - nesterov: nesterov for SGD optimizer.
-  - momentum: momentum for SGD optimizer.
   """
   name: str = 'SGD'
   decay: float = 0.0
@@ -49,13 +32,6 @@ class SGDExperimentalConfig(BaseOptimizerConfig):
 
   The attributes for this class matches the argument of
   `tf.keras.experimental.SGD`.
-
-  Attribute:
-  ----------
-  - name: name of the optimizer.
-  - nesterov: nesterov for SGD optimizer.
-  - momentum: momentum for SGD optimizer.
-  - jit_compile: jit compile will be used when it is `True`.
   """
   name: str = 'SGD'
   nesterov: bool = False
@@ -69,14 +45,6 @@ class RMSPropConfig(BaseOptimizerConfig):
 
   The attributes for this class matches the arguments of
   tf.keras.optimizers.RMSprop.
-
-  Attributes:
-  -----------
-  - name: name of the optimizer.
-  - rho: discounting factor for RMSProp optimizer.
-  - momentum: momentum for RMSProp optimizer.
-  - epsilon: epsilon value for RMSProp optimizer, help with numerical stability.
-  - centered: Whether to normalize gradients or not.
   """
   name: str = 'RMSprop'
   rho = float = 0.9
@@ -91,13 +59,6 @@ class AdagradConfig(BaseOptimizerConfig):
 
   The attributes of this class match the arguments of
   tf.keras.optimizer.Adagrad.
-
-  Attributes:
-  -----------
-  - name: name of the optimizer.
-  - initial_accumulator_value: A floating point value. Starting value for the
-    accumulators, must be non-negative.
-  - epsilon: A small floating point value to avoid zero denominator.
   """
   name: str = 'Adagrad'
   initial_accumulator_value: float = 0.1
@@ -110,15 +71,6 @@ class AdamConfig(BaseOptimizerConfig):
 
   The attributes for this class matches the arguments of
   tf.keras.optimizer.Adam.
-
-  Attributes:
-  -----------
-  - name: name of the optimizer.
-  - beta_1: decay rate for 1st order moments.
-  - beta_2: decay rate for 2st order moments.
-  - epsilon: epsilon value used for numerical stability in Adam optimizer.
-  - amsgrad: boolean. Whether to apply AMSGrad variant of this algorithm from
-    the paper "On the Convergence of Adam and beyond".
   """
   name: str = 'Adam'
   beta_1: float = 0.9
@@ -133,16 +85,6 @@ class AdamExperimentalConfig(BaseOptimizerConfig):
 
   The attributes for this class matches the arguments of
   `tf.keras.optimizer.experimental.Adam`.
-
-  Attributes:
-  -----------
-  - name: name of the optimizer.
-  - beta_1: decay rate for 1st order moments.
-  - beta_2: decay rate for 2st order moments.
-  - epsilon: epsilon value used for numerical stability in Adam optimizer.
-  - amsgrad: boolean. Whether to apply AMSGrad variant of this algorithm from
-    the paper "On the Convergence of Adam and beyond".
-  - jit_compile: if True, jit compile will be used.
   """
   name: str = 'Adam'
   beta_1: float = 0.9
@@ -155,22 +97,6 @@ class AdamExperimentalConfig(BaseOptimizerConfig):
 @dataclasses.dataclass
 class AdamWeightDecayConfig(BaseOptimizerConfig):
   """Configuration for Adam optimizer with weight decay.
-
-  Attributes:
-  -----------
-  - name: name of the optimizer.
-  - beta_1: decay rate for 1st order moments.
-  - beta_2: decay rate for 2st order moments.
-  - epsilon: epsilon value used for numerical stability in the optimizer.
-  - amsgrad: boolean. Whether to apply AMSGrad variant of this algorithm from
-    the paper "On the Convergence of Adam and beyond".
-  - weight_decay: float. Weight decay rate. Default to 0.
-  - include_weight_decay: list[str], or None. List of weight names to include
-    in weight decay.
-  - exclude_weight_decay: list[str], or None. List of weight names to not
-    include in weight decay.
-  - gradient_clip_norm: A positive float. Clips the gradients to this maximum
-    L2-norm. Default to 1.0.
   """
   name: str = 'AdamWeightDecay'
   beta_1: float = 0.9
@@ -189,20 +115,6 @@ class LAMBConfig(BaseOptimizerConfig):
 
   The attributes for this class matches the arguments of
   tensorflow_addons.optimizers.LAMB.
-
-  Attributes:
-  -----------
-  - name: name of the optimizer.
-  - beta_1: decay rate for 1st order moments.
-  - beta_2: decay rate for 2st order moments.
-  - epsilon: epsilon value used for numerical stability in LAMB optimizer.
-  - weight_decay: float. Weight decay rate. Default to 0.
-  - exclude_weight_decay: List of regex patterns of variables excluded from
-    weight decay. Variables whose name contain a substring matching the
-    pattern will be excluded.
-  - exclude_layer_adaptation: List of regex patterns of variables excluded
-    from layer adaptation. Variables whose name contain a substring matching
-    the pattern will be excluded.
   """
   name: str = 'LAMB'
   beta_1: float = 0.9
@@ -216,16 +128,6 @@ class LAMBConfig(BaseOptimizerConfig):
 @dataclasses.dataclass
 class EMAConfig(BaseOptimizerConfig):
   """Exponential moving average optimizer config.
-
-  Attributes:
-  -----------
-  - name: 'str', name of the optimizer.
-  - trainable_weights_only: 'bool', if True, only model trainable weights will
-    be updated. Otherwise, all model weights will be updated. This mainly
-    affects batch normalization parameters.
-  - average_decay: 'float', average decay value.
-  - start_step: 'int', start step to apply moving average.
-  - dynamic_decay: 'bool', whether to apply dynamic decay or not.
   """
   name: str = 'ExponentialMovingAverage'
   trainable_weights_only: bool = True
@@ -237,27 +139,6 @@ class EMAConfig(BaseOptimizerConfig):
 @dataclasses.dataclass
 class LARSConfig(BaseOptimizerConfig):
   """Layer-wise adaptive rate scaling config.
-
-  Attributes:
-  -----------
-  - name: 'str', name of the optimizer.
-  - momentum: `float` hyperparameter >= 0 that accelerates gradient descent in
-    the relevant direction and dampens oscillations. Defaults to 0.9.
-  - eeta: `float` LARS coefficient as used in the paper. Default set to LARS
-    coefficient from the paper. (eeta / weight_decay) determines the highest
-    scaling factor in LARS..
-  - weight_decay: `float` for weight decay.
-  - nesterov: 'boolean' for whether to use nesterov momentum.
-  - classic_momentum: `boolean` for whether to use classic (or popular)
-    momentum. The learning rate is applied during momentum update in classic
-    momentum, but after momentum for popular momentum.
-  - exclude_from_weight_decay: A list of `string` for variable screening, if any
-    of the string appears in a variable's name, the variable will be excluded
-    for computing weight decay. For example, one could specify the list like
-    ['batch_normalization', 'bias'] to exclude BN and bias from weight decay.
-  - exclude_from_layer_adaptation: Similar to exclude_from_weight_decay, but for
-    layer adaptation. If it is None, it will be defaulted the same as
-    exclude_from_weight_decay.
   """
   name: str = 'LARS'
   momentum: float = 0.9

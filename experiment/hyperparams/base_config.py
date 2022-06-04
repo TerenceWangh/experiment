@@ -33,7 +33,8 @@ def bind(config_cls):
 
       config_cls._BUILDER = _wrapper
     else:
-      raise ValueError('The `BUILDER` type is not supported: {}'.format(builder))
+      raise ValueError('The `BUILDER` type is not supported: {}'.format(
+          builder))
     _BOUND.add(config_cls)
     return builder
 
@@ -68,8 +69,8 @@ class Config(params_dict.ParamsDict):
                     default_params: Optional[Mapping[str, Any]],
                     restrictions: Optional[List[str]]):
     super().__init__(
-      default_params=default_params,
-      restrictions=restrictions)
+        default_params=default_params,
+        restrictions=restrictions)
 
   @property
   def BUILDER(self):
@@ -95,18 +96,17 @@ class Config(params_dict.ParamsDict):
     """Returns v with dicts converted to Configs, recursively."""
     if not issubclass(subconfig_type, params_dict.ParamsDict):
       raise TypeError(
-        'subconfig_type should be subclass of ParamsDict, found {!r}'.format(
-          subconfig_type))
+          'subconfig_type should be subclass of ParamsDict, found {!r}'.format(
+              subconfig_type))
     if isinstance(v, cls.IMMUTABLE_TYPES):
       return v
     elif isinstance(v, cls.SEQUENCE_TYPES):
       # Only support one layer of sequence.
       if not cls._is_valid_sequence(v):
         raise TypeError(
-          'Invalid sequence: only supports single level {!r} of {!r} or dict '
-          'or ParamDict found: {!r}'.format(cls.SEQUENCE_TYPES,
-                                            cls.IMMUTABLE_TYPES,
-                                            v))
+            'Invalid sequence: only supports single level {!r} of {!r} or dict '
+            'or ParamDict found: {!r}'.format(
+                cls.SEQUENCE_TYPES, cls.IMMUTABLE_TYPES, v))
       import_fn = functools.partial(cls._import_config,
                                     subconfig_type=subconfig_type)
       return type(v)(map(import_fn, v))
@@ -144,12 +144,10 @@ class Config(params_dict.ParamsDict):
     subconfig_type = Config
     if k in cls.__annotations__:
       # Directly Config subtype.
-      type_annotation = cls.__annotations__[
-        k]  # pytype: disable=invalid-annotation
+      type_annotation = cls.__annotations__[k]  # pytype: disable=invalid-annotation
       if (isinstance(type_annotation, type) and
           issubclass(type_annotation, Config)):
-        subconfig_type = cls.__annotations__[
-          k]  # pytype: disable=invalid-annotation
+        subconfig_type = cls.__annotations__[k]  # pytype: disable=invalid-annotation
       else:
         # Check if the field is a sequence of subtypes.
         field_type = getattr(type_annotation, '__origin__', type(None))
@@ -157,8 +155,8 @@ class Config(params_dict.ParamsDict):
             issubclass(field_type, cls.SEQUENCE_TYPES)):
           element_type = getattr(type_annotation, '__args__', [type(None)])[0]
           subconfig_type = (
-            element_type if issubclass(element_type, params_dict.ParamsDict)
-            else subconfig_type)
+              element_type if issubclass(element_type, params_dict.ParamsDict)
+              else subconfig_type)
     return subconfig_type
 
   def _set(self, k, v):
@@ -191,9 +189,9 @@ class Config(params_dict.ParamsDict):
           self.__dict__[k][i].override(v[i])
       elif not all([isinstance(e, self.IMMUTABLE_TYPES) for e in v]):
         logging.warning(
-          'The list/tuple don\'t match the value dictionaries provided, Thus, '
-          'the list/tuple is determined by the type annotation and '
-          'values provided. This is error-prone.')
+            'The list/tuple don\'t match the value dictionaries provided, '
+            'Thus, the list/tuple is determined by the type annotation and '
+            'values provided. This is error-prone.')
         self.__dict__[k] = self._import_config(v, subconfig_type)
       else:
         self.__dict__[k] = self._import_config(v, subconfig_type)
@@ -246,7 +244,7 @@ class Config(params_dict.ParamsDict):
     :return: a dict representation of params_dict.ParamsDict.
     """
     return {
-      k: self._export_config(v)
+        k: self._export_config(v)
         for k, v in self.__dict__.items()
         if k not in self.RESERVED_ATTR
     }

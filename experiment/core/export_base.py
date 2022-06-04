@@ -17,10 +17,10 @@ class ExportModule(tf.Module, metaclass=abc.ABCMeta):
   def __init__(self,
                params,
                model: Union[tf.Module, tf.keras.Model],
-               inference_step: Optional[Callable[..., Any]]=None,
+               inference_step: Optional[Callable[..., Any]] = None,
                *,
-               preprocessor: Optional[Callable[..., Any]]=None,
-               postprocessor: Optional[Callable[..., Any]]=None):
+               preprocessor: Optional[Callable[..., Any]] = None,
+               postprocessor: Optional[Callable[..., Any]] = None):
     """Instantiates an ExportModel.
 
     Examples:
@@ -47,7 +47,7 @@ class ExportModule(tf.Module, metaclass=abc.ABCMeta):
     :param postprocessor: An optional callable to postprocess the model outputs.
     """
     super().__init__(name=None)
-    self.model  = model
+    self.model = model
     self.params = params
 
     if inference_step is not None:
@@ -63,9 +63,9 @@ class ExportModule(tf.Module, metaclass=abc.ABCMeta):
         self.inference_step = self.model.call
       else:
         self.inference_step = functools.partial(
-          self.model.__call__, training=False)
+            self.model.__call__, training=False)
 
-    self.preprocessor  = preprocessor
+    self.preprocessor = preprocessor
     self.postprocessor = postprocessor
 
   @abc.abstractmethod
@@ -113,11 +113,11 @@ def export(export_module: ExportModule,
     if checkpoint is None:
       checkpoint = tf.train.Checkpoint(model=export_module.model)
     checkpoint.read(
-      ckpt_dir_or_file).assert_existing_objects_matched().expect_partial()
+        ckpt_dir_or_file).assert_existing_objects_matched().expect_partial()
   if isinstance(function_keys, list):
     if len(function_keys) == 1:
       function_keys = {
-        function_keys[0]: tf.saved_model.DEFAULT_SERVING_SIGNATURE_DEF_KEY
+          function_keys[0]: tf.saved_model.DEFAULT_SERVING_SIGNATURE_DEF_KEY
       }
     else:
       raise ValueError('If the function_keys is a list, it must contain a '
@@ -126,11 +126,11 @@ def export(export_module: ExportModule,
   signatures = export_module.get_inference_signatures(function_keys)
   if timestamped:
     export_dir = get_timestamped_export_dir(export_saved_model_dir).decode(
-      'utf-8')
+        'utf-8')
   else:
     export_dir = export_saved_model_dir
   tf.saved_model.save(
-    export_module, export_dir, signatures=signatures, options=save_options)
+      export_module, export_dir, signatures=signatures, options=save_options)
   return export_dir
 
 def get_timestamped_export_dir(export_dir_base):
@@ -147,7 +147,7 @@ def get_timestamped_export_dir(export_dir_base):
   while attempts < MAX_DIRECTORY_CREATION_ATTEMPTS:
     timestamp = int(time.time())
     result_dir = tf.io.gfile.join(
-      tf.compat.as_bytes(export_dir_base), tf.compat.as_bytes(str(timestamp)))
+        tf.compat.as_bytes(export_dir_base), tf.compat.as_bytes(str(timestamp)))
     if not tf.io.gfile.exists(result_dir):
       # Collisions are still possible (though extremely unlikely): this
       # directory is not actually created yet, but it will be almost
@@ -156,7 +156,7 @@ def get_timestamped_export_dir(export_dir_base):
     time.sleep(1)
     attempts += 1
     logging.warning(
-      'Directory {} already exists; retrying (attempt {}/{})'.format(
-        str(result_dir), attempts, MAX_DIRECTORY_CREATION_ATTEMPTS))
+        'Directory {} already exists; retrying (attempt {}/{})'.format(
+            str(result_dir), attempts, MAX_DIRECTORY_CREATION_ATTEMPTS))
   raise RuntimeError('Failed to obtain a unique export directory name after {} '
                      'attempts'.format(MAX_DIRECTORY_CREATION_ATTEMPTS))

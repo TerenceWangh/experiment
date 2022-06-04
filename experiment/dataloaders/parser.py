@@ -66,12 +66,12 @@ class Parser:
     return parse
 
   @classmethod
-  def inference_fn(cls, input):
+  def inference_fn(cls, input_tensor):
     """Parses inputs for predictions.
 
     Parameters
     ----------
-    input : dict or tf.Tensor
+    input_tensor : dict or tf.Tensor
         The input data.
 
     Returns

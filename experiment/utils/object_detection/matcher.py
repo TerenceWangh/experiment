@@ -231,7 +231,7 @@ class Matcher:
   """Abstract base class for matcher."""
   __metaclass__ = ABCMeta
 
-  def match(self, similarity_matrix, scope = None, **params):
+  def match(self, similarity_matrix, scope=None, **params):
     """Computes matches among row and column indices and returns the result.
 
     Computes matches among the row and column indices based on the similarity

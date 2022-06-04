@@ -15,8 +15,9 @@ def _self_suppression(iou, _, iou_sum):
       [batch_size, -1, 1]) * iou
   iou_sum_new = tf.reduce_sum(iou_suppressed, [1, 2])
   return [
-    iou_suppressed,
-    tf.reduce_any(iou_sum - iou_sum_new > 0.5), iou_sum_new
+      iou_suppressed,
+      tf.reduce_any(iou_sum - iou_sum_new > 0.5),
+      iou_sum_new
   ]
 
 
@@ -178,9 +179,9 @@ def sorted_non_max_suppression_padded(
 
   selected_boxes, _, output_size, _ = tf.while_loop(
       _loop_cond, _suppression_loop_body, [
-        boxes, iou_threshold,
-        tf.zeros([batch_size], tf.int32),
-        tf.constant(0)
+          boxes, iou_threshold,
+          tf.zeros([batch_size], tf.int32),
+          tf.constant(0)
       ])
   idx = num_boxes - tf.cast(
       tf.nn.top_k(

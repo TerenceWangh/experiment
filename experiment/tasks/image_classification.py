@@ -1,6 +1,6 @@
 """Image classification task definition."""
 
-from typing import Any, Optional, List, Tuple
+from typing import Optional
 from absl import logging
 import tensorflow as tf
 
@@ -114,11 +114,10 @@ class ImageClassificationTask(Task):
 
     return dataset
 
-  def build_losses(
-      self,
-      labels,
-      model_outputs,
-      aux_losses = None) -> tf.Tensor:
+  def build_losses(self,
+                   labels,
+                   model_outputs,
+                   aux_losses=None) -> tf.Tensor:
     losses_config = self.task_config.losses
     is_multilabel = self.task_config.train_data.is_multilabel
 
@@ -155,14 +154,14 @@ class ImageClassificationTask(Task):
       if (self.task_config.losses.one_hot or
           self.task_config.losses.soft_labels):
         metrics = [
-          tf.keras.metrics.CategoricalAccuracy(name='accuracy'),
-          tf.keras.metrics.TopKCategoricalAccuracy(
-              k=k, name='top_{}_accuracy'.format(k))]
+            tf.keras.metrics.CategoricalAccuracy(name='accuracy'),
+            tf.keras.metrics.TopKCategoricalAccuracy(
+                k=k, name='top_{}_accuracy'.format(k))]
       else:
         metrics = [
-          tf.keras.metrics.SparseCategoricalAccuracy(name='accuracy'),
-          tf.keras.metrics.SparseTopKCategoricalAccuracy(
-              k=k, name='top_{}_accuracy'.format(k))]
+            tf.keras.metrics.SparseCategoricalAccuracy(name='accuracy'),
+            tf.keras.metrics.SparseTopKCategoricalAccuracy(
+                k=k, name='top_{}_accuracy'.format(k))]
     else:
       metrics = []
       # These metrics destablize the training if included in training. The jobs
@@ -170,26 +169,25 @@ class ImageClassificationTask(Task):
       # TODO: Investigate adding following metric to train.
       if not training:
         metrics = [
-          tf.keras.metrics.AUC(
-              name='globalPR-AUC',
-              curve='PR',
-              multi_label=False,
-              from_logits=True),
-          tf.keras.metrics.AUC(
-              name='meanPR-AUC',
-              curve='PR',
-              multi_label=True,
-              num_labels=self.task_config.model.num_classes,
-              from_logits=True),
+            tf.keras.metrics.AUC(
+                name='globalPR-AUC',
+                curve='PR',
+                multi_label=False,
+                from_logits=True),
+            tf.keras.metrics.AUC(
+                name='meanPR-AUC',
+                curve='PR',
+                multi_label=True,
+                num_labels=self.task_config.model.num_classes,
+                from_logits=True),
         ]
     return metrics
 
-  def train_step(
-      self,
-      inputs,
-      model: tf.keras.Model,
-      optimizer: tf.keras.optimizers.Optimizer,
-      metrics = None):
+  def train_step(self,
+                 inputs,
+                 model: tf.keras.Model,
+                 optimizer: tf.keras.optimizers.Optimizer,
+                 metrics=None):
     features, labels = inputs
     is_multilabel = self.task_config.train_data.is_multilabel
     if self.task_config.losses.one_hot and not is_multilabel:
@@ -235,7 +233,7 @@ class ImageClassificationTask(Task):
       logs.update({m.name: m.result() for m in model.metrics})
     return logs
 
-  def validation_step(self, inputs, model: tf.keras.Model, metrics = None):
+  def validation_step(self, inputs, model: tf.keras.Model, metrics=None):
     features, labels = inputs
     one_hot = self.task_config.losses.one_hot
     soft_labels = self.task_config.losses.soft_labels

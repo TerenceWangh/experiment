@@ -25,7 +25,7 @@ class OneOfConfig(base_config.Config):
       return {'type': None}
     elif self.__dict__['type'] not in self.__dict__:
       raise ValueError('type: {!r} is not a valid key!'.format(
-        self.__dict__['type']))
+          self.__dict__['type']))
     else:
       chosen_type = self.type
       chosen_value = self.__dict__[chosen_type]

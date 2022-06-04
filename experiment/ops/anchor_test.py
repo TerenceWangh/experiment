@@ -115,7 +115,7 @@ class AnchorTest(parameterized.TestCase, tf.test.TestCase):
     gt_boxes = anchor_boxes['3'][0:1, 0, 0:4]
     gt_classes = tf.constant([[ground_truth_class_id]], dtype=tf.float32)
     gt_attributes = {
-      attribute_name: tf.constant([[ground_truth_depth]], dtype=tf.float32)
+        attribute_name: tf.constant([[ground_truth_depth]], dtype=tf.float32)
     } if has_attribute else {}
 
     (cls_targets, box_targets, att_targets, _,

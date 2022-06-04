@@ -73,7 +73,7 @@ def _flip_masks_left_right(masks):
 def keypoint_flip_horizontal(keypoints,
                              flip_point,
                              flip_permutation,
-                             scope = None):
+                             scope=None):
   """Flips the keypoints horizontally around the flip_point.
 
   This operation flips the x coordinate for each keypoint around the flip_point
@@ -111,7 +111,7 @@ def keypoint_flip_horizontal(keypoints,
     return new_keypoints
 
 
-def keypoint_change_coordinate_frame(keypoints, window, scope = None):
+def keypoint_change_coordinate_frame(keypoints, window, scope=None):
   """Changes coordinate frame of the keypoints to be relative to window's frame.
 
   Given a window of the form [y_min, x_min, y_max, x_max], changes keypoint
@@ -146,7 +146,7 @@ def keypoint_change_coordinate_frame(keypoints, window, scope = None):
     return new_keypoints
 
 
-def keypoint_prune_outside_window(keypoints, window, scope = None):
+def keypoint_prune_outside_window(keypoints, window, scope=None):
   """Prunes keypoints that fall outside a given window.
 
   This function replaces keypoints that fall outside the given window with nan.
@@ -181,11 +181,11 @@ def keypoint_prune_outside_window(keypoints, window, scope = None):
 
 
 def random_horizontal_flip(image,
-                           boxes = None,
-                           masks = None,
-                           keypoints = None,
-                           keypoint_flip_permutation = None,
-                           seed = None):
+                           boxes=None,
+                           masks=None,
+                           keypoints=None,
+                           keypoint_flip_permutation=None,
+                           seed=None):
   """Randomly flips the image and detections horizontally.
 
   The probability of flipping the image is 50%.
@@ -345,12 +345,12 @@ def _compute_new_dynamic_size(image, min_dimension, max_dimension):
 
 
 def resize_to_range(image,
-                    masks = None,
-                    min_dimension = None,
-                    max_dimension = None,
-                    method = tf.image.ResizeMethod.BILINEAR,
-                    align_corners = False,
-                    pad_to_max_dimension = False):
+                    masks=None,
+                    min_dimension=None,
+                    max_dimension=None,
+                    method=tf.image.ResizeMethod.BILINEAR,
+                    align_corners=False,
+                    pad_to_max_dimension=False):
   """Resizes an image so its dimensions are within the provided value.
 
   The output size can be described by two cases:
@@ -448,7 +448,7 @@ def _copy_extra_fields(box_list_to_copy_to, box_list_to_copy_from):
   return box_list_to_copy_to
 
 
-def box_list_scale(box_list, y_scale, x_scale, scope = None):
+def box_list_scale(box_list, y_scale, x_scale, scope=None):
   """Scale box coordinates in x and y dimensions.
 
   Parameters

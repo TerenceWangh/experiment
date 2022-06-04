@@ -42,12 +42,12 @@ def to_4d(image: tf.Tensor) -> tf.Tensor:
   left_pad = tf.cast(tf.less_equal(original_rank, 3), dtype=tf.int32)
   right_pad = tf.cast(tf.equal(original_rank, 2), dtype=tf.int32)
   new_shape = tf.concat(
-    [
-      tf.ones(shape=left_pad, dtype=tf.int32),
-      shape,
-      tf.ones(shape=right_pad, dtype=tf.int32),
-    ],
-    axis=0,
+      [
+          tf.ones(shape=left_pad, dtype=tf.int32),
+          shape,
+          tf.ones(shape=right_pad, dtype=tf.int32),
+      ],
+      axis=0,
   )
   return tf.reshape(image, new_shape)
 
@@ -91,16 +91,16 @@ def _convert_translation_to_transform(translations: tf.Tensor) -> tf.Tensor:
   num_translations = tf.shape(translations)[0]
 
   return tf.concat(
-    values=[
-      tf.ones((num_translations, 1), tf.dtypes.float32),
-      tf.zeros((num_translations, 1), tf.dtypes.float32),
-      -translations[:, 0, None],
-      tf.zeros((num_translations, 1), tf.dtypes.float32),
-      tf.ones((num_translations, 1), tf.dtypes.float32),
-      -translations[:, 1, None],
-      tf.zeros((num_translations, 2), tf.dtypes.float32),
-    ],
-    axis=1,
+      values=[
+          tf.ones((num_translations, 1), tf.dtypes.float32),
+          tf.zeros((num_translations, 1), tf.dtypes.float32),
+          -translations[:, 0, None],
+          tf.zeros((num_translations, 1), tf.dtypes.float32),
+          tf.ones((num_translations, 1), tf.dtypes.float32),
+          -translations[:, 1, None],
+          tf.zeros((num_translations, 2), tf.dtypes.float32),
+      ],
+      axis=1,
   )
 
 
@@ -131,16 +131,16 @@ def _convert_angles_to_transform(angles: tf.Tensor,
   num_angles = tf.shape(angles)[0]
 
   return tf.concat(
-    values=[
-      tf.math.cos(angles)[:, None],
-      -tf.math.sin(angles)[:, None],
-      x_offset[:, None],
-      tf.math.sin(angles)[:, None],
-      tf.math.cos(angles)[:, None],
-      y_offset[:, None],
-      tf.zeros((num_angles, 2), tf.dtypes.float32),
-    ],
-    axis=1,
+      values=[
+          tf.math.cos(angles)[:, None],
+          -tf.math.sin(angles)[:, None],
+          x_offset[:, None],
+          tf.math.sin(angles)[:, None],
+          tf.math.cos(angles)[:, None],
+          y_offset[:, None],
+          tf.zeros((num_angles, 2), tf.dtypes.float32),
+      ],
+      axis=1,
   )
 
 
@@ -152,7 +152,7 @@ def transform(image: tf.Tensor, transforms) -> tf.Tensor:
     transforms = transforms[None]
   image = to_4d(image)
   image = image_ops.transform(
-    images=image, transforms=transforms, interpolation='nearest')
+      images=image, transforms=transforms, interpolation='nearest')
   return from_4d(image, original_ndims)
 
 
@@ -185,7 +185,7 @@ def rotate(image: tf.Tensor, degrees: float) -> tf.Tensor:
   image_height = tf.cast(tf.shape(image)[1], tf.float32)
   image_width = tf.cast(tf.shape(image)[2], tf.float32)
   transforms = _convert_angles_to_transform(
-    angles=radians, image_width=image_width, image_height=image_height)
+      angles=radians, image_width=image_width, image_height=image_height)
   # In practice, we should randomize the rotation degrees by flipping it
   # negatively half the time, but that's done on 'degrees' outside of the
   # function,
@@ -257,9 +257,9 @@ def cutout(image: tf.Tensor, pad_size: int, replace: int = 0) -> tf.Tensor:
 
   # Sample the center location in the image where the zero mask will be applied.
   cutout_center_height = tf.random.uniform(
-    shape=[], minval=0, maxval=image_height, dtype=tf.int32)
+      shape=[], minval=0, maxval=image_height, dtype=tf.int32)
   cutout_center_width = tf.random.uniform(
-    shape=[], minval=0, maxval=image_width, dtype=tf.int32)
+      shape=[], minval=0, maxval=image_width, dtype=tf.int32)
   image = _fill_rectangle(image, cutout_center_width, cutout_center_height,
                           pad_size, pad_size, replace)
   return image
@@ -279,13 +279,13 @@ def _fill_rectangle(image,
   rt_pad = tf.maximum(0, image_w - center_width - half_width)
 
   cutout_shape = [
-    image_h - (lo_pad + up_pad),
-    image_w - (lt_pad + rt_pad),
+      image_h - (lo_pad + up_pad),
+      image_w - (lt_pad + rt_pad),
   ]
   padding_dims = [[lo_pad, up_pad], [lt_pad, rt_pad]]
   mask = tf.pad(
-    tf.zeros(cutout_shape, dtype=image.dtype),
-    padding_dims, constant_values=1)
+      tf.zeros(cutout_shape, dtype=image.dtype),
+      padding_dims, constant_values=1)
   mask = tf.expand_dims(mask, -1)
   mask = tf.tile(mask, [1, 1, 3])
 
@@ -321,24 +321,24 @@ def cutout_video(image: tf.Tensor, replace: int = 0) -> tf.Tensor:
 
   # Sample the center location in the image where the zero mask will be applied.
   center_d = tf.random.uniform(
-    shape=[], minval=0, maxval=image_d, dtype=tf.int32)
+      shape=[], minval=0, maxval=image_d, dtype=tf.int32)
   center_h = tf.random.uniform(
-    shape=[], minval=0, maxval=image_h, dtype=tf.int32)
+      shape=[], minval=0, maxval=image_h, dtype=tf.int32)
   center_w = tf.random.uniform(
-    shape=[], minval=0, maxval=image_w, dtype=tf.int32)
+      shape=[], minval=0, maxval=image_w, dtype=tf.int32)
 
   pad_d = tf.random.uniform(
-    shape=[],
-    minval=1,
-    maxval=tf.maximum(2, tf.cast(image_d / 4, tf.int32)), dtype=tf.int32)
+      shape=[],
+      minval=1,
+      maxval=tf.maximum(2, tf.cast(image_d / 4, tf.int32)), dtype=tf.int32)
   pad_h = tf.random.uniform(
-    shape=[],
-    minval=tf.maximum(1, tf.cast(image_h / 4, tf.int32)),
-    maxval=tf.maximum(2, tf.cast(image_h / 2, tf.int32)), dtype=tf.int32)
+      shape=[],
+      minval=tf.maximum(1, tf.cast(image_h / 4, tf.int32)),
+      maxval=tf.maximum(2, tf.cast(image_h / 2, tf.int32)), dtype=tf.int32)
   pad_w = tf.random.uniform(
-    shape=[],
-    minval=tf.maximum(1, tf.cast(image_w / 4, tf.int32)),
-    maxval=tf.maximum(2, tf.cast(image_w / 2, tf.int32)), dtype=tf.int32)
+      shape=[],
+      minval=tf.maximum(1, tf.cast(image_w / 4, tf.int32)),
+      maxval=tf.maximum(2, tf.cast(image_w / 2, tf.int32)), dtype=tf.int32)
 
   lo_pad = tf.maximum(0, center_h - pad_h)
   up_pad = tf.maximum(0, image_h - center_h - pad_h)
@@ -348,9 +348,9 @@ def cutout_video(image: tf.Tensor, replace: int = 0) -> tf.Tensor:
   fd_pad = tf.maximum(0, image_d - center_d - pad_d)
 
   cutout_shape = [
-    image_d - (bk_pad + fd_pad),
-    image_h - (lo_pad + up_pad),
-    image_w - (lt_pad + rt_pad)]
+      image_d - (bk_pad + fd_pad),
+      image_h - (lo_pad + up_pad),
+      image_w - (lt_pad + rt_pad)]
   padding_dims = [[bk_pad, fd_pad],
                   [lo_pad, up_pad],
                   [lt_pad, rt_pad]]
@@ -445,7 +445,7 @@ def shear_x(image: tf.Tensor, level: float, replace: int) -> tf.Tensor:
   # [1  level
   #  0  1].
   image = transform(
-    image=wrap(image), transforms=[1., level, 0., 0., 1., 0., 0., 0.])
+      image=wrap(image), transforms=[1., level, 0., 0., 1., 0., 0., 0.])
   return unwrap(image, replace)
 
 
@@ -456,7 +456,7 @@ def shear_y(image: tf.Tensor, level: float, replace: int) -> tf.Tensor:
   # [1  0
   #  level  1].
   image = transform(
-    image=wrap(image), transforms=[1., 0., 0., level, 1., 0., 0., 0.])
+      image=wrap(image), transforms=[1., 0., 0., level, 1., 0., 0., 0.])
   return unwrap(image, replace)
 
 
@@ -479,7 +479,7 @@ def auto_contrast(image: tf.Tensor) -> tf.Tensor:
     # Scale the image, making the lowest value 0 and the highest value 255.
     def scale_values(im):
       scale = 255.0 / (hi - lo)
-      offset = -lo * scale
+      offset = -1.0 * lo * scale
       im = tf.cast(im, tf.float32) * scale + offset
       im = tf.clip_by_value(im, 0.0, 255.0)
       return tf.cast(im, tf.uint8)
@@ -512,7 +512,7 @@ def sharpness(image: tf.Tensor, factor: float) -> tf.Tensor:
     kernel = tf.tile(kernel, [1, 1, 3, 1])
     strides = [1, 1, 1, 1]
     degenerate = tf.nn.depthwise_conv2d(
-      image, kernel, strides, padding='VALID', dilations=[1, 1])
+        image, kernel, strides, padding='VALID', dilations=[1, 1])
   elif orig_image.shape.rank == 4:
     kernel = tf.constant([[1, 1, 1], [1, 5, 1], [1, 1, 1]],
                          dtype=tf.float32,
@@ -521,9 +521,9 @@ def sharpness(image: tf.Tensor, factor: float) -> tf.Tensor:
     # Run the kernel across each channel
     channels = tf.split(image, 3, axis=-1)
     degenerates = [
-      tf.nn.conv3d(channel, kernel, strides, padding='VALID',
-                   dilations=[1, 1, 1, 1, 1])
-      for channel in channels
+        tf.nn.conv3d(channel, kernel, strides, padding='VALID',
+                     dilations=[1, 1, 1, 1, 1])
+        for channel in channels
     ]
     degenerate = tf.concat(degenerates, -1)
   else:
@@ -570,8 +570,9 @@ def equalize(image: tf.Tensor) -> tf.Tensor:
     # If step is zero, return the original image.  Otherwise, build
     # lut from the full histogram and step and then index from it.
     result = tf.cond(
-      tf.equal(step, 0), lambda: im,
-      lambda: tf.gather(build_lut(histo, step), im))
+        tf.equal(step, 0),
+        lambda: im,
+        lambda: tf.gather(build_lut(histo, step), im))
 
     return tf.cast(result, tf.uint8)
 
@@ -623,15 +624,15 @@ def unwrap(image: tf.Tensor, replace: int) -> tf.Tensor:
 
   # Where they are zero, fill them in with 'replace'.
   flattened_image = tf.where(
-    tf.equal(alpha_channel, 0),
-    tf.ones_like(flattened_image, dtype=image.dtype) * replace,
-    flattened_image)
+      tf.equal(alpha_channel, 0),
+      tf.ones_like(flattened_image, dtype=image.dtype) * replace,
+      flattened_image)
 
   image = tf.reshape(flattened_image, image_shape)
   image = tf.slice(
-    image,
-    [0] * image.shape.rank,
-    tf.concat([image_shape[:-1], [3]], -1))
+      image,
+      [0] * image.shape.rank,
+      tf.concat([image_shape[:-1], [3]], -1))
   return image
 
 
@@ -643,7 +644,8 @@ def _scale_bbox_only_op_probability(prob):
   hyper parameter when designing the autoaugment algorithm that we found
   empirically to work well.
 
-  :param prob: Float that is the probability of applying the bbox-only operation.
+  :param prob: Float that is the probability of applying the bbox-only
+      operation.
   :return: Reduced probability.
   """
   return prob / 3.0
@@ -743,17 +745,17 @@ def _apply_bbox_augmentation_wrapper(image, bbox, new_bboxes, prob,
   augmentation_func.
   """
   should_apply_op = tf.cast(
-    tf.floor(tf.random.uniform([], dtype=tf.float32) + prob), tf.bool)
+      tf.floor(tf.random.uniform([], dtype=tf.float32) + prob), tf.bool)
   if func_changes_bbox:
     augmented_image, bbox = tf.cond(
-      should_apply_op,
-      lambda: augmentation_func(image, bbox, *args),
-      lambda: (image, bbox))
+        should_apply_op,
+        lambda: augmentation_func(image, bbox, *args),
+        lambda: (image, bbox))
   else:
     augmented_image = tf.cond(
-      should_apply_op,
-      lambda: _apply_bbox_augmentation(image, bbox, augmentation_func, *args),
-      lambda: image)
+        should_apply_op,
+        lambda: _apply_bbox_augmentation(image, bbox, augmentation_func, *args),
+        lambda: image)
   new_bboxes = _concat_bbox(bbox, new_bboxes)
   return augmented_image, new_bboxes
 
@@ -763,12 +765,12 @@ def _apply_multi_bbox_augmentation_wrapper(image, bboxes, prob, aug_func,
   """Checks to be sure num bboxes > 0 before calling inner function."""
   num_bboxes = tf.shape(bboxes)[0]
   image, bboxes = tf.cond(
-    tf.equal(num_bboxes, 0),
-    lambda: (image, bboxes),
-    # pylint:disable=g-long-lambda
-    lambda: _apply_multi_bbox_augmentation(
-      image, bboxes, prob, aug_func, func_changes_bbox, *args))
-  # pylint:enable=g-long-lambda
+      tf.equal(num_bboxes, 0),
+      lambda: (image, bboxes),
+      # pylint:disable=g-long-lambda
+      lambda: _apply_multi_bbox_augmentation(
+          image, bboxes, prob, aug_func, func_changes_bbox, *args))
+      # pylint:enable=g-long-lambda
   return image, bboxes
 
 
@@ -817,8 +819,8 @@ def _apply_multi_bbox_augmentation(image, bboxes, prob, aug_func,
 
   # pylint:disable=g-long-lambda
   wrapped_aug_func = (
-    lambda _image, bbox, _new_bboxes: _apply_bbox_augmentation_wrapper(
-      _image, bbox, _new_bboxes, prob, aug_func, func_changes_bbox, *args))
+      lambda _image, bbox, _new_bboxes: _apply_bbox_augmentation_wrapper(
+          _image, bbox, _new_bboxes, prob, aug_func, func_changes_bbox, *args))
   # pylint:enable=g-long-lambda
 
   # Setup the while_loop.
@@ -840,15 +842,15 @@ def _apply_multi_bbox_augmentation(image, bboxes, prob, aug_func,
   # bboxes in the image.
   # pylint:disable=g-long-lambda
   body = lambda _idx, _images_and_bboxes: [
-    _idx + 1, wrapped_aug_func(_images_and_bboxes[0],
-                               loop_bboxes[_idx],
-                               _images_and_bboxes[1])]
+      _idx + 1, wrapped_aug_func(_images_and_bboxes[0],
+                                 loop_bboxes[_idx],
+                                 _images_and_bboxes[1])]
   # pylint:enable=g-long-lambda
 
   _, (image, new_bboxes) = tf.while_loop(
-    cond, body, [idx, (image, new_bboxes)],
-    shape_invariants=[idx.get_shape(),
-                      (image.get_shape(), tf.TensorShape([None, 4]))])
+      cond, body, [idx, (image, new_bboxes)],
+      shape_invariants=[idx.get_shape(),
+                        (image.get_shape(), tf.TensorShape([None, 4]))])
 
   # Either return the altered bboxes or the original ones depending on if
   # we altered them in anyway.
@@ -920,7 +922,7 @@ def _rotate_bbox(bbox, image_height, image_width, degrees):
   coordinates.
   """
   image_height, image_width = (
-    tf.cast(image_height, tf.float32), tf.cast(image_width, tf.float32))
+      tf.cast(image_height, tf.float32), tf.cast(image_width, tf.float32))
 
   # Convert from degrees to radians.
   degrees_to_radians = math.pi / 180.0
@@ -931,20 +933,20 @@ def _rotate_bbox(bbox, image_height, image_width, degrees):
   # Y coordinates are made negative as the y axis of images goes down with
   # increasing pixel values, so we negate to make sure x axis and y axis points
   # are in the traditionally positive direction.
-  min_y = -tf.cast(image_height * (bbox[0] - 0.5), tf.int32)
+  min_y = -1.0 * tf.cast(image_height * (bbox[0] - 0.5), tf.int32)
   min_x = tf.cast(image_width * (bbox[1] - 0.5), tf.int32)
-  max_y = -tf.cast(image_height * (bbox[2] - 0.5), tf.int32)
+  max_y = -1.0 * tf.cast(image_height * (bbox[2] - 0.5), tf.int32)
   max_x = tf.cast(image_width * (bbox[3] - 0.5), tf.int32)
   coordinates = tf.stack(
-    [[min_y, min_x], [min_y, max_x], [max_y, min_x], [max_y, max_x]])
+      [[min_y, min_x], [min_y, max_x], [max_y, min_x], [max_y, max_x]])
   coordinates = tf.cast(coordinates, tf.float32)
   # Rotate the coordinates according to the rotation matrix clockwise if
   # radians is positive, else negative
   rotation_matrix = tf.stack(
-    [[tf.cos(radians), tf.sin(radians)],
-     [-tf.sin(radians), tf.cos(radians)]])
+      [[tf.cos(radians), tf.sin(radians)],
+       [-1.0 * tf.sin(radians), tf.cos(radians)]])
   new_coords = tf.cast(
-    tf.matmul(rotation_matrix, tf.transpose(coordinates)), tf.int32)
+      tf.matmul(rotation_matrix, tf.transpose(coordinates)), tf.int32)
   # Find min/max values and convert them back to normalized 0-1 floats.
   min_y = -(
       tf.cast(tf.reduce_max(new_coords[0, :]), tf.float32) / image_height - 0.5)
@@ -987,7 +989,7 @@ def rotate_with_bboxes(image, bboxes, degrees, replace):
   image_width = tf.shape(image)[1]
   # pylint:disable=g-long-lambda
   wrapped_rotate_bbox = lambda bbox: _rotate_bbox(
-    bbox, image_height, image_width, degrees)
+      bbox, image_height, image_width, degrees)
   # pylint:enable=g-long-lambda
   bboxes = tf.map_fn(wrapped_rotate_bbox, bboxes)
   return image, bboxes
@@ -1007,7 +1009,7 @@ def _shear_bbox(bbox, image_height, image_width, level, shear_horizontal):
   coordinates.
   """
   image_height, image_width = (
-    tf.cast(image_height, tf.float32), tf.cast(image_width, tf.float32))
+      tf.cast(image_height, tf.float32), tf.cast(image_width, tf.float32))
 
   # Change bbox coordinates to be pixels.
   min_y = tf.cast(image_height * bbox[0], tf.int32)
@@ -1015,19 +1017,19 @@ def _shear_bbox(bbox, image_height, image_width, level, shear_horizontal):
   max_y = tf.cast(image_height * bbox[2], tf.int32)
   max_x = tf.cast(image_width * bbox[3], tf.int32)
   coordinates = tf.stack(
-    [[min_y, min_x], [min_y, max_x], [max_y, min_x], [max_y, max_x]])
+      [[min_y, min_x], [min_y, max_x], [max_y, min_x], [max_y, max_x]])
   coordinates = tf.cast(coordinates, tf.float32)
 
   # Shear the coordinates according to the translation matrix.
   if shear_horizontal:
     translation_matrix = tf.stack(
-      [[1, 0], [-level, 1]])
+        [[1, 0], [-level, 1]])
   else:
     translation_matrix = tf.stack(
-      [[1, -level], [0, 1]])
+        [[1, -level], [0, 1]])
   translation_matrix = tf.cast(translation_matrix, tf.float32)
   new_coords = tf.cast(
-    tf.matmul(translation_matrix, tf.transpose(coordinates)), tf.int32)
+      tf.matmul(translation_matrix, tf.transpose(coordinates)), tf.int32)
 
   # Find min/max values and convert them back to floats.
   min_y = tf.cast(tf.reduce_min(new_coords[0, :]), tf.float32) / image_height
@@ -1071,7 +1073,7 @@ def shear_with_bboxes(image, bboxes, level, replace, shear_horizontal):
   image_width = tf.shape(image)[1]
   # pylint:disable=g-long-lambda
   wrapped_shear_bbox = lambda bbox: _shear_bbox(
-    bbox, image_height, image_width, level, shear_horizontal)
+      bbox, image_height, image_width, level, shear_horizontal)
   # pylint:enable=g-long-lambda
   bboxes = tf.map_fn(wrapped_shear_bbox, bboxes)
   return image, bboxes
@@ -1145,7 +1147,7 @@ def translate_bbox(image, bboxes, pixels, replace, shift_horizontal):
   image_width = tf.shape(image)[1]
   # pylint:disable=g-long-lambda
   wrapped_shift_bbox = lambda bbox: _shift_bbox(
-    bbox, image_height, image_width, pixels, shift_horizontal)
+      bbox, image_height, image_width, pixels, shift_horizontal)
   # pylint:enable=g-long-lambda
   bboxes = tf.map_fn(wrapped_shift_bbox, bboxes)
   return image, bboxes
@@ -1163,7 +1165,7 @@ def translate_y_only_bboxes(image: tf.Tensor,
   func_changes_bbox = False
   prob = _scale_bbox_only_op_probability(prob)
   return _apply_multi_bbox_augmentation_wrapper(
-    image, bboxes, prob, translate_y, func_changes_bbox, pixels, replace)
+      image, bboxes, prob, translate_y, func_changes_bbox, pixels, replace)
 
 
 def _randomly_negate_tensor(tensor):
@@ -1218,11 +1220,11 @@ def _apply_func_with_prob(func: Any, image: tf.Tensor,
 
   # Apply the function with probability `prob`.
   should_apply_op = tf.cast(
-    tf.floor(tf.random.uniform([], dtype=tf.float32) + prob), tf.bool)
+      tf.floor(tf.random.uniform([], dtype=tf.float32) + prob), tf.bool)
   augmented_image, augmented_bboxes = tf.cond(
-    should_apply_op,
-    lambda: func(image, bboxes, *args),
-    lambda: (image, bboxes))
+      should_apply_op,
+      lambda: func(image, bboxes, *args),
+      lambda: (image, bboxes))
   return augmented_image, augmented_bboxes
 
 
@@ -1235,76 +1237,81 @@ def select_and_apply_random_policy(policies: Any,
   # larger graphs and would even break export for some larger policies.
   for (i, policy) in enumerate(policies):
     image, bboxes = tf.cond(
-      tf.equal(i, policy_to_select),
-      lambda selected_policy=policy: selected_policy(image, bboxes),
-      lambda: (image, bboxes))
+        tf.equal(i, policy_to_select),
+        lambda selected_policy=policy: selected_policy(image, bboxes),
+        lambda: (image, bboxes))
   return image, bboxes
 
 
+# pylint: disable=bad-whitespace
 NAME_TO_FUNC = {
-  'AutoContrast'          : auto_contrast,
-  'Equalize'              : equalize,
-  'Invert'                : invert,
-  'Rotate'                : wrapped_rotate,
-  'Posterize'             : posterize,
-  'Solarize'              : solarize,
-  'SolarizeAdd'           : solarize_add,
-  'Color'                 : color,
-  'Contrast'              : contrast,
-  'Brightness'            : brightness,
-  'Sharpness'             : sharpness,
-  'ShearX'                : shear_x,
-  'ShearY'                : shear_y,
-  'TranslateX'            : translate_x,
-  'TranslateY'            : translate_y,
-  'Cutout'                : cutout,
-  'Rotate_BBox'           : rotate_with_bboxes,
-  # pylint:disable=g-long-lambda
-  'ShearX_BBox'           : lambda image, bboxes, level,
-                                   replace: shear_with_bboxes(
-    image, bboxes, level, replace, shear_horizontal=True),
-  'ShearY_BBox'           : lambda image, bboxes, level,
-                                   replace: shear_with_bboxes(
-    image, bboxes, level, replace, shear_horizontal=False),
-  'TranslateX_BBox'       : lambda image, bboxes, pixels,
-                                   replace: translate_bbox(
-    image, bboxes, pixels, replace, shift_horizontal=True),
-  'TranslateY_BBox'       : lambda image, bboxes, pixels,
-                                   replace: translate_bbox(
-    image, bboxes, pixels, replace, shift_horizontal=False),
-  # pylint:enable=g-long-lambda
-  'TranslateY_Only_BBoxes': translate_y_only_bboxes,
+    'AutoContrast'          : auto_contrast,
+    'Equalize'              : equalize,
+    'Invert'                : invert,
+    'Rotate'                : wrapped_rotate,
+    'Posterize'             : posterize,
+    'Solarize'              : solarize,
+    'SolarizeAdd'           : solarize_add,
+    'Color'                 : color,
+    'Contrast'              : contrast,
+    'Brightness'            : brightness,
+    'Sharpness'             : sharpness,
+    'ShearX'                : shear_x,
+    'ShearY'                : shear_y,
+    'TranslateX'            : translate_x,
+    'TranslateY'            : translate_y,
+    'Cutout'                : cutout,
+    'Rotate_BBox'           : rotate_with_bboxes,
+    # pylint:disable=g-long-lambda
+    'ShearX_BBox'           :
+        lambda image, bboxes, level, replace: shear_with_bboxes(
+            image, bboxes, level, replace, shear_horizontal=True),
+    'ShearY_BBox'           :
+        lambda image, bboxes, level, replace: shear_with_bboxes(
+            image, bboxes, level, replace, shear_horizontal=False),
+    'TranslateX_BBox'       :
+        lambda image, bboxes, pixels, replace: translate_bbox(
+            image, bboxes, pixels, replace, shift_horizontal=True),
+    'TranslateY_BBox'       :
+        lambda image, bboxes, pixels, replace: translate_bbox(
+            image, bboxes, pixels, replace, shift_horizontal=False),
+    # pylint:enable=g-long-lambda
+    'TranslateY_Only_BBoxes': translate_y_only_bboxes,
 }
+# pylint: enable=bad-whitespace
+
 
 # Functions that require a `bboxes` parameter.
 REQUIRE_BOXES_FUNCS = frozenset({
-  'Rotate_BBox',
-  'ShearX_BBox',
-  'ShearY_BBox',
-  'TranslateX_BBox',
-  'TranslateY_BBox',
-  'TranslateY_Only_BBoxes',
+    'Rotate_BBox',
+    'ShearX_BBox',
+    'ShearY_BBox',
+    'TranslateX_BBox',
+    'TranslateY_BBox',
+    'TranslateY_Only_BBoxes',
 })
+
 
 # Functions that have a 'prob' parameter
 PROB_FUNCS = frozenset({
-  'TranslateY_Only_BBoxes',
+    'TranslateY_Only_BBoxes',
 })
+
 
 # Functions that have a 'replace' parameter
 REPLACE_FUNCS = frozenset({
-  'Rotate',
-  'TranslateX',
-  'ShearX',
-  'ShearY',
-  'TranslateY',
-  'Cutout',
-  'Rotate_BBox',
-  'ShearX_BBox',
-  'ShearY_BBox',
-  'TranslateX_BBox',
-  'TranslateY_BBox',
-  'TranslateY_Only_BBoxes',
+    'Rotate',
+    'TranslateX',
+    'ShearX',
+    'ShearY',
+    'TranslateY',
+    'Cutout',
+    'Rotate_BBox',
+    'ShearX_BBox',
+    'ShearY_BBox',
+    'TranslateX_BBox',
+    'TranslateY_BBox',
+    'TranslateY_Only_BBoxes',
 })
 
 
@@ -1319,34 +1326,36 @@ def level_to_arg(cutout_const: float, translate_const: float):
   translate_arg = lambda level: _translate_level_to_arg(level, translate_const)
   translate_bbox_arg = lambda level: _translate_level_to_arg(level, 120)
 
+  # pylint: disable=bad-whitespace
   args = {
-    'AutoContrast'          : no_arg,
-    'Equalize'              : no_arg,
-    'Invert'                : no_arg,
-    'Rotate'                : _rotate_level_to_arg,
-    'Posterize'             : posterize_arg,
-    'Solarize'              : solarize_arg,
-    'SolarizeAdd'           : solarize_add_arg,
-    'Color'                 : _enhance_level_to_arg,
-    'Contrast'              : _enhance_level_to_arg,
-    'Brightness'            : _enhance_level_to_arg,
-    'Sharpness'             : _enhance_level_to_arg,
-    'ShearX'                : _shear_level_to_arg,
-    'ShearY'                : _shear_level_to_arg,
-    'Cutout'                : cutout_arg,
-    'TranslateX'            : translate_arg,
-    'TranslateY'            : translate_arg,
-    'Rotate_BBox'           : _rotate_level_to_arg,
-    'ShearX_BBox'           : _shear_level_to_arg,
-    'ShearY_BBox'           : _shear_level_to_arg,
-    # pylint:disable=g-long-lambda
-    'TranslateX_BBox'       : lambda level: _translate_level_to_arg(
-      level, translate_const),
-    'TranslateY_BBox'       : lambda level: _translate_level_to_arg(
-      level, translate_const),
-    # pylint:enable=g-long-lambda
-    'TranslateY_Only_BBoxes': translate_bbox_arg,
+      'AutoContrast'          : no_arg,
+      'Equalize'              : no_arg,
+      'Invert'                : no_arg,
+      'Rotate'                : _rotate_level_to_arg,
+      'Posterize'             : posterize_arg,
+      'Solarize'              : solarize_arg,
+      'SolarizeAdd'           : solarize_add_arg,
+      'Color'                 : _enhance_level_to_arg,
+      'Contrast'              : _enhance_level_to_arg,
+      'Brightness'            : _enhance_level_to_arg,
+      'Sharpness'             : _enhance_level_to_arg,
+      'ShearX'                : _shear_level_to_arg,
+      'ShearY'                : _shear_level_to_arg,
+      'Cutout'                : cutout_arg,
+      'TranslateX'            : translate_arg,
+      'TranslateY'            : translate_arg,
+      'Rotate_BBox'           : _rotate_level_to_arg,
+      'ShearX_BBox'           : _shear_level_to_arg,
+      'ShearY_BBox'           : _shear_level_to_arg,
+      # pylint:disable=g-long-lambda
+      'TranslateX_BBox'       : lambda level: _translate_level_to_arg(
+          level, translate_const),
+      'TranslateY_BBox'       : lambda level: _translate_level_to_arg(
+          level, translate_const),
+      # pylint:enable=g-long-lambda
+      'TranslateY_Only_BBoxes': translate_bbox_arg,
   }
+  # pylint: enable=bad-whitespace
   return args
 
 
@@ -1394,10 +1403,7 @@ def _parse_policy_info(name: Text,
 class ImageAugment(object):
   """Image augmentation class for applying image distortions."""
 
-  def distort(
-      self,
-      image: tf.Tensor
-  ) -> tf.Tensor:
+  def distort(self, image: tf.Tensor) -> tf.Tensor:
     """Given an image tensor, returns a distorted image with the same shape.
 
     :param image: `Tensor` of shape [height, width, 3] or [num_frames,
@@ -1469,20 +1475,22 @@ class AutoAugment(ImageAugment):
     self.augmentation_name = augmentation_name
     self.cutout_const = float(cutout_const)
     self.translate_const = float(translate_const)
+    # pylint: disable=bad-whitespace
     self.available_policies = {
-      'detection_v0'    : self.detection_policy_v0(),
-      'v0'              : self.policy_v0(),
-      'test'            : self.policy_test(),
-      'simple'          : self.policy_simple(),
-      'reduced_cifar10' : self.policy_reduced_cifar10(),
-      'svhn'            : self.policy_svhn(),
-      'reduced_imagenet': self.policy_reduced_imagenet(),
+        'detection_v0'    : self.detection_policy_v0(),
+        'v0'              : self.policy_v0(),
+        'test'            : self.policy_test(),
+        'simple'          : self.policy_simple(),
+        'reduced_cifar10' : self.policy_reduced_cifar10(),
+        'svhn'            : self.policy_svhn(),
+        'reduced_imagenet': self.policy_reduced_imagenet(),
     }
+    # pylint: enable=bad-whitespace
 
     if not policies:
       if augmentation_name not in self.available_policies:
         raise ValueError(
-          'Invalid augmentation_name: {}'.format(augmentation_name))
+            'Invalid augmentation_name: {}'.format(augmentation_name))
 
       self.policies = self.available_policies[augmentation_name]
 
@@ -1522,10 +1530,10 @@ class AutoAugment(ImageAugment):
         _, prob, level = policy_info
         assert_ranges.append(tf.Assert(tf.less_equal(prob, 1.), [prob]))
         assert_ranges.append(
-          tf.Assert(tf.less_equal(level, int(_MAX_LEVEL)), [level]))
+            tf.Assert(tf.less_equal(level, int(_MAX_LEVEL)), [level]))
 
         policy_info = list(policy_info) + [
-          replace_value, self.cutout_const, self.translate_const
+            replace_value, self.cutout_const, self.translate_const
         ]
         tf_policy.append(_parse_policy_info(*policy_info))
 
@@ -1535,8 +1543,8 @@ class AutoAugment(ImageAugment):
 
         def final_policy(image_, bboxes_):
           for func, prob, args in tf_policy_:
-            image_, bboxes_ = _apply_func_with_prob(func, image_, bboxes_, args,
-                                                    prob)
+            image_, bboxes_ = _apply_func_with_prob(
+                func, image_, bboxes_, args, prob)
           return image_, bboxes_
 
         return final_policy
@@ -1582,11 +1590,11 @@ class AutoAugment(ImageAugment):
     :return: the policy.
     """
     policy = [
-      [('TranslateX_BBox', 0.6, 4), ('Equalize', 0.8, 10)],
-      [('TranslateY_Only_BBoxes', 0.2, 2), ('Cutout', 0.8, 8)],
-      [('Sharpness', 0.0, 8), ('ShearX_BBox', 0.4, 0)],
-      [('ShearY_BBox', 1.0, 2), ('TranslateY_Only_BBoxes', 0.6, 6)],
-      [('Rotate_BBox', 0.6, 10), ('Color', 1.0, 6)],
+        [('TranslateX_BBox', 0.6, 4), ('Equalize', 0.8, 10)],
+        [('TranslateY_Only_BBoxes', 0.2, 2), ('Cutout', 0.8, 8)],
+        [('Sharpness', 0.0, 8), ('ShearX_BBox', 0.4, 0)],
+        [('ShearY_BBox', 1.0, 2), ('TranslateY_Only_BBoxes', 0.6, 6)],
+        [('Rotate_BBox', 0.6, 10), ('Color', 1.0, 6)],
     ]
     return policy
 
@@ -1602,31 +1610,31 @@ class AutoAugment(ImageAugment):
     """
 
     policy = [
-      [('Equalize', 0.8, 1), ('ShearY', 0.8, 4)],
-      [('Color', 0.4, 9), ('Equalize', 0.6, 3)],
-      [('Color', 0.4, 1), ('Rotate', 0.6, 8)],
-      [('Solarize', 0.8, 3), ('Equalize', 0.4, 7)],
-      [('Solarize', 0.4, 2), ('Solarize', 0.6, 2)],
-      [('Color', 0.2, 0), ('Equalize', 0.8, 8)],
-      [('Equalize', 0.4, 8), ('SolarizeAdd', 0.8, 3)],
-      [('ShearX', 0.2, 9), ('Rotate', 0.6, 8)],
-      [('Color', 0.6, 1), ('Equalize', 1.0, 2)],
-      [('Invert', 0.4, 9), ('Rotate', 0.6, 0)],
-      [('Equalize', 1.0, 9), ('ShearY', 0.6, 3)],
-      [('Color', 0.4, 7), ('Equalize', 0.6, 0)],
-      [('Posterize', 0.4, 6), ('AutoContrast', 0.4, 7)],
-      [('Solarize', 0.6, 8), ('Color', 0.6, 9)],
-      [('Solarize', 0.2, 4), ('Rotate', 0.8, 9)],
-      [('Rotate', 1.0, 7), ('TranslateY', 0.8, 9)],
-      [('ShearX', 0.0, 0), ('Solarize', 0.8, 4)],
-      [('ShearY', 0.8, 0), ('Color', 0.6, 4)],
-      [('Color', 1.0, 0), ('Rotate', 0.6, 2)],
-      [('Equalize', 0.8, 4), ('Equalize', 0.0, 8)],
-      [('Equalize', 1.0, 4), ('AutoContrast', 0.6, 2)],
-      [('ShearY', 0.4, 7), ('SolarizeAdd', 0.6, 7)],
-      [('Posterize', 0.8, 2), ('Solarize', 0.6, 10)],
-      [('Solarize', 0.6, 8), ('Equalize', 0.6, 1)],
-      [('Color', 0.8, 6), ('Rotate', 0.4, 5)],
+        [('Equalize', 0.8, 1), ('ShearY', 0.8, 4)],
+        [('Color', 0.4, 9), ('Equalize', 0.6, 3)],
+        [('Color', 0.4, 1), ('Rotate', 0.6, 8)],
+        [('Solarize', 0.8, 3), ('Equalize', 0.4, 7)],
+        [('Solarize', 0.4, 2), ('Solarize', 0.6, 2)],
+        [('Color', 0.2, 0), ('Equalize', 0.8, 8)],
+        [('Equalize', 0.4, 8), ('SolarizeAdd', 0.8, 3)],
+        [('ShearX', 0.2, 9), ('Rotate', 0.6, 8)],
+        [('Color', 0.6, 1), ('Equalize', 1.0, 2)],
+        [('Invert', 0.4, 9), ('Rotate', 0.6, 0)],
+        [('Equalize', 1.0, 9), ('ShearY', 0.6, 3)],
+        [('Color', 0.4, 7), ('Equalize', 0.6, 0)],
+        [('Posterize', 0.4, 6), ('AutoContrast', 0.4, 7)],
+        [('Solarize', 0.6, 8), ('Color', 0.6, 9)],
+        [('Solarize', 0.2, 4), ('Rotate', 0.8, 9)],
+        [('Rotate', 1.0, 7), ('TranslateY', 0.8, 9)],
+        [('ShearX', 0.0, 0), ('Solarize', 0.8, 4)],
+        [('ShearY', 0.8, 0), ('Color', 0.6, 4)],
+        [('Color', 1.0, 0), ('Rotate', 0.6, 2)],
+        [('Equalize', 0.8, 4), ('Equalize', 0.0, 8)],
+        [('Equalize', 1.0, 4), ('AutoContrast', 0.6, 2)],
+        [('ShearY', 0.4, 7), ('SolarizeAdd', 0.6, 7)],
+        [('Posterize', 0.8, 2), ('Solarize', 0.6, 10)],
+        [('Solarize', 0.6, 8), ('Equalize', 0.6, 1)],
+        [('Color', 0.8, 6), ('Rotate', 0.4, 5)],
     ]
     return policy
 
@@ -1642,31 +1650,31 @@ class AutoAugment(ImageAugment):
     :return: the policy.
     """
     policy = [
-      [('Invert', 0.1, 7), ('Contrast', 0.2, 6)],
-      [('Rotate', 0.7, 2), ('TranslateX', 0.3, 9)],
-      [('Sharpness', 0.8, 1), ('Sharpness', 0.9, 3)],
-      [('ShearY', 0.5, 8), ('TranslateY', 0.7, 9)],
-      [('AutoContrast', 0.5, 8), ('Equalize', 0.9, 2)],
-      [('ShearY', 0.2, 7), ('Posterize', 0.3, 7)],
-      [('Color', 0.4, 3), ('Brightness', 0.6, 7)],
-      [('Sharpness', 0.3, 9), ('Brightness', 0.7, 9)],
-      [('Equalize', 0.6, 5), ('Equalize', 0.5, 1)],
-      [('Contrast', 0.6, 7), ('Sharpness', 0.6, 5)],
-      [('Color', 0.7, 7), ('TranslateX', 0.5, 8)],
-      [('Equalize', 0.3, 7), ('AutoContrast', 0.4, 8)],
-      [('TranslateY', 0.4, 3), ('Sharpness', 0.2, 6)],
-      [('Brightness', 0.9, 6), ('Color', 0.2, 8)],
-      [('Solarize', 0.5, 2), ('Invert', 0.0, 3)],
-      [('Equalize', 0.2, 0), ('AutoContrast', 0.6, 0)],
-      [('Equalize', 0.2, 8), ('Equalize', 0.6, 4)],
-      [('Color', 0.9, 9), ('Equalize', 0.6, 6)],
-      [('AutoContrast', 0.8, 4), ('Solarize', 0.2, 8)],
-      [('Brightness', 0.1, 3), ('Color', 0.7, 0)],
-      [('Solarize', 0.4, 5), ('AutoContrast', 0.9, 3)],
-      [('TranslateY', 0.9, 9), ('TranslateY', 0.7, 9)],
-      [('AutoContrast', 0.9, 2), ('Solarize', 0.8, 3)],
-      [('Equalize', 0.8, 8), ('Invert', 0.1, 3)],
-      [('TranslateY', 0.7, 9), ('AutoContrast', 0.9, 1)],
+        [('Invert', 0.1, 7), ('Contrast', 0.2, 6)],
+        [('Rotate', 0.7, 2), ('TranslateX', 0.3, 9)],
+        [('Sharpness', 0.8, 1), ('Sharpness', 0.9, 3)],
+        [('ShearY', 0.5, 8), ('TranslateY', 0.7, 9)],
+        [('AutoContrast', 0.5, 8), ('Equalize', 0.9, 2)],
+        [('ShearY', 0.2, 7), ('Posterize', 0.3, 7)],
+        [('Color', 0.4, 3), ('Brightness', 0.6, 7)],
+        [('Sharpness', 0.3, 9), ('Brightness', 0.7, 9)],
+        [('Equalize', 0.6, 5), ('Equalize', 0.5, 1)],
+        [('Contrast', 0.6, 7), ('Sharpness', 0.6, 5)],
+        [('Color', 0.7, 7), ('TranslateX', 0.5, 8)],
+        [('Equalize', 0.3, 7), ('AutoContrast', 0.4, 8)],
+        [('TranslateY', 0.4, 3), ('Sharpness', 0.2, 6)],
+        [('Brightness', 0.9, 6), ('Color', 0.2, 8)],
+        [('Solarize', 0.5, 2), ('Invert', 0.0, 3)],
+        [('Equalize', 0.2, 0), ('AutoContrast', 0.6, 0)],
+        [('Equalize', 0.2, 8), ('Equalize', 0.6, 4)],
+        [('Color', 0.9, 9), ('Equalize', 0.6, 6)],
+        [('AutoContrast', 0.8, 4), ('Solarize', 0.2, 8)],
+        [('Brightness', 0.1, 3), ('Color', 0.7, 0)],
+        [('Solarize', 0.4, 5), ('AutoContrast', 0.9, 3)],
+        [('TranslateY', 0.9, 9), ('TranslateY', 0.7, 9)],
+        [('AutoContrast', 0.9, 2), ('Solarize', 0.8, 3)],
+        [('Equalize', 0.8, 8), ('Invert', 0.1, 3)],
+        [('TranslateY', 0.7, 9), ('AutoContrast', 0.9, 1)],
     ]
     return policy
 
@@ -1682,31 +1690,31 @@ class AutoAugment(ImageAugment):
     :return: the policy.
     """
     policy = [
-      [('ShearX', 0.9, 4), ('Invert', 0.2, 3)],
-      [('ShearY', 0.9, 8), ('Invert', 0.7, 5)],
-      [('Equalize', 0.6, 5), ('Solarize', 0.6, 6)],
-      [('Invert', 0.9, 3), ('Equalize', 0.6, 3)],
-      [('Equalize', 0.6, 1), ('Rotate', 0.9, 3)],
-      [('ShearX', 0.9, 4), ('AutoContrast', 0.8, 3)],
-      [('ShearY', 0.9, 8), ('Invert', 0.4, 5)],
-      [('ShearY', 0.9, 5), ('Solarize', 0.2, 6)],
-      [('Invert', 0.9, 6), ('AutoContrast', 0.8, 1)],
-      [('Equalize', 0.6, 3), ('Rotate', 0.9, 3)],
-      [('ShearX', 0.9, 4), ('Solarize', 0.3, 3)],
-      [('ShearY', 0.8, 8), ('Invert', 0.7, 4)],
-      [('Equalize', 0.9, 5), ('TranslateY', 0.6, 6)],
-      [('Invert', 0.9, 4), ('Equalize', 0.6, 7)],
-      [('Contrast', 0.3, 3), ('Rotate', 0.8, 4)],
-      [('Invert', 0.8, 5), ('TranslateY', 0.0, 2)],
-      [('ShearY', 0.7, 6), ('Solarize', 0.4, 8)],
-      [('Invert', 0.6, 4), ('Rotate', 0.8, 4)],
-      [('ShearY', 0.3, 7), ('TranslateX', 0.9, 3)],
-      [('ShearX', 0.1, 6), ('Invert', 0.6, 5)],
-      [('Solarize', 0.7, 2), ('TranslateY', 0.6, 7)],
-      [('ShearY', 0.8, 4), ('Invert', 0.8, 8)],
-      [('ShearX', 0.7, 9), ('TranslateY', 0.8, 3)],
-      [('ShearY', 0.8, 5), ('AutoContrast', 0.7, 3)],
-      [('ShearX', 0.7, 2), ('Invert', 0.1, 5)],
+        [('ShearX', 0.9, 4), ('Invert', 0.2, 3)],
+        [('ShearY', 0.9, 8), ('Invert', 0.7, 5)],
+        [('Equalize', 0.6, 5), ('Solarize', 0.6, 6)],
+        [('Invert', 0.9, 3), ('Equalize', 0.6, 3)],
+        [('Equalize', 0.6, 1), ('Rotate', 0.9, 3)],
+        [('ShearX', 0.9, 4), ('AutoContrast', 0.8, 3)],
+        [('ShearY', 0.9, 8), ('Invert', 0.4, 5)],
+        [('ShearY', 0.9, 5), ('Solarize', 0.2, 6)],
+        [('Invert', 0.9, 6), ('AutoContrast', 0.8, 1)],
+        [('Equalize', 0.6, 3), ('Rotate', 0.9, 3)],
+        [('ShearX', 0.9, 4), ('Solarize', 0.3, 3)],
+        [('ShearY', 0.8, 8), ('Invert', 0.7, 4)],
+        [('Equalize', 0.9, 5), ('TranslateY', 0.6, 6)],
+        [('Invert', 0.9, 4), ('Equalize', 0.6, 7)],
+        [('Contrast', 0.3, 3), ('Rotate', 0.8, 4)],
+        [('Invert', 0.8, 5), ('TranslateY', 0.0, 2)],
+        [('ShearY', 0.7, 6), ('Solarize', 0.4, 8)],
+        [('Invert', 0.6, 4), ('Rotate', 0.8, 4)],
+        [('ShearY', 0.3, 7), ('TranslateX', 0.9, 3)],
+        [('ShearX', 0.1, 6), ('Invert', 0.6, 5)],
+        [('Solarize', 0.7, 2), ('TranslateY', 0.6, 7)],
+        [('ShearY', 0.8, 4), ('Invert', 0.8, 8)],
+        [('ShearX', 0.7, 9), ('TranslateY', 0.8, 3)],
+        [('ShearY', 0.8, 5), ('AutoContrast', 0.7, 3)],
+        [('ShearX', 0.7, 2), ('Invert', 0.1, 5)],
     ]
     return policy
 
@@ -1722,31 +1730,31 @@ class AutoAugment(ImageAugment):
     :return: the policy.
     """
     policy = [
-      [('Posterize', 0.4, 8), ('Rotate', 0.6, 9)],
-      [('Solarize', 0.6, 5), ('AutoContrast', 0.6, 5)],
-      [('Equalize', 0.8, 8), ('Equalize', 0.6, 3)],
-      [('Posterize', 0.6, 7), ('Posterize', 0.6, 6)],
-      [('Equalize', 0.4, 7), ('Solarize', 0.2, 4)],
-      [('Equalize', 0.4, 4), ('Rotate', 0.8, 8)],
-      [('Solarize', 0.6, 3), ('Equalize', 0.6, 7)],
-      [('Posterize', 0.8, 5), ('Equalize', 1.0, 2)],
-      [('Rotate', 0.2, 3), ('Solarize', 0.6, 8)],
-      [('Equalize', 0.6, 8), ('Posterize', 0.4, 6)],
-      [('Rotate', 0.8, 8), ('Color', 0.4, 0)],
-      [('Rotate', 0.4, 9), ('Equalize', 0.6, 2)],
-      [('Equalize', 0.0, 7), ('Equalize', 0.8, 8)],
-      [('Invert', 0.6, 4), ('Equalize', 1.0, 8)],
-      [('Color', 0.6, 4), ('Contrast', 1.0, 8)],
-      [('Rotate', 0.8, 8), ('Color', 1.0, 2)],
-      [('Color', 0.8, 8), ('Solarize', 0.8, 7)],
-      [('Sharpness', 0.4, 7), ('Invert', 0.6, 8)],
-      [('ShearX', 0.6, 5), ('Equalize', 1.0, 9)],
-      [('Color', 0.4, 0), ('Equalize', 0.6, 3)],
-      [('Equalize', 0.4, 7), ('Solarize', 0.2, 4)],
-      [('Solarize', 0.6, 5), ('AutoContrast', 0.6, 5)],
-      [('Invert', 0.6, 4), ('Equalize', 1.0, 8)],
-      [('Color', 0.6, 4), ('Contrast', 1.0, 8)],
-      [('Equalize', 0.8, 8), ('Equalize', 0.6, 3)]
+        [('Posterize', 0.4, 8), ('Rotate', 0.6, 9)],
+        [('Solarize', 0.6, 5), ('AutoContrast', 0.6, 5)],
+        [('Equalize', 0.8, 8), ('Equalize', 0.6, 3)],
+        [('Posterize', 0.6, 7), ('Posterize', 0.6, 6)],
+        [('Equalize', 0.4, 7), ('Solarize', 0.2, 4)],
+        [('Equalize', 0.4, 4), ('Rotate', 0.8, 8)],
+        [('Solarize', 0.6, 3), ('Equalize', 0.6, 7)],
+        [('Posterize', 0.8, 5), ('Equalize', 1.0, 2)],
+        [('Rotate', 0.2, 3), ('Solarize', 0.6, 8)],
+        [('Equalize', 0.6, 8), ('Posterize', 0.4, 6)],
+        [('Rotate', 0.8, 8), ('Color', 0.4, 0)],
+        [('Rotate', 0.4, 9), ('Equalize', 0.6, 2)],
+        [('Equalize', 0.0, 7), ('Equalize', 0.8, 8)],
+        [('Invert', 0.6, 4), ('Equalize', 1.0, 8)],
+        [('Color', 0.6, 4), ('Contrast', 1.0, 8)],
+        [('Rotate', 0.8, 8), ('Color', 1.0, 2)],
+        [('Color', 0.8, 8), ('Solarize', 0.8, 7)],
+        [('Sharpness', 0.4, 7), ('Invert', 0.6, 8)],
+        [('ShearX', 0.6, 5), ('Equalize', 1.0, 9)],
+        [('Color', 0.4, 0), ('Equalize', 0.6, 3)],
+        [('Equalize', 0.4, 7), ('Solarize', 0.2, 4)],
+        [('Solarize', 0.6, 5), ('AutoContrast', 0.6, 5)],
+        [('Invert', 0.6, 4), ('Equalize', 1.0, 8)],
+        [('Color', 0.6, 4), ('Contrast', 1.0, 8)],
+        [('Equalize', 0.8, 8), ('Equalize', 0.6, 3)]
     ]
     return policy
 
@@ -1755,19 +1763,19 @@ class AutoAugment(ImageAugment):
     """Same as `policy_v0`, except with custom ops removed."""
 
     policy = [
-      [('Color', 0.4, 9), ('Equalize', 0.6, 3)],
-      [('Solarize', 0.8, 3), ('Equalize', 0.4, 7)],
-      [('Solarize', 0.4, 2), ('Solarize', 0.6, 2)],
-      [('Color', 0.2, 0), ('Equalize', 0.8, 8)],
-      [('Equalize', 0.4, 8), ('SolarizeAdd', 0.8, 3)],
-      [('Color', 0.6, 1), ('Equalize', 1.0, 2)],
-      [('Color', 0.4, 7), ('Equalize', 0.6, 0)],
-      [('Posterize', 0.4, 6), ('AutoContrast', 0.4, 7)],
-      [('Solarize', 0.6, 8), ('Color', 0.6, 9)],
-      [('Equalize', 0.8, 4), ('Equalize', 0.0, 8)],
-      [('Equalize', 1.0, 4), ('AutoContrast', 0.6, 2)],
-      [('Posterize', 0.8, 2), ('Solarize', 0.6, 10)],
-      [('Solarize', 0.6, 8), ('Equalize', 0.6, 1)],
+        [('Color', 0.4, 9), ('Equalize', 0.6, 3)],
+        [('Solarize', 0.8, 3), ('Equalize', 0.4, 7)],
+        [('Solarize', 0.4, 2), ('Solarize', 0.6, 2)],
+        [('Color', 0.2, 0), ('Equalize', 0.8, 8)],
+        [('Equalize', 0.4, 8), ('SolarizeAdd', 0.8, 3)],
+        [('Color', 0.6, 1), ('Equalize', 1.0, 2)],
+        [('Color', 0.4, 7), ('Equalize', 0.6, 0)],
+        [('Posterize', 0.4, 6), ('AutoContrast', 0.4, 7)],
+        [('Solarize', 0.6, 8), ('Color', 0.6, 9)],
+        [('Equalize', 0.8, 4), ('Equalize', 0.0, 8)],
+        [('Equalize', 1.0, 4), ('AutoContrast', 0.6, 2)],
+        [('Posterize', 0.8, 2), ('Solarize', 0.6, 10)],
+        [('Solarize', 0.6, 8), ('Equalize', 0.6, 1)],
     ]
     return policy
 
@@ -1775,7 +1783,7 @@ class AutoAugment(ImageAugment):
   def policy_test():
     """Autoaugment test policy for debugging."""
     policy = [
-      [('TranslateX', 1.0, 4), ('Equalize', 1.0, 10)],
+        [('TranslateX', 1.0, 4), ('Equalize', 1.0, 10)],
     ]
     return policy
 
@@ -1821,16 +1829,16 @@ class RandAugment(ImageAugment):
     self.cutout_const = float(cutout_const)
     self.translate_const = float(translate_const)
     self.prob_to_apply = (
-      float(prob_to_apply) if prob_to_apply is not None else None)
+        float(prob_to_apply) if prob_to_apply is not None else None)
     self.available_ops = [
-      'AutoContrast', 'Equalize', 'Invert', 'Rotate', 'Posterize', 'Solarize',
-      'Color', 'Contrast', 'Brightness', 'Sharpness', 'ShearX', 'ShearY',
-      'TranslateX', 'TranslateY', 'Cutout', 'SolarizeAdd'
+        'AutoContrast', 'Equalize', 'Invert', 'Rotate', 'Posterize', 'Solarize',
+        'Color', 'Contrast', 'Brightness', 'Sharpness', 'ShearX', 'ShearY',
+        'TranslateX', 'TranslateY', 'Cutout', 'SolarizeAdd'
     ]
     self.magnitude_std = magnitude_std
     if exclude_ops:
       self.available_ops = [
-        op for op in self.available_ops if op not in exclude_ops
+          op for op in self.available_ops if op not in exclude_ops
       ]
 
   @classmethod
@@ -1844,31 +1852,30 @@ class RandAugment(ImageAugment):
                           exclude_ops: Optional[List[str]] = None):
     """Builds a RandAugment that modifies bboxes for geometric transforms."""
     augmenter = cls(
-      num_layers=num_layers,
-      magnitude=magnitude,
-      cutout_const=cutout_const,
-      translate_const=translate_const,
-      magnitude_std=magnitude_std,
-      prob_to_apply=prob_to_apply,
-      exclude_ops=exclude_ops)
+        num_layers=num_layers,
+        magnitude=magnitude,
+        cutout_const=cutout_const,
+        translate_const=translate_const,
+        magnitude_std=magnitude_std,
+        prob_to_apply=prob_to_apply,
+        exclude_ops=exclude_ops)
     box_aware_ops_by_base_name = {
-      'Rotate'    : 'Rotate_BBox',
-      'ShearX'    : 'ShearX_BBox',
-      'ShearY'    : 'ShearY_BBox',
-      'TranslateX': 'TranslateX_BBox',
-      'TranslateY': 'TranslateY_BBox',
+        'Rotate': 'Rotate_BBox',
+        'ShearX': 'ShearX_BBox',
+        'ShearY': 'ShearY_BBox',
+        'TranslateX': 'TranslateX_BBox',
+        'TranslateY': 'TranslateY_BBox',
     }
     augmenter.available_ops = [
-      box_aware_ops_by_base_name.get(op_name) or op_name
-      for op_name in augmenter.available_ops
+        box_aware_ops_by_base_name.get(op_name) or op_name
+        for op_name in augmenter.available_ops
     ]
     return augmenter
 
-  def _distort_common(
-      self,
-      image: tf.Tensor,
-      bboxes: Optional[tf.Tensor] = None
-  ) -> Tuple[tf.Tensor, Optional[tf.Tensor]]:
+  def _distort_common(self,
+                      image: tf.Tensor,
+                      bboxes: Optional[tf.Tensor] = None
+                      ) -> Tuple[tf.Tensor, Optional[tf.Tensor]]:
     """Distorts the image and optionally bounding boxes."""
     input_image_type = image.dtype
 
@@ -1883,37 +1890,34 @@ class RandAugment(ImageAugment):
     aug_bboxes = bboxes
 
     for _ in range(self.num_layers):
-      op_to_select = tf.random.uniform([],
-                                       maxval=len(self.available_ops) + 1,
-                                       dtype=tf.int32)
+      op_to_select = tf.random.uniform(
+          [], maxval=len(self.available_ops) + 1, dtype=tf.int32)
 
       branch_fns = []
       for (i, op_name) in enumerate(self.available_ops):
-        prob = tf.random.uniform([],
-                                 minval=min_prob,
-                                 maxval=max_prob,
-                                 dtype=tf.float32)
+        prob = tf.random.uniform(
+            [], minval=min_prob, maxval=max_prob, dtype=tf.float32)
         func, _, args = _parse_policy_info(op_name, prob, self.magnitude,
                                            replace_value, self.cutout_const,
                                            self.translate_const,
                                            self.magnitude_std)
         branch_fns.append((
-          i,
-          # pylint:disable=g-long-lambda
-          lambda selected_func=func, selected_args=args: selected_func(
-            image, bboxes, *selected_args)))
-        # pylint:enable=g-long-lambda
+            i,
+            # pylint:disable=g-long-lambda
+            lambda selected_func=func, selected_args=args: selected_func(
+                image, bboxes, *selected_args)))
+            # pylint:enable=g-long-lambda
 
       aug_image, aug_bboxes = tf.switch_case(
-        branch_index=op_to_select,
-        branch_fns=branch_fns,
-        default=lambda: (tf.identity(image), _maybe_identity(bboxes)))
+          branch_index=op_to_select,
+          branch_fns=branch_fns,
+          default=lambda: (tf.identity(image), _maybe_identity(bboxes)))
 
       if self.prob_to_apply is not None:
         aug_image, aug_bboxes = tf.cond(
-          tf.random.uniform(shape=[], dtype=tf.float32) < self.prob_to_apply,
-          lambda: (tf.identity(aug_image), _maybe_identity(aug_bboxes)),
-          lambda: (tf.identity(image), _maybe_identity(bboxes)))
+            tf.random.uniform(shape=[], dtype=tf.float32) < self.prob_to_apply,
+            lambda: (tf.identity(aug_image), _maybe_identity(aug_bboxes)),
+            lambda: (tf.identity(image), _maybe_identity(bboxes)))
       image = aug_image
       bboxes = aug_bboxes
 
@@ -1994,10 +1998,10 @@ class RandomErasing(ImageAugment):
       count = self._min_count
     else:
       count = tf.random.uniform(
-        shape=[],
-        minval=int(self._min_count),
-        maxval=int(self._max_count - self._min_count + 1),
-        dtype=tf.int32)
+          shape=[],
+          minval=int(self._min_count),
+          maxval=int(self._max_count - self._min_count + 1),
+          dtype=tf.int32)
 
     image_height = tf.shape(image)[0]
     image_width = tf.shape(image)[1]
@@ -2009,41 +2013,41 @@ class RandomErasing(ImageAugment):
       for _ in range(self._trials):
         if not is_trial_successfull:
           erase_area = tf.random.uniform(
-            shape=[],
-            minval=area * self._min_area,
-            maxval=area * self._max_area)
-          aspect_ratio = tf.math.exp(
-            tf.random.uniform(
               shape=[],
-              minval=self._min_log_aspect,
-              maxval=self._max_log_aspect))
+              minval=area * self._min_area,
+              maxval=area * self._max_area)
+          aspect_ratio = tf.math.exp(
+              tf.random.uniform(
+                  shape=[],
+                  minval=self._min_log_aspect,
+                  maxval=self._max_log_aspect))
 
           half_height = tf.cast(
-            tf.math.round(tf.math.sqrt(erase_area * aspect_ratio) / 2),
-            dtype=tf.int32)
+              tf.math.round(tf.math.sqrt(erase_area * aspect_ratio) / 2),
+              dtype=tf.int32)
           half_width = tf.cast(
-            tf.math.round(tf.math.sqrt(erase_area / aspect_ratio) / 2),
-            dtype=tf.int32)
+              tf.math.round(tf.math.sqrt(erase_area / aspect_ratio) / 2),
+              dtype=tf.int32)
 
           if 2 * half_height < image_height and 2 * half_width < image_width:
             center_height = tf.random.uniform(
-              shape=[],
-              minval=0,
-              maxval=int(image_height - 2 * half_height),
-              dtype=tf.int32)
+                shape=[],
+                minval=0,
+                maxval=int(image_height - 2 * half_height),
+                dtype=tf.int32)
             center_width = tf.random.uniform(
-              shape=[],
-              minval=0,
-              maxval=int(image_width - 2 * half_width),
-              dtype=tf.int32)
+                shape=[],
+                minval=0,
+                maxval=int(image_width - 2 * half_width),
+                dtype=tf.int32)
 
             image = _fill_rectangle(
-              image,
-              center_width,
-              center_height,
-              half_width,
-              half_height,
-              replace=None)
+                image,
+                center_width,
+                center_height,
+                half_width,
+                half_height,
+                replace=None)
 
             is_trial_successfull = True
 
@@ -2107,13 +2111,14 @@ class MixupAndCutmix:
     :return: The augmented version of `image` and `labels`.
     """
     augment_cond = tf.less(
-      tf.random.uniform(shape=[], minval=0., maxval=1.0), self.mix_prob)
+        tf.random.uniform(shape=[], minval=0., maxval=1.0), self.mix_prob)
     # pylint: disable=g-long-lambda
     augment_a = lambda: self._update_labels(*tf.cond(
-      tf.less(
-        tf.random.uniform(shape=[], minval=0., maxval=1.0), self.switch_prob
-      ), lambda: self._cutmix(images, labels), lambda: self._mixup(
-        images, labels)))
+        tf.less(
+            tf.random.uniform(shape=[], minval=0., maxval=1.0), self.switch_prob
+        ),
+        lambda: self._cutmix(images, labels),
+        lambda: self._mixup(images, labels)))
     augment_b = lambda: (images, self._smooth_labels(labels))
     # pylint: enable=g-long-lambda
 
@@ -2128,8 +2133,8 @@ class MixupAndCutmix:
   def _cutmix(self, images: tf.Tensor,
               labels: tf.Tensor) -> Tuple[tf.Tensor, tf.Tensor, tf.Tensor]:
     """Apply cutmix."""
-    lam = MixupAndCutmix._sample_from_beta(self.cutmix_alpha, self.cutmix_alpha,
-                                           tf.shape(labels))
+    lam = MixupAndCutmix._sample_from_beta(
+        self.cutmix_alpha, self.cutmix_alpha, tf.shape(labels))
 
     ratio = tf.math.sqrt(1 - lam)
 
@@ -2137,33 +2142,36 @@ class MixupAndCutmix:
     image_height, image_width = tf.shape(images)[1], tf.shape(images)[2]
 
     cut_height = tf.cast(
-      ratio * tf.cast(image_height, dtype=tf.float32), dtype=tf.int32)
+        ratio * tf.cast(image_height, dtype=tf.float32), dtype=tf.int32)
     cut_width = tf.cast(
-      ratio * tf.cast(image_height, dtype=tf.float32), dtype=tf.int32)
+        ratio * tf.cast(image_height, dtype=tf.float32), dtype=tf.int32)
 
     random_center_height = tf.random.uniform(
-      shape=[batch_size], minval=0, maxval=image_height, dtype=tf.int32)
+        shape=[batch_size], minval=0, maxval=image_height, dtype=tf.int32)
     random_center_width = tf.random.uniform(
-      shape=[batch_size], minval=0, maxval=image_width, dtype=tf.int32)
+        shape=[batch_size], minval=0, maxval=image_width, dtype=tf.int32)
 
     bbox_area = cut_height * cut_width
     lam = 1. - bbox_area / (image_height * image_width)
     lam = tf.cast(lam, dtype=tf.float32)
 
     images = tf.map_fn(
-      lambda x: _fill_rectangle(*x),
-      (images, random_center_width, random_center_height, cut_width // 2,
-       cut_height // 2, tf.reverse(images, [0])),
-      dtype=(
-        images.dtype, tf.int32, tf.int32, tf.int32, tf.int32, images.dtype),
-      fn_output_signature=tf.TensorSpec(images.shape[1:], dtype=images.dtype))
+        lambda x: _fill_rectangle(*x),
+        (
+            images, random_center_width, random_center_height, cut_width // 2,
+            cut_height // 2, tf.reverse(images, [0])
+        ),
+        dtype=(
+            images.dtype, tf.int32, tf.int32, tf.int32, tf.int32, images.dtype),
+        fn_output_signature=tf.TensorSpec(images.shape[1:], dtype=images.dtype))
 
     return images, labels, lam
 
-  def _mixup(self, images: tf.Tensor,
+  def _mixup(self,
+             images: tf.Tensor,
              labels: tf.Tensor) -> Tuple[tf.Tensor, tf.Tensor, tf.Tensor]:
-    lam = MixupAndCutmix._sample_from_beta(self.mixup_alpha, self.mixup_alpha,
-                                           tf.shape(labels))
+    lam = MixupAndCutmix._sample_from_beta(
+        self.mixup_alpha, self.mixup_alpha, tf.shape(labels))
     lam = tf.reshape(lam, [-1, 1, 1, 1])
     lam_cast = tf.cast(lam, dtype=images.dtype)
     images = lam_cast * images + (1. - lam_cast) * tf.reverse(images, [0])
@@ -2175,10 +2183,12 @@ class MixupAndCutmix:
     on_value = 1. - self.label_smoothing + off_value
 
     smooth_labels = tf.one_hot(
-      labels, self.num_classes, on_value=on_value, off_value=off_value)
+        labels, self.num_classes, on_value=on_value, off_value=off_value)
     return smooth_labels
 
-  def _update_labels(self, images: tf.Tensor, labels: tf.Tensor,
+  def _update_labels(self,
+                     images: tf.Tensor,
+                     labels: tf.Tensor,
                      lam: tf.Tensor) -> Tuple[tf.Tensor, tf.Tensor]:
     labels_1 = self._smooth_labels(labels)
     labels_2 = tf.reverse(labels_1, [0])

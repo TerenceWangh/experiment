@@ -50,14 +50,14 @@ class CombinationDatasetInputReader(InputReader):
   def __init__(
       self,
       params: DataConfig,
-      dataset_fn = tf.data.TFRecordDataset,
-      pseudo_label_dataset_fn = tf.data.TFRecordDataset,
+      dataset_fn=tf.data.TFRecordDataset,
+      pseudo_label_dataset_fn=tf.data.TFRecordDataset,
       decoder_fn: Optional[Callable[..., Any]] = None,
       sample_fn: Optional[Callable[..., Any]] = None,
       parser_fn: Optional[Callable[..., Any]] = None,
       transform_and_batch_fn: Optional[Callable[
-        [tf.data.Dataset, Optional[tf.distribute.InputContext]],
-        tf.data.Dataset]] = None,
+          [tf.data.Dataset, Optional[tf.distribute.InputContext]],
+          tf.data.Dataset]] = None,
       postprocess_fn: Optional[Callable[..., Any]] = None):
     """Initializes an CombinationDatasetInputReader instance.
 

@@ -543,7 +543,8 @@ def filter_boxes_by_scores(boxes, scores, min_score_threshold):
 
   with tf.name_scope('filter_boxes_by_scores'):
     filtered_mask = tf.math.greater(scores, min_score_threshold)
-    filtered_scores = tf.where(filtered_mask, scores, -tf.ones_like(scores))
+    filtered_scores = tf.where(
+        filtered_mask, scores, -1.0 * tf.ones_like(scores))
     filtered_boxes = tf.cast(
         tf.expand_dims(filtered_mask, axis=-1), dtype=boxes.dtype) * boxes
 
@@ -693,12 +694,12 @@ def bbox_overlap(boxes, gt_boxes):
     padding_mask = tf.logical_or(
         tf.zeros_like(bb_x_min, dtype=tf.bool),
         tf.transpose(gt_invalid_mask, [0, 2, 1]))
-    iou = tf.where(padding_mask, -tf.ones_like(iou), iou)
+    iou = tf.where(padding_mask, -1.0 * tf.ones_like(iou), iou)
 
     # Fills -1 for invalid (-1) boxes.
     boxes_invalid_mask = tf.less(
         tf.reduce_max(boxes, axis=-1, keepdims=True), 0.0)
-    iou = tf.where(boxes_invalid_mask, -tf.ones_like(iou), iou)
+    iou = tf.where(boxes_invalid_mask, -1.0 * tf.ones_like(iou), iou)
 
     return iou
 
@@ -774,7 +775,7 @@ def bbox_generalized_overlap(boxes, gt_boxes):
         tf.reduce_max(gt_boxes, axis=-1, keepdims=True), 0.0)
     padding_mask = tf.broadcast_to(
         tf.transpose(gt_invalid_mask, [0, 2, 1]), tf.shape(giou))
-    giou = tf.where(padding_mask, -tf.ones_like(giou), giou)
+    giou = tf.where(padding_mask, -1.0 * tf.ones_like(giou), giou)
     return giou
 
 
@@ -850,7 +851,7 @@ def box_matching(boxes, gt_boxes, gt_classes):
 
   matched_gt_indices = tf.where(
       background_box_mask,
-      -tf.ones_like(argmax_iou_indices),
+      -1.0 * tf.ones_like(argmax_iou_indices),
       argmax_iou_indices)
 
   return (matched_gt_boxes, matched_gt_classes, matched_gt_indices,

@@ -23,7 +23,7 @@ from experiment.utils.object_detection import ops
 class BalancedPositiveNegativeSampler(MinibatchSampler):
   """Subsamples minibatches to a desired balance of positives and negatives."""
 
-  def __init__(self, positive_fraction = 0.5, is_static = False):
+  def __init__(self, positive_fraction=0.5, is_static=False):
     """Constructs a minibatch sampler.
 
     Parameters
@@ -209,7 +209,7 @@ class BalancedPositiveNegativeSampler(MinibatchSampler):
     return tf.cast(tf.tensordot(tf.cast(sampled_idx_indicator, tf.float32),
                                 reprojections, axes=[0, 0]), tf.bool)
 
-  def subsample(self, indicator, batch_size, labels, scope = None):
+  def subsample(self, indicator, batch_size, labels, scope=None):
     """Returns subsampled minibatch.
 
     Parameters

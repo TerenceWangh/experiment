@@ -2,7 +2,6 @@
 
 import json
 import os
-from numpy import number
 import tensorflow as tf
 
 
@@ -15,16 +14,16 @@ def _collective_communication(all_reduce_alg):
   :raise ValueError: if `all_reduce_alg` not in [None, 'ring', 'nccl'].
   """
   collective_communication_options = {
-    None  : tf.distribute.CollectiveCommunication.AUTO,
-    'ring': tf.distribute.CollectiveCommunication.RING,
-    'nccl': tf.distribute.CollectiveCommunication.NCCL,
+      None: tf.distribute.CollectiveCommunication.AUTO,
+      'ring': tf.distribute.CollectiveCommunication.RING,
+      'nccl': tf.distribute.CollectiveCommunication.NCCL,
   }
 
   if all_reduce_alg not in collective_communication_options:
     raise ValueError(
-      'When used with `multi_worker_mirrored`, valid values for '
-      'all_reduce_alg are [`ring`, `nccl`]. Supplied value: {}'.format(
-        all_reduce_alg))
+        'When used with `multi_worker_mirrored`, valid values for '
+        'all_reduce_alg are [`ring`, `nccl`]. Supplied value: {}'.format(
+            all_reduce_alg))
   return collective_communication_options[all_reduce_alg]
 
 
@@ -43,14 +42,15 @@ def _mirrored_cross_device_ops(all_reduce_alg, num_packs):
     return None
 
   mirrored_all_reduce_options = {
-    'nccl'             : tf.distribute.NcclAllReduce,
-    'hierarchical_copy': tf.distribute.HierarchicalCopyAllReduce,
+      'nccl': tf.distribute.NcclAllReduce,
+      'hierarchical_copy': tf.distribute.HierarchicalCopyAllReduce,
   }
 
   if all_reduce_alg not in mirrored_all_reduce_options:
     raise ValueError(
-      'When used with mirrored, valid values for all_reduce_alg are '
-      '[`nccl`, `hierarchical_copy`]. Supplied value: {}'.format(all_reduce_alg))
+        'When used with mirrored, valid values for all_reduce_alg are '
+        '[`nccl`, `hierarchical_copy`]. Supplied value: {}'.format(
+            all_reduce_alg))
 
   cross_device_ops_class = mirrored_all_reduce_options[all_reduce_alg]
   return cross_device_ops_class(num_packs=num_packs)
@@ -63,14 +63,14 @@ def tpu_initialize(tpu_address):
   :return: A TPUClusterResolver.
   """
   cluster_resolver = tf.distribute.cluster_resolver.TPUClusterResolver(
-    tpu=tpu_address)
+      tpu=tpu_address)
   if tpu_address not in ('', 'local'):
     tf.config.experimental_connect_to_cluster(cluster_resolver)
   tf.tpu.experimental.initialize_tpu_system(cluster_resolver)
   return cluster_resolver
 
 
-def get_distribution_strategy(distribution_strategy="mirrored",
+def get_distribution_strategy(distribution_strategy='mirrored',
                               num_gpus=0,
                               all_reduce_alg=None,
                               num_packs=1,
@@ -108,7 +108,7 @@ def get_distribution_strategy(distribution_strategy="mirrored",
 
   if not isinstance(distribution_strategy, str):
     msg = 'distribution_strategy must be a string but got: {}.'.format(
-      distribution_strategy)
+        distribution_strategy)
     if distribution_strategy == False: # pylint: disable=singleton-comparison,g-explicit-bool-comparison
       msg += ('If you meant to pass the string \'off\', make sure you add '
               'quotes around \'off\' so that yaml interprets it as a string '
@@ -130,7 +130,7 @@ def get_distribution_strategy(distribution_strategy="mirrored",
 
   if distribution_strategy == 'multi_worker_mirrored':
     return tf.distribute.experimental.MultiWorkerMirroredStrategy(
-      communication=_collective_communication(all_reduce_alg))
+        communication=_collective_communication(all_reduce_alg))
 
   if distribution_strategy == 'one_device':
     if num_gpus == 0:
@@ -146,15 +146,15 @@ def get_distribution_strategy(distribution_strategy="mirrored",
     else:
       devices = ['device:GPU:{}'.format(i) for i in range(num_gpus)]
     return tf.distribute.MirroredStrategy(
-      devices=devices,
-      cross_device_ops=_mirrored_cross_device_ops(all_reduce_alg, num_packs))
+        devices=devices,
+        cross_device_ops=_mirrored_cross_device_ops(all_reduce_alg, num_packs))
 
   if distribution_strategy == 'parameter_server':
     cluster_resolver = tf.distribute.cluster_resolver.TFConfigClusterResolver()
     return tf.distribute.experimental.ParameterServerStrategy(cluster_resolver)
 
   raise ValueError('Unrecognized Distribution Strategy: {}'.format(
-    distribution_strategy))
+      distribution_strategy))
 
 
 def configure_cluster(worker_hosts=None, task_index=-1):
@@ -167,8 +167,8 @@ def configure_cluster(worker_hosts=None, task_index=-1):
   tf_config = json.loads(os.environ.get('TF_CONFIG', '{}'))
   if tf_config:
     num_workers = (
-      len(tf_config['cluster'].get('chief', [])) +
-      len(tf_config['cluster'].get('worker'), []))
+        len(tf_config['cluster'].get('chief', [])) +
+        len(tf_config['cluster'].get('worker'), []))
   elif worker_hosts:
     workers = worker_hosts.split(',')
     num_workers = len(workers)
@@ -178,13 +178,13 @@ def configure_cluster(worker_hosts=None, task_index=-1):
 
     task_index = 0 if num_workers == 1 else task_index
     os.environ['TF_CONFIG'] = json.dumps({
-      'cluster': {
-        'worker': workers,
-      },
-      'task': {
-        'type': 'worker',
-        'index': task_index,
-      }
+        'cluster': {
+            'worker': workers,
+        },
+        'task': {
+            'type': 'worker',
+            'index': task_index,
+        }
     })
   else:
     num_workers = 1
@@ -205,5 +205,5 @@ class DummyContextManager(object):
   def __enter__(self):
     pass
 
-  def __exit__(self):
+  def __exit__(self, exception_type, exception_value, exception_traceback):
     pass

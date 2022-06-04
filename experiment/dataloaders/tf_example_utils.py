@@ -198,14 +198,16 @@ def create_classification_example(
       np.uint8(np.random.rand(image_height, image_width, 3) * 255),
       fmt=image_format)
   labels = [0, 1] if is_multilabel else [0]
+  # pylint: disable=bad-whitespace
   serialized_example = tf.train.Example(
       features=tf.train.Features(
           feature={
-            IMAGE_KEY               : (tf.train.Feature(
-                bytes_list=tf.train.BytesList(value=[image]))),
-            CLASSIFICATION_LABEL_KEY: (tf.train.Feature(
-                int64_list=tf.train.Int64List(value=labels))),
+              IMAGE_KEY               : (tf.train.Feature(
+                  bytes_list=tf.train.BytesList(value=[image]))),
+              CLASSIFICATION_LABEL_KEY: (tf.train.Feature(
+                  int64_list=tf.train.Int64List(value=labels))),
           })).SerializeToString()
+  # pylint: enable=bad-whitespace
   return serialized_example
 
 
@@ -219,14 +221,16 @@ def create_distillation_example(
       np.uint8(np.random.rand(image_height, image_width, 3) * 255),
       fmt=image_format)
   soft_labels = [0.6] * num_labels
+  # pylint: disable=bad-whitespace
   serialized_example = tf.train.Example(
       features=tf.train.Features(
           feature={
-            IMAGE_KEY            : (tf.train.Feature(
-                bytes_list=tf.train.BytesList(value=[image]))),
-            DISTILATION_LABEL_KEY: (tf.train.Feature(
-                float_list=tf.train.FloatList(value=soft_labels))),
+              IMAGE_KEY            : (tf.train.Feature(
+                  bytes_list=tf.train.BytesList(value=[image]))),
+              DISTILATION_LABEL_KEY: (tf.train.Feature(
+                  float_list=tf.train.FloatList(value=soft_labels))),
           })).SerializeToString()
+  # pylint: enable=bad-whitespace
   return serialized_example
 
 
@@ -242,12 +246,14 @@ def create_3d_image_test_example(image_height: int, image_width: int,
       low=2, size=(image_height, image_width, image_volume, image_channel))
   labels = labels.astype(np.float32)
 
+  # pylint: disable=bad-whitespace
   feature = {
-    IMAGE_KEY               : (tf.train.Feature(
-        bytes_list=tf.train.BytesList(value=[images.tobytes()]))),
-    CLASSIFICATION_LABEL_KEY: (tf.train.Feature(
-        bytes_list=tf.train.BytesList(value=[labels.tobytes()])))
+      IMAGE_KEY               : (tf.train.Feature(
+          bytes_list=tf.train.BytesList(value=[images.tobytes()]))),
+      CLASSIFICATION_LABEL_KEY: (tf.train.Feature(
+          bytes_list=tf.train.BytesList(value=[labels.tobytes()])))
   }
+  # pylint: enable=bad-whitespace
   return tf.train.Example(features=tf.train.Features(feature=feature))
 
 
@@ -298,36 +304,38 @@ def create_detection_test_example(image_height: int,
     for _ in range(num_instances):
       mask = make_image_bytes([image_height, image_width], fmt='PNG')
       masks.append(mask)
+  # pylint: disable=bad-whitespace
   return tf.train.Example(
       features=tf.train.Features(
           feature={
-            'image/encoded'           : (tf.train.Feature(
-                bytes_list=tf.train.BytesList(value=[image]))),
-            'image/source_id'         : (tf.train.Feature(
-                bytes_list=tf.train.BytesList(value=[DUMP_SOURCE_ID]))),
-            'image/height'            : (tf.train.Feature(
-                int64_list=tf.train.Int64List(value=[image_height]))),
-            'image/width'             : (tf.train.Feature(
-                int64_list=tf.train.Int64List(value=[image_width]))),
-            'image/object/bbox/xmin'  : (tf.train.Feature(
-                float_list=tf.train.FloatList(value=xmins))),
-            'image/object/bbox/xmax'  : (tf.train.Feature(
-                float_list=tf.train.FloatList(value=xmaxs))),
-            'image/object/bbox/ymin'  : (tf.train.Feature(
-                float_list=tf.train.FloatList(value=ymins))),
-            'image/object/bbox/ymax'  : (tf.train.Feature(
-                float_list=tf.train.FloatList(value=ymaxs))),
-            'image/object/class/label': (tf.train.Feature(
-                int64_list=tf.train.Int64List(value=labels))),
-            'image/object/class/text' : (tf.train.Feature(
-                bytes_list=tf.train.BytesList(value=labels_text))),
-            'image/object/is_crowd'   : (tf.train.Feature(
-                int64_list=tf.train.Int64List(value=is_crowds))),
-            'image/object/area'       : (tf.train.Feature(
-                float_list=tf.train.FloatList(value=areas))),
-            'image/object/mask'       : (tf.train.Feature(
-                bytes_list=tf.train.BytesList(value=masks))),
+              'image/encoded'           : (tf.train.Feature(
+                  bytes_list=tf.train.BytesList(value=[image]))),
+              'image/source_id'         : (tf.train.Feature(
+                  bytes_list=tf.train.BytesList(value=[DUMP_SOURCE_ID]))),
+              'image/height'            : (tf.train.Feature(
+                  int64_list=tf.train.Int64List(value=[image_height]))),
+              'image/width'             : (tf.train.Feature(
+                  int64_list=tf.train.Int64List(value=[image_width]))),
+              'image/object/bbox/xmin'  : (tf.train.Feature(
+                  float_list=tf.train.FloatList(value=xmins))),
+              'image/object/bbox/xmax'  : (tf.train.Feature(
+                  float_list=tf.train.FloatList(value=xmaxs))),
+              'image/object/bbox/ymin'  : (tf.train.Feature(
+                  float_list=tf.train.FloatList(value=ymins))),
+              'image/object/bbox/ymax'  : (tf.train.Feature(
+                  float_list=tf.train.FloatList(value=ymaxs))),
+              'image/object/class/label': (tf.train.Feature(
+                  int64_list=tf.train.Int64List(value=labels))),
+              'image/object/class/text' : (tf.train.Feature(
+                  bytes_list=tf.train.BytesList(value=labels_text))),
+              'image/object/is_crowd'   : (tf.train.Feature(
+                  int64_list=tf.train.Int64List(value=is_crowds))),
+              'image/object/area'       : (tf.train.Feature(
+                  float_list=tf.train.FloatList(value=areas))),
+              'image/object/mask'       : (tf.train.Feature(
+                  bytes_list=tf.train.BytesList(value=masks))),
           }))
+  # pylint: enable=bad-whitespace
 
 
 def create_segmentation_test_example(image_height: int,
@@ -351,15 +359,17 @@ def create_segmentation_test_example(image_height: int,
   """
   image = make_image_bytes([image_height, image_width, image_channel])
   mask = make_image_bytes([image_height, image_width], fmt='PNG')
+  # pylint: disable=bad-whitespace
   return tf.train.Example(
       features=tf.train.Features(
           feature={
-            'image/encoded'                   : (tf.train.Feature(
-                bytes_list=tf.train.BytesList(value=[image]))),
-            'image/segmentation/class/encoded': (tf.train.Feature(
-                bytes_list=tf.train.BytesList(value=[mask]))),
-            'image/height'                    : (tf.train.Feature(
-                int64_list=tf.train.Int64List(value=[image_height]))),
-            'image/width'                     : (tf.train.Feature(
-                int64_list=tf.train.Int64List(value=[image_width])))
+              'image/encoded'                   : (tf.train.Feature(
+                  bytes_list=tf.train.BytesList(value=[image]))),
+              'image/segmentation/class/encoded': (tf.train.Feature(
+                  bytes_list=tf.train.BytesList(value=[mask]))),
+              'image/height'                    : (tf.train.Feature(
+                  int64_list=tf.train.Int64List(value=[image_height]))),
+              'image/width'                     : (tf.train.Feature(
+                  int64_list=tf.train.Int64List(value=[image_width])))
           }))
+  # pylint: enable=bad-whitespace

@@ -34,8 +34,8 @@ def _make_offset_wrapper(new_cls_name: str, base_lr_cls):
   :return: A new class (subclass of the base_lr_cls) that can take an offset.
   """
   assert issubclass(base_lr_cls, BaseSchedule), (
-         'base_lr_cls should be subclass of keras LearningRateSchedule, got '
-         '{}'.format(base_lr_cls))
+      'base_lr_cls should be subclass of keras LearningRateSchedule, got '
+      '{}'.format(base_lr_cls))
 
   # pylint: disable=protected-access,pointless-statement
   def offset_learning_rate_init(self, offset=0, **kwargs):
@@ -54,15 +54,17 @@ def _make_offset_wrapper(new_cls_name: str, base_lr_cls):
   def offset_learning_rate_call(self, step):
     step = tf.cast(step - self._offset, tf.float32)
     return base_lr_cls.__call__(self, step)
-
   # pylint: enable=protected-access,pointless-statement
 
   return type(
-      new_cls_name, (base_lr_cls,), {
-        'base_lr_class': base_lr_cls,
-        '__init__': offset_learning_rate_init,
-        '__call__': offset_learning_rate_call,
-  })
+      new_cls_name,
+      (base_lr_cls,),
+      {
+          'base_lr_class': base_lr_cls,
+          '__init__': offset_learning_rate_init,
+          '__call__': offset_learning_rate_call,
+      }
+  )
 
 
 PiecewiseConstantDecayWithOffset = _make_offset_wrapper(
@@ -134,19 +136,20 @@ class LinearWarmup(BaseSchedule):
   def get_config(self) -> Mapping[str, Any]:
     if isinstance(self._after_warmup_lr_schedule, BaseSchedule):
       config = {
-        # pylint: disable=attribute-error
-        'after_warmup_lr_schedule': self._after_warmup_lr_schedule.get_config()
-        # pylint: enable=attribute-error
+          # pylint: disable=attribute-error
+          'after_warmup_lr_schedule':
+              self._after_warmup_lr_schedule.get_config()
+          # pylint: enable=attribute-error
       }
     else:
       config = {
-        'after_warmup_lr_schedule': self._after_warmup_lr_schedule
+          'after_warmup_lr_schedule': self._after_warmup_lr_schedule
       }
 
     config.update({
-      'warmup_steps': self._warmup_step,
-      'warmup_learning_rate': self._init_warmup_lr,
-      'name': self._name,
+        'warmup_steps': self._warmup_step,
+        'warmup_learning_rate': self._init_warmup_lr,
+        'name': self._name,
     })
     return config
 
@@ -205,19 +208,20 @@ class PolynomialWarmup(BaseSchedule):
   def get_config(self) -> Mapping[str, Any]:
     if isinstance(self._after_warmup_lr_schedule, BaseSchedule):
       config = {
-        # pylint: disable=attribute-error
-        'after_warmup_lr_schedule': self._after_warmup_lr_schedule.get_config()
-        # pylint: enable=attribute-error
+          # pylint: disable=attribute-error
+          'after_warmup_lr_schedule':
+              self._after_warmup_lr_schedule.get_config()
+          # pylint: enable=attribute-error
       }
     else:
       config = {
-        'after_warmup_lr_schedule': self._after_warmup_lr_schedule
+          'after_warmup_lr_schedule': self._after_warmup_lr_schedule
       }
 
     config.update({
-      'warmup_steps': self._warmup_steps,
-      'power': self._power,
-      'name': self._name,
+        'warmup_steps': self._warmup_steps,
+        'power': self._power,
+        'name': self._name,
     })
     return  config
 
@@ -252,9 +256,9 @@ class DirectPowerDecay(BaseSchedule):
   def get_config(self):
     """Get the configuration of the learning rate schedule."""
     return {
-      'initial_learning_rate': self._initial_learning_rate,
-      'power': self._power,
-      'name': self._name,
+        'initial_learning_rate': self._initial_learning_rate,
+        'power': self._power,
+        'name': self._name,
     }
 
 
@@ -311,19 +315,20 @@ class PowerAndLinearDecay(BaseSchedule):
       learning_rate *= tf.math.pow(step_non_zero, self._power)
       if self._total_decay_steps * self._linear_decay_fraction > 0:
         learning_rate *= tf.minimum(
-            1.0, (self._total_decay_steps - step) /
-                 (self._total_decay_steps * self._linear_decay_fraction))
+            1.0,
+            (self._total_decay_steps - step) / (self._total_decay_steps *
+                                                self._linear_decay_fraction))
         learning_rate = tf.maximum(0.0, learning_rate)
       return learning_rate
 
   def get_config(self) -> Mapping[str, Any]:
     return {
-      'initial_learning_rate': self._initial_learning_rate,
-      'total_decay_steps': self._total_decay_steps,
-      'power': self._power,
-      'linear_decay_fraction': self._linear_decay_fraction,
-      'offset': self._offset,
-      'name': self._name,
+        'initial_learning_rate': self._initial_learning_rate,
+        'total_decay_steps': self._total_decay_steps,
+        'power': self._power,
+        'linear_decay_fraction': self._linear_decay_fraction,
+        'offset': self._offset,
+        'name': self._name,
     }
 
 
@@ -359,8 +364,8 @@ class PowerDecayWithOffset(BaseSchedule):
     with tf.name_scope(self._name or 'PowerDecayWithOffset'):
       step = tf.cast(step, tf.float32)
       lr_after_offset = tf.math.pow(
-          tf.math.maximum(step - self._offset, 1,0), self._power) * (
-        self._initial_learning_rate)
+          tf.math.maximum(step - self._offset, 1, 0), self._power) * (
+              self._initial_learning_rate)
       sign = tf.cast(step > self._offset, tf.float32)
       lr_combined = (1.0 - sign) * self._pre_offset_learning_rate + \
                     sign * lr_after_offset
@@ -368,11 +373,11 @@ class PowerDecayWithOffset(BaseSchedule):
 
   def get_config(self) -> Mapping[str, Any]:
     return {
-      'initial_learning_rate': self._initial_learning_rate,
-      'power': self._power,
-      'offset': self._offset,
-      'pre_offset_learning_rate': self._pre_offset_learning_rate,
-      'name': self._name,
+        'initial_learning_rate': self._initial_learning_rate,
+        'power': self._power,
+        'offset': self._offset,
+        'pre_offset_learning_rate': self._pre_offset_learning_rate,
+        'name': self._name,
     }
 
 
@@ -425,9 +430,9 @@ class StepCosineDecayWithOffset(BaseSchedule):
       raise ValueError('Boundaries length is equal to learning rate levels '
                        'length {} != {}'.format(len(boundaries), len(values)))
 
-    self._total_steps = (
-      [boundaries[i + 1] - boundaries[i] for i in range(len(boundaries) - 1)] +
-      [0])
+    self._total_steps = [
+        boundaries[i + 1] - boundaries[i] for i in range(len(boundaries) - 1)
+        ] + [0]
 
   def __call__(self, step: int):
     with tf.name_scope(self._name or 'StepCosineDecayWithOffset'):
@@ -459,10 +464,12 @@ class StepCosineDecayWithOffset(BaseSchedule):
         tf.compat.v1.logging.info(
             'DEBUG step %r nilr %r nss %r nts %r nnilr %r',
             step, next_init_lr, next_total_steps, next_next_init_lr)
-        next_cosine_learning_rate = (
-            (next_init_lr - next_next_init_lr) * (
-            tf.cos(tf.constant(math.pi) * (global_step - next_start_step) /
-                next_total_steps) + 1.0) / 2.0 + next_next_init_lr)
+        next_cosine_learning_rate = (next_init_lr - next_next_init_lr) * (
+            tf.cos(
+                tf.constant(math.pi) * (global_step - next_start_step) /
+                next_total_steps
+            ) + 1.0
+        ) / 2.0 + next_next_init_lr
         learning_rate = tf.where(global_step >= next_start_step,
                                  next_cosine_learning_rate, learning_rate)
         tf.compat.v1.logging.info('DEBUG lr %r next lr %r',
@@ -472,8 +479,8 @@ class StepCosineDecayWithOffset(BaseSchedule):
 
   def get_config(self) -> Mapping[str, Any]:
     return {
-      'boundaries': self._boundaries,
-      'values': self._values,
-      'offset': self._offset,
-      'name': self._name,
+        'boundaries': self._boundaries,
+        'values': self._values,
+        'offset': self._offset,
+        'name': self._name,
     }

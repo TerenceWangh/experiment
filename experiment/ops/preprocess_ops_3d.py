@@ -221,10 +221,10 @@ def crop_image(
       offset_2 = tf.cond(
           tf.greater_equal(height, width),
           true_fn=lambda: tf.broadcast_to([
-            0, tf.cast(height, tf.float32) / 2 - target_height // 2, 0, 0
+              0, tf.cast(height, tf.float32) / 2 - target_height // 2, 0, 0
           ], [4]),
           false_fn=lambda: tf.broadcast_to([
-            0, 0, tf.cast(width, tf.float32) / 2 - target_width // 2, 0
+              0, 0, tf.cast(width, tf.float32) / 2 - target_width // 2, 0
           ], [4]))
       offset_3 = tf.cond(
           tf.greater_equal(height, width),
@@ -335,10 +335,8 @@ def random_crop_resize(
   bbox_begin, bbox_size, _ = sample_distorted_bbox
   offset_y, offset_x, _ = tf.unstack(bbox_begin)
   target_height, target_width, _ = tf.unstack(bbox_size)
-  size = tf.convert_to_tensor((
-    seq_len, target_height, target_width, channels))
-  offset = tf.convert_to_tensor((
-    0, offset_y, offset_x, 0))
+  size = tf.convert_to_tensor((seq_len, target_height, target_width, channels))
+  offset = tf.convert_to_tensor((0, offset_y, offset_x, 0))
   frames = tf.slice(frames, offset, size)
   frames = tf.cast(
       tf.image.resize(frames, (output_h, output_w)),

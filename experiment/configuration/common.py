@@ -74,13 +74,6 @@ class MixupAndCutmix(Config):
 @dataclasses.dataclass
 class Augmentation(OneOfConfig):
   """Configuration for input data augmentation.
-
-  ------
-
-  **Attributes**:
-    - type: 'str', type of augmentation be used, one of the fields below.
-    - randaug: RandAugment config.
-    - autoaug: AutoAugment config.
   """
   type: Optional[str] = None
   randaug: RandAugment = RandAugment()

@@ -44,7 +44,7 @@ class BoxList:
       raise ValueError('Invalid dimensions for box data.')
     if boxes.dtype != tf.float32:
       raise ValueError('Invalid tensor type: should be tf.float32.')
-    self._data = { 'boxes': boxes }
+    self._data = {'boxes': boxes}
 
   def num_boxes(self):
     """Returns number of boxes held in collection.
@@ -180,7 +180,7 @@ class BoxList:
       raise ValueError('field {} does not exist.'.format(str(field)))
     self._data[field] = value
 
-  def get_center_coordinates_and_sizes(self, scope = None):
+  def get_center_coordinates_and_sizes(self, scope=None):
     """Computes the center coordinates, height and width of the boxes.
 
     Parameters
@@ -202,7 +202,7 @@ class BoxList:
       x_center = xmin + width / 2.
       return [y_center, x_center, height, width]
 
-  def transpose_coordinates(self, scope = None):
+  def transpose_coordinates(self, scope=None):
     """Transpose the coordinate representation in a box list.
 
     Parameters
@@ -215,7 +215,7 @@ class BoxList:
           value=self.get(), num_or_size_splits=4, axis=1)
       self.set(tf.concat([xmin, ymin, xmax, ymax], 1))
 
-  def as_tensor_dict(self, fields = None):
+  def as_tensor_dict(self, fields=None):
     """Retrieves specified fields as a dictionary of tensors.
 
     Parameters

@@ -21,10 +21,10 @@ GPU_TEST = 'test_gpu' in sys.argv[0]
 
 def all_strategy_combinations():
   return combinations.combine(
-    distribution=[
-      strategy_combinations.default_strategy,
-      strategy_combinations.one_device_strategy_gpu,
-    ],
+      distribution=[
+          strategy_combinations.default_strategy,
+          strategy_combinations.one_device_strategy_gpu,
+      ],
   )
 
 
@@ -83,27 +83,27 @@ class MockAsyncTrainer(trainer_lib._AsyncTrainer):
     self.init_async()
 
     self.global_step = tf.Variable(
-      0,
-      dtype=tf.int64,
-      name='global_step',
-      trainable=False,
-      aggregation=tf.VariableAggregation.ONLY_FIRST_REPLICA)
+        0,
+        dtype=tf.int64,
+        name='global_step',
+        trainable=False,
+        aggregation=tf.VariableAggregation.ONLY_FIRST_REPLICA)
     self.eval_global_step = tf.Variable(
-      0,
-      dtype=tf.int64,
-      name='eval_global_step',
-      trainable=False,
-      aggregation=tf.VariableAggregation.ONLY_FIRST_REPLICA)
+        0,
+        dtype=tf.int64,
+        name='eval_global_step',
+        trainable=False,
+        aggregation=tf.VariableAggregation.ONLY_FIRST_REPLICA)
 
     train_dataset = self.distribute_dataset(dataset_fn)
     orbit.StandardTrainer.__init__(
-      self, train_dataset, options=orbit.StandardTrainerOptions())
+        self, train_dataset, options=orbit.StandardTrainerOptions())
 
     validation_dataset = self.distribute_dataset(dataset_fn)
     orbit.StandardEvaluator.__init__(
-      self,
-      validation_dataset,
-      options=orbit.StandardEvaluatorOptions(use_tf_while_loop=True))
+        self,
+        validation_dataset,
+        options=orbit.StandardEvaluatorOptions(use_tf_while_loop=True))
 
   def train_loop_begin(self):
     self.global_step.assign(0)
@@ -113,7 +113,7 @@ class MockAsyncTrainer(trainer_lib._AsyncTrainer):
     def replica_step(_):
       self.global_step.assign_add(1)
 
-    self._strategy.run(replica_step, args=(next(iterator), ))
+    self._strategy.run(replica_step, args=(next(iterator)))
 
   def train_loop_end(self):
     self.join()
@@ -138,15 +138,15 @@ class TrainerTest(tf.test.TestCase, parameterized.TestCase):
   def setUp(self):
     super().setUp()
     self._config = cfg.ExperimentConfig(
-      trainer=cfg.TrainerConfig(
-        optimizer_config=cfg.OptimizationConfig({
-          'optimizer'    : {
-            'type': 'sgd'
-          },
-          'learning_rate': {
-            'type': 'constant'
-          }
-        })))
+        trainer=cfg.TrainerConfig(
+            optimizer_config=cfg.OptimizationConfig({
+                'optimizer': {
+                    'type': 'sgd'
+                },
+                'learning_rate': {
+                    'type': 'constant'
+                }
+            })))
 
   def tearDown(self):
     gc.collect()
@@ -180,19 +180,19 @@ class TrainerTest(tf.test.TestCase, parameterized.TestCase):
     with distribution.scope():
       task = mock_task.MockTask(self._config)
       train_dataset = orbit.utils.make_distributed_dataset(
-        distribution, task.build_inputs, self._config.task.train_data)
+          distribution, task.build_inputs, self._config.task.train_data)
       validation_dataset = orbit.utils.make_distributed_dataset(
-        distribution, task.build_inputs, self._config.task.validation_data)
+          distribution, task.build_inputs, self._config.task.validation_data)
       self._config.task.train_data = None
       self._config.task.validation_data = None
       trainer = trainer_lib.Trainer(
-        self._config,
-        task,
-        model=task.build_model(),
-        optimizer=task.create_optimizer(self._config.trainer.optimizer_config,
-                                        self._config.runtime),
-        train_dataset=train_dataset,
-        validation_dataset=validation_dataset)
+          self._config,
+          task,
+          model=task.build_model(),
+          optimizer=task.create_optimizer(self._config.trainer.optimizer_config,
+                                          self._config.runtime),
+          train_dataset=train_dataset,
+          validation_dataset=validation_dataset)
     logs = trainer.train(tf.convert_to_tensor(5, dtype=tf.int32))
     self.assertIn('training_loss', logs)
     self.assertIn('learning_rate', logs)
@@ -206,13 +206,13 @@ class TrainerTest(tf.test.TestCase, parameterized.TestCase):
     num_ps = 2
     cluster_resolver = create_in_process_cluster(num_workers, num_ps)
     distribution = tf.distribute.experimental.ParameterServerStrategy(
-      cluster_resolver)
+        cluster_resolver)
     with distribution.scope():
       trainer = MockAsyncTrainer()
       trainer.init_async()
       self.assertIsInstance(
-        trainer._coordinator,
-        tf.distribute.experimental.coordinator.ClusterCoordinator)
+          trainer._coordinator,
+          tf.distribute.experimental.coordinator.ClusterCoordinator)
       self.assertEqual(trainer.train(tf.constant(10)), 10)
       self.assertEqual(trainer.evaluate(tf.constant(11)), 11)
 
@@ -223,7 +223,7 @@ class TrainerTest(tf.test.TestCase, parameterized.TestCase):
     num_ps = 2
     cluster_resolver = create_in_process_cluster(num_workers, num_ps)
     distribution = tf.distribute.experimental.ParameterServerStrategy(
-      cluster_resolver)
+        cluster_resolver)
     with distribution.scope():
       config = cfg.ExperimentConfig(**self._config.as_dict())
       config.trainer.eval_tf_while_loop = True
@@ -239,7 +239,7 @@ class TrainerTest(tf.test.TestCase, parameterized.TestCase):
     num_ps = 2
     cluster_resolver = create_in_process_cluster(num_workers, num_ps)
     distribution = tf.distribute.experimental.ParameterServerStrategy(
-      cluster_resolver)
+        cluster_resolver)
     with distribution.scope():
       config = cfg.ExperimentConfig(**self._config.as_dict())
       config.trainer.eval_tf_while_loop = True
@@ -275,23 +275,23 @@ class TrainerTest(tf.test.TestCase, parameterized.TestCase):
       self.assertNotIn('validation_loss', logs)
 
   @combinations.generate(
-    combinations.combine(
-      mixed_precision_dtype=['float32', 'bfloat16', 'float16'],
-      loss_scale=[None, 'dynamic', 128, 256],
-    ))
+      combinations.combine(
+          mixed_precision_dtype=['float32', 'bfloat16', 'float16'],
+          loss_scale=[None, 'dynamic', 128, 256],
+      ))
   def test_configure_optimizer(self, mixed_precision_dtype, loss_scale):
     config = cfg.ExperimentConfig(
-      runtime=cfg.RuntimeConfig(
-        mixed_precision_dtype=mixed_precision_dtype, loss_scale=loss_scale),
-      trainer=cfg.TrainerConfig(
-        optimizer_config=cfg.OptimizationConfig({
-          'optimizer'    : {
-            'type': 'sgd'
-          },
-          'learning_rate': {
-            'type': 'constant'
-          },
-        })))
+        runtime=cfg.RuntimeConfig(
+            mixed_precision_dtype=mixed_precision_dtype, loss_scale=loss_scale),
+        trainer=cfg.TrainerConfig(
+            optimizer_config=cfg.OptimizationConfig({
+                'optimizer': {
+                    'type': 'sgd'
+                },
+                'learning_rate': {
+                    'type': 'constant'
+                },
+            })))
     trainer = self.create_test_trainer(config)
     if mixed_precision_dtype == 'float16':
       self.assertIsInstance(trainer.optimizer,
@@ -309,33 +309,33 @@ class TrainerTest(tf.test.TestCase, parameterized.TestCase):
 
   def test_export_best_ckpt(self):
     config = cfg.ExperimentConfig(
-      trainer=cfg.TrainerConfig(
-        best_checkpoint_export_subdir='best_ckpt',
-        best_checkpoint_eval_metric='acc',
-        optimizer_config=cfg.OptimizationConfig({
-          'optimizer'    : {
-            'type': 'sgd'
-          },
-          'learning_rate': {
-            'type': 'constant'
-          }
-        })))
+        trainer=cfg.TrainerConfig(
+            best_checkpoint_export_subdir='best_ckpt',
+            best_checkpoint_eval_metric='acc',
+            optimizer_config=cfg.OptimizationConfig({
+                'optimizer': {
+                    'type': 'sgd'
+                },
+                'learning_rate': {
+                    'type': 'constant'
+                }
+            })))
     model_dir = self.get_temp_dir()
     trainer = self.create_test_trainer(config, model_dir=model_dir)
     trainer.train(tf.convert_to_tensor(1, dtype=tf.int32))
     trainer.evaluate(tf.convert_to_tensor(1, dtype=tf.int32))
     self.assertTrue(
-      tf.io.gfile.exists(os.path.join(model_dir, 'best_ckpt', 'info.json')))
+        tf.io.gfile.exists(os.path.join(model_dir, 'best_ckpt', 'info.json')))
 
   def test_model_with_compiled_loss(self):
     task = mock_task.MockTask()
     model = task.build_model()
     model.compile(loss=tf.keras.losses.CategoricalCrossentropy())
     trainer = trainer_lib.Trainer(
-      self._config,
-      task,
-      model=model,
-      optimizer=task.create_optimizer(self._config.trainer.optimizer_config))
+        self._config,
+        task,
+        model=model,
+        optimizer=task.create_optimizer(self._config.trainer.optimizer_config))
     logs = trainer.train(tf.convert_to_tensor(5, dtype=tf.int32))
     self.assertIn('training_loss', logs)
 

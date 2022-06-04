@@ -35,12 +35,12 @@ def get_leaf_nested_dict(d: Dict[str, Any], keys: List[str]) -> Dict[str, Any]:
     if not isinstance(leaf, dict) or k not in leaf:
       raise KeyError(
           'Path not exist while traversing the dictionary: d with keys'
-          ': %s.' % keys)
+          ': {}.'.format(keys))
     leaf = leaf[k]
 
   if isinstance(leaf, dict):
-    raise KeyError('The value extracted with keys: %s is not a leaf of the '
-                   'dictionary: %s.' % (keys, d))
+    raise KeyError('The value extracted with keys: {} is not a leaf of the '
+                   'dictionary: {}.'.format(keys, d))
   return leaf
 
 
@@ -121,12 +121,11 @@ class BestCheckpointExporter:
           max_to_keep=1, checkpoint_name='best_ckpt')
     return self._checkpoint_manager
 
-  def maybe_export_checkpoint(
-      self,
-      checkpoint,
-      eval_logs,
-      global_step,
-      write_log = True) -> bool:
+  def maybe_export_checkpoint(self,
+                              checkpoint,
+                              eval_logs,
+                              global_step,
+                              write_log: bool = True) -> bool:
     """Compare eval_logs with past eval_logs and export checkpoint if better."""
     logging.info('[BestCheckpointExporter] received eval_log: %s, at step: %d.',
                  eval_logs, global_step)
@@ -190,7 +189,7 @@ class BestCheckpointExporter:
 def create_optimizer(
     task: base_task.Task,
     params: config_definitions.ExperimentConfig
-    ) -> tf.keras.optimizers.Optimizer:
+) -> tf.keras.optimizers.Optimizer:
   """A create optimizer util to be backward compatability with new args."""
   if 'dp_config' in inspect.signature(task.create_optimizer).parameters:
     dp_config = None
@@ -215,7 +214,7 @@ def create_trainer(
     train: bool,
     evaluate: bool,
     checkpoint_exporter: Optional[BestCheckpointExporter] = None,
-    trainer_cls = base_trainer.Trainer) -> base_trainer.Trainer:
+    trainer_cls=base_trainer.Trainer) -> base_trainer.Trainer:
   logging.info('Running default trainer.')
   model = task.build_model()
   optimizer = create_optimizer(task, params)
@@ -279,9 +278,9 @@ class ExperimentParser:
     """Override the runtime configuration of params from flags."""
     # Override the TPU address and tf.data service address.
     params.override({
-      'runtime': {
-        'tpu': self._flags_object.tpu,
-      },
+        'runtime': {
+            'tpu': self._flags_object.tpu,
+        },
     })
     return params
 
@@ -291,14 +290,14 @@ class ExperimentParser:
         self._flags_object.tf_data_service and
         isinstance(params.task, config_definitions.TaskConfig)):
       params.override({
-        'task': {
-          'train_data'     : {
-            'tf_data_service_address': self._flags_object.tf_data_service,
-          },
-          'validation_data': {
-            'tf_data_service_address': self._flags_object.tf_data_service,
+          'task': {
+              'train_data': {
+                  'tf_data_service_address': self._flags_object.tf_data_service,
+              },
+              'validation_data': {
+                  'tf_data_service_address': self._flags_object.tf_data_service,
+              }
           }
-        }
       })
     return params
 
@@ -314,7 +313,7 @@ class ExperimentParser:
     return params
 
 
-def parse_configuration(flags_object, lock_return = True, print_return = True):
+def parse_configuration(flags_object, lock_return=True, print_return=True):
   """Parse ExperimentConfig from flags"""
   params = ExperimentParser(flags_object).parse()
 
@@ -474,8 +473,8 @@ def try_count_flops(
       # Get input shape and set batch size to 1.
       if model.inputs:
         inputs = [
-          tf.TensorSpec([1] + inp.shape[1:], inp.dtype)
-          for inp in model.inputs]
+            tf.TensorSpec([1] + inp.shape[1:], inp.dtype)
+            for inp in model.inputs]
         concrete_func = tf.function(model).get_concrete_function(inputs)
       # If model.inputs is invalid, try to use the input to get concrete
       # function for model.call (subclass model).

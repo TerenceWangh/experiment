@@ -1,11 +1,11 @@
 """Build classification models."""
 
-from typing import Any, Mapping, Optional
+from typing import Optional
 
 import tensorflow as tf
 
 layers = tf.keras.layers
-
+regularizers = tf.keras.regularizers
 
 @tf.keras.utils.register_keras_serializable(package='experiment')
 class ClassificationModel(tf.keras.Model):
@@ -18,8 +18,8 @@ class ClassificationModel(tf.keras.Model):
                    shape=[None, None, None, 3]),
                dropout_rate: float = 0.0,
                kernel_initializer: str = 'random_uniform',
-               kernel_regularizer: Optional[tf.keras.regularizers.Regularizer] = None,
-               bias_regularizer: Optional[tf.keras.regularizers.Regularizer] = None,
+               kernel_regularizer: Optional[regularizers.Regularizer] = None,
+               bias_regularizer: Optional[regularizers.Regularizer] = None,
                add_head_batch_norm: bool = False,
                use_sync_bn: bool = False,
                norm_momentum: float = 0.99,

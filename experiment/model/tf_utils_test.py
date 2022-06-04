@@ -9,10 +9,10 @@ from experiment.model import tf_utils
 
 def all_strategy_combinations():
   return combinations.combine(
-    strategy=[
-      strategy_combinations.mirrored_strategy_with_two_gpus,
-    ],
-    mode='eager',
+      strategy=[
+          strategy_combinations.mirrored_strategy_with_two_gpus,
+      ],
+      mode='eager',
   )
 
 

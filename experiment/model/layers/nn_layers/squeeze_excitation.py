@@ -19,12 +19,12 @@ class SqueezeExcitation(tf.keras.layers.Layer):
                use_3d_input: bool = False,
                kernel_initializer: str = 'VarianceScaling',
                kernel_regularizer: Optional[
-                 tf.keras.regularizers.Regularizer] = None,
+                   tf.keras.regularizers.Regularizer] = None,
                bias_regularizer: Optional[
-                 tf.keras.regularizers.Regularizer] = None,
+                   tf.keras.regularizers.Regularizer] = None,
                activation: str = 'relu',
                gating_activation: str = 'sigmoid',
-               round_down_protect:bool = True,
+               round_down_protect: bool = True,
                **kwargs):
     """Initializes a squeeze and excitation layer.
 
@@ -111,19 +111,21 @@ class SqueezeExcitation(tf.keras.layers.Layer):
 
   def get_config(self):
     config = super(SqueezeExcitation, self).get_config()
+    # pylint: disable=bad-whitespace
     config.update({
-      'in_filters'        : self._in_filters,
-      'out_filters'       : self._out_filters,
-      'se_ratio'          : self._se_ratio,
-      'divisible_by'      : self._divisible_by,
-      'use_3d_input'      : self._use_3d_input,
-      'kernel_initializer': self._kernel_initializer,
-      'kernel_regularizer': self._kernel_regularizer,
-      'bias_regularizer'  : self._bias_regularizer,
-      'activation'        : self._activation,
-      'gating_activation' : self._gating_activation,
-      'round_down_protect': self._round_down_protect,
+        'in_filters'        : self._in_filters,
+        'out_filters'       : self._out_filters,
+        'se_ratio'          : self._se_ratio,
+        'divisible_by'      : self._divisible_by,
+        'use_3d_input'      : self._use_3d_input,
+        'kernel_initializer': self._kernel_initializer,
+        'kernel_regularizer': self._kernel_regularizer,
+        'bias_regularizer'  : self._bias_regularizer,
+        'activation'        : self._activation,
+        'gating_activation' : self._gating_activation,
+        'round_down_protect': self._round_down_protect,
     })
+    # pylint: enable=bad-whitespace
     return config
 
   def call(self, inputs):

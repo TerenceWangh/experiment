@@ -31,8 +31,8 @@ def register(registered_collection, reg_key):
         collection = collection[entry_name]
         if not isinstance(collection, dict):
           raise KeyError(
-            'Collection path {} at position {} already registered as a '
-            'function or class.'.format(entry_name, h_idx))
+              'Collection path {} at position {} already registered as a '
+              'function or class.'.format(entry_name, h_idx))
       leaf_reg_key = hierarchy[-1]
     else:
       collection = registered_collection
@@ -41,12 +41,12 @@ def register(registered_collection, reg_key):
     if leaf_reg_key in collection:
       if 'beta' in fn_or_cls.__module__:
         logging.warning(
-          'Duplicate register of beta module name {} new {} old {}'.format(
-            reg_key, collection[leaf_reg_key], fn_or_cls.__module__))
+            'Duplicate register of beta module name {} new {} old {}'.format(
+                reg_key, collection[leaf_reg_key], fn_or_cls.__module__))
         return fn_or_cls
       else:
         raise KeyError('Function or class {} registered multiple times.'.format(
-          leaf_reg_key))
+            leaf_reg_key))
     collection[leaf_reg_key] = fn_or_cls
     return fn_or_cls
 
@@ -76,15 +76,15 @@ def lookup(registered_collection, reg_key):
     for h_idx, entry_name in enumerate(hierarchy):
       if entry_name not in collection:
         raise LookupError(
-          'collection path {} at position {} is never registered. Please make '
-          'sure the {} and its library is imported and linked to the trainer '
-          'binary.'.format(entry_name, h_idx, entry_name))
+            'collection path {} at position {} is never registered. Please '
+            'make sure the {} and its library is imported and linked to the '
+            'trainer binary.'.format(entry_name, h_idx, entry_name))
       collection = collection[entry_name]
     return collection
   else:
     if reg_key not in registered_collection:
       raise LookupError(
-        'registration key {} is never registered. Please ,ake sure the {} and '
-        'its library is imported and linked to the trainer binary.'.format(
-          reg_key, reg_key))
+          'registration key {} is never registered. Please ,ake sure the {} '
+          'and its library is imported and linked to the trainer '
+          'binary.'.format(reg_key, reg_key))
     return registered_collection[reg_key]

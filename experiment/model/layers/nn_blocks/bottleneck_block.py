@@ -17,9 +17,9 @@ class BottleneckBlock(tf.keras.layers.Layer):
                stochastic_depth_drop_rate: Optional[float] = None,
                kernel_initializer: str = 'VarianceScaling',
                kernel_regularizer: Optional[
-                 tf.keras.regularizers.Regularizer] = None,
+                   tf.keras.regularizers.Regularizer] = None,
                bias_regularizer: Optional[
-                 tf.keras.regularizers.Regularizer] = None,
+                   tf.keras.regularizers.Regularizer] = None,
                activation: str = 'relu',
                use_sync_bn: bool = False,
                norm_momentum: float = 0.99,
@@ -195,26 +195,28 @@ class BottleneckBlock(tf.keras.layers.Layer):
 
   def get_config(self):
     config = super(BottleneckBlock, self).get_config()
+    # pylint: disable=bad-whitespace
     config.update({
-      'filters'                   : self._filters,
-      'strides'                   : self._strides,
-      'dilation_rate'             : self._dilation_rate,
-      'use_projection'            : self._use_projection,
-      'se_ratio'                  : self._se_ratio,
-      'resnetd_shortcut'          : self._resnetd_shortcut,
-      'stochastic_depth_drop_rate': self._stochastic_depth_drop_rate,
-      'kernel_initializer'        : self._kernel_initializer,
-      'kernel_regularizer'        : self._kernel_regularizer,
-      'bias_regularizer'          : self._bias_regularizer,
-      'activation'                : self._activation,
-      'use_sync_bn'               : self._use_sync_bn,
-      'norm_momentum'             : self._norm_momentum,
-      'norm_epsilon'              : self._norm_epsilon,
-      'bn_trainable'              : self._bn_trainable,
+        'filters'                   : self._filters,
+        'strides'                   : self._strides,
+        'dilation_rate'             : self._dilation_rate,
+        'use_projection'            : self._use_projection,
+        'se_ratio'                  : self._se_ratio,
+        'resnetd_shortcut'          : self._resnetd_shortcut,
+        'stochastic_depth_drop_rate': self._stochastic_depth_drop_rate,
+        'kernel_initializer'        : self._kernel_initializer,
+        'kernel_regularizer'        : self._kernel_regularizer,
+        'bias_regularizer'          : self._bias_regularizer,
+        'activation'                : self._activation,
+        'use_sync_bn'               : self._use_sync_bn,
+        'norm_momentum'             : self._norm_momentum,
+        'norm_epsilon'              : self._norm_epsilon,
+        'bn_trainable'              : self._bn_trainable,
     })
+    # pylint: enable=bad-whitespace
     return config
 
-  def call(self, inputs, training = False):
+  def call(self, inputs, training=False):
     shortcut = inputs
     if self._use_projection:
       if self._resnetd_shortcut:

@@ -36,27 +36,31 @@ def get_activation(identifier, use_keras_layer=False):
   if isinstance(identifier, six.string_types):
     identifier = str(identifier).lower()
     if use_keras_layer:
+      # pylint: disable=bad-whitespace
       keras_layer_allow_list = {
-        'relu'          : 'relu',
-        'linear'        : 'linear',
-        'identity'      : 'linear',
-        'swish'         : 'swish',
-        'sigmoid'       : 'sigmoid',
-        'relu6'         : tf.nn.relu6,
-        'hard_swish'    : activations.hard_swish,
-        'hard_sigmoid'  : activations.hard_sigmoid,
+          'relu'          : 'relu',
+          'linear'        : 'linear',
+          'identity'      : 'linear',
+          'swish'         : 'swish',
+          'sigmoid'       : 'sigmoid',
+          'relu6'         : tf.nn.relu6,
+          'hard_swish'    : activations.hard_swish,
+          'hard_sigmoid'  : activations.hard_sigmoid,
       }
+      # pylint: enable=bad-whitespace
       if identifier in keras_layer_allow_list:
         return tf.keras.layers.Activation(identifier)
 
+    # pylint: disable=bad-whitespace
     name_to_fn = {
-      'gelu'        : activations.gelu,
-      'simple_swish': activations.simple_swish,
-      'hard_swish'  : activations.hard_swish,
-      'relu6'       : activations.relu6,
-      'hard_sigmoid': activations.hard_sigmoid,
-      'identity'    : activations.identity,
+        'gelu'        : activations.gelu,
+        'simple_swish': activations.simple_swish,
+        'hard_swish'  : activations.hard_swish,
+        'relu6'       : activations.relu6,
+        'hard_sigmoid': activations.hard_sigmoid,
+        'identity'    : activations.identity,
     }
+    # pylint: enable=bad-whitespace
     if identifier in name_to_fn:
       return tf.keras.activations.get(name_to_fn[identifier])
   return tf.keras.activations.get(identifier)
@@ -111,9 +115,9 @@ def assert_rank(tensor, expected_rank, name=None):
   actual_rank = tensor.shape.ndims
   if actual_rank not in expected_rank_dict:
     raise ValueError(
-      'For the tensor `{}`, the actual rank `{}` (shape = {}) is not equal to '
-      'the expected tensor rank `{}`'.format(
-        name, actual_rank, str(tensor.shape), str(expected_rank)))
+        'For the tensor `{}`, the actual rank `{}` (shape = {}) is not equal '
+        'to the expected tensor rank `{}`'.format(
+            name, actual_rank, str(tensor.shape), str(expected_rank)))
 
 
 def safe_mean(losses):

@@ -313,8 +313,7 @@ class BaseConfigTest(parameterized.TestCase, tf.test.TestCase):
   def test_config_vs_params_dict(self, v):
     d = {'key': v}
     self.assertEqual(type(base_config.Config(d).key[0]), base_config.Config)
-    self.assertEqual(type(
-        experiment.hyperparams.base_config.params_dict.ParamsDict(d).key[0]), dict)
+    self.assertEqual(type(base_config.params_dict.ParamsDict(d).key[0]), dict)
 
   def test_ppformat(self):
     self.assertEqual(

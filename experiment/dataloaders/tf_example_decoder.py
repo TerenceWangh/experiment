@@ -17,32 +17,34 @@ class TfExampleDecoder(Decoder):
   """Tensorflow Example proto decoder."""
 
   def __init__(self,
-               include_mask = False,
-               regenerate_source_id = False,
-               mask_binarize_threshold = None):
+               include_mask=False,
+               regenerate_source_id=False,
+               mask_binarize_threshold=None):
     self._include_mask = include_mask
     self._regenerate_source_id = regenerate_source_id
+    # pylint: disable=bad-whitespace
     self._keys_to_features = {
-      'image/encoded'           : tf.io.FixedLenFeature((), tf.string),
-      'image/height'            : tf.io.FixedLenFeature((), tf.int64),
-      'image/width'             : tf.io.FixedLenFeature((), tf.int64),
-      'image/object/bbox/xmin'  : tf.io.VarLenFeature(tf.float32),
-      'image/object/bbox/xmax'  : tf.io.VarLenFeature(tf.float32),
-      'image/object/bbox/ymin'  : tf.io.VarLenFeature(tf.float32),
-      'image/object/bbox/ymax'  : tf.io.VarLenFeature(tf.float32),
-      'image/object/class/label': tf.io.VarLenFeature(tf.int64),
-      'image/object/area'       : tf.io.VarLenFeature(tf.float32),
-      'image/object/is_crowd'   : tf.io.VarLenFeature(tf.int64),
+        'image/encoded'           : tf.io.FixedLenFeature((), tf.string),
+        'image/height'            : tf.io.FixedLenFeature((), tf.int64),
+        'image/width'             : tf.io.FixedLenFeature((), tf.int64),
+        'image/object/bbox/xmin'  : tf.io.VarLenFeature(tf.float32),
+        'image/object/bbox/xmax'  : tf.io.VarLenFeature(tf.float32),
+        'image/object/bbox/ymin'  : tf.io.VarLenFeature(tf.float32),
+        'image/object/bbox/ymax'  : tf.io.VarLenFeature(tf.float32),
+        'image/object/class/label': tf.io.VarLenFeature(tf.int64),
+        'image/object/area'       : tf.io.VarLenFeature(tf.float32),
+        'image/object/is_crowd'   : tf.io.VarLenFeature(tf.int64),
     }
+    # pylint: enable=bad-whitespace
     self._mask_binarize_threshold = mask_binarize_threshold
 
     if include_mask:
       self._keys_to_features.update({
-        'image/object/mask': tf.io.VarLenFeature(tf.string)
+          'image/object/mask': tf.io.VarLenFeature(tf.string)
       })
     if not regenerate_source_id:
       self._keys_to_features.update({
-        'image/source_id': tf.io.FixedLenFeature((), tf.string),
+          'image/source_id': tf.io.FixedLenFeature((), tf.string),
       })
 
   def _decode_image(self, parsed_tensors):
@@ -142,16 +144,18 @@ class TfExampleDecoder(Decoder):
         lambda: tf.cast(parsed_tensors['image/object/is_crowd'], dtype=tf.bool),
         lambda: tf.zeros_like(classes, dtype=tf.bool))
 
+    # pylint: disable=bad-whitespace
     decoded_tensors = {
-      'source_id'            : source_id,
-      'image'                : image,
-      'height'               : parsed_tensors['image/height'],
-      'width'                : parsed_tensors['image/width'],
-      'ground_truth_classes' : classes,
-      'ground_truth_is_crowd': is_crowds,
-      'ground_truth_area'    : areas,
-      'ground_truth_boxes'   : boxes,
+        'source_id'            : source_id,
+        'image'                : image,
+        'height'               : parsed_tensors['image/height'],
+        'width'                : parsed_tensors['image/width'],
+        'ground_truth_classes' : classes,
+        'ground_truth_is_crowd': is_crowds,
+        'ground_truth_area'    : areas,
+        'ground_truth_boxes'   : boxes,
     }
+    # pylint: enable=bad-whitespace
 
     if self._include_mask:
       masks = self._decode_masks(parsed_tensors)
@@ -159,8 +163,11 @@ class TfExampleDecoder(Decoder):
       if self._mask_binarize_threshold is not None:
         masks = tf.cast(masks > self._mask_binarize_threshold, tf.float32)
 
+      # pylint: disable=bad-whitespace
       decoded_tensors.update({
-        'ground_truth_instance_masks'    : masks,
-        'ground_truth_instance_masks_png': parsed_tensors['image/object/mask'],
+          'ground_truth_instance_masks'    : masks,
+          'ground_truth_instance_masks_png':
+              parsed_tensors['image/object/mask'],
       })
+      # pylint: enable=bad-whitespace
     return decoded_tensors

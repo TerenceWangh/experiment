@@ -30,20 +30,20 @@ class ExportBaseTest(tf.test.TestCase):
     expected_output = model(inputs, training=False)
     module = TestModule(params=None, model=model)
     ckpt_path = tf.train.Checkpoint(model=model).save(
-      os.path.join(tmp_dir, 'ckpt'))
+        os.path.join(tmp_dir, 'ckpt'))
     export_dir = export_base.export(
-      module, ['foo'],
-      export_saved_model_dir=tmp_dir,
-      checkpoint_path=ckpt_path,
-      timestamped=True)
+        module, ['foo'],
+        export_saved_model_dir=tmp_dir,
+        checkpoint_path=ckpt_path,
+        timestamped=True)
     self.assertTrue(os.path.exists(os.path.join(export_dir, 'saved_model.pb')))
     self.assertTrue(
-      os.path.exists(
-        os.path.join(export_dir, 'variables', 'variables.index')))
+        os.path.exists(
+            os.path.join(export_dir, 'variables', 'variables.index')))
     self.assertTrue(
-      os.path.exists(
-        os.path.join(export_dir, 'variables',
-                     'variables.data-00000-of-00001')))
+        os.path.exists(
+            os.path.join(export_dir, 'variables',
+                         'variables.data-00000-of-00001')))
 
     imported = tf.saved_model.load(export_dir)
     output = imported.signatures['foo'](inputs)
@@ -58,15 +58,15 @@ class ExportBaseTest(tf.test.TestCase):
       return tf.nn.softmax(model(inputs, training=False))
 
     module = TestModule(
-      params=None, model=model, inference_step=_inference_step)
+        params=None, model=model, inference_step=_inference_step)
     expected_output = _inference_step(inputs, model)
     ckpt_path = tf.train.Checkpoint(model=model).save(
-      os.path.join(tmp_dir, 'ckpt'))
+        os.path.join(tmp_dir, 'ckpt'))
     export_dir = export_base.export(
-      module, ['foo'],
-      export_saved_model_dir=tmp_dir,
-      checkpoint_path=ckpt_path,
-      timestamped=False)
+        module, ['foo'],
+        export_saved_model_dir=tmp_dir,
+        checkpoint_path=ckpt_path,
+        timestamped=False)
     imported = tf.saved_model.load(export_dir)
     output = imported.signatures['foo'](inputs)
     self.assertAllClose(output['outputs'].numpy(), expected_output.numpy())
@@ -84,10 +84,10 @@ class ExportBaseTest(tf.test.TestCase):
       return inputs + 0.1
 
     module = TestModule(
-      params=None,
-      model=model,
-      inference_step=_inference_step,
-      preprocessor=_preprocessor)
+        params=None,
+        model=model,
+        inference_step=_inference_step,
+        preprocessor=_preprocessor)
     output = module.serve(inputs)
     self.assertAllClose(output['outputs'].numpy(), 1.1)
 
@@ -97,18 +97,18 @@ class ExportBaseTest(tf.test.TestCase):
         return inputs + 0.01
 
     module = TestModule(
-      params=None,
-      model=model,
-      inference_step=_inference_step,
-      preprocessor=_preprocessor,
-      postprocessor=_PostProcessor())
+        params=None,
+        model=model,
+        inference_step=_inference_step,
+        preprocessor=_preprocessor,
+        postprocessor=_PostProcessor())
     output = module.serve(inputs)
     self.assertAllClose(output['outputs'].numpy(), 1.11)
 
   def test_get_timestamped_export_dir(self):
     export_dir = self.get_temp_dir()
     timed_dir = export_base.get_timestamped_export_dir(
-      export_dir_base=export_dir)
+        export_dir_base=export_dir)
     self.assertFalse(tf.io.gfile.exists(timed_dir))
     self.assertIn(export_dir, str(timed_dir))
 

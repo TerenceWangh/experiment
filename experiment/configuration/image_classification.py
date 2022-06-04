@@ -24,8 +24,8 @@ class DataConfig(cfg.DataConfig):
   cycle_length: int = 10
   is_multilabel: bool = False
   aug_rand_hflip: bool = True
-  aug_type: Optional[
-    common.Augmentation] = None  # Choose from AutoAugment and RandAugment.
+  # Choose from AutoAugment and RandAugment.
+  aug_type: Optional[common.Augmentation] = None
   color_jitter: float = 0.
   random_erasing: Optional[common.RandomErasing] = None
   file_type: str = 'tfrecord'
@@ -90,8 +90,8 @@ def image_classification() -> cfg.ExperimentConfig:
       task=ImageClassificationTask(),
       trainer=cfg.TrainerConfig(),
       restrictions=[
-        'task.train_data.is_training != None',
-        'task.validation_data.is_training != None'
+          'task.train_data.is_training != None',
+          'task.validation_data.is_training != None'
       ])
 
 
@@ -133,39 +133,39 @@ def image_classification_imagenet() -> cfg.ExperimentConfig:
           validation_steps=IMAGENET_VAL_EXAMPLES // eval_batch_size,
           validation_interval=steps_per_epoch,
           optimizer_config=optimization.OptimizationConfig({
-            'optimizer'    : {
-              'type': 'sgd',
-              'sgd' : {
-                'momentum': 0.9
+              'optimizer': {
+                  'type': 'sgd',
+                  'sgd': {
+                      'momentum': 0.9
+                  }
+              },
+              'learning_rate': {
+                  'type': 'stepwise',
+                  'stepwise': {
+                      'boundaries': [
+                          30 * steps_per_epoch,
+                          60 * steps_per_epoch,
+                          80 * steps_per_epoch
+                      ],
+                      'values': [
+                          0.1 * train_batch_size / 256,
+                          0.01 * train_batch_size / 256,
+                          0.001 * train_batch_size / 256,
+                          0.0001 * train_batch_size / 256,
+                      ]
+                  }
+              },
+              'warmup': {
+                  'type': 'linear',
+                  'linear': {
+                      'warmup_steps': 5 * steps_per_epoch,
+                      'warmup_learning_rate': 0
+                  }
               }
-            },
-            'learning_rate': {
-              'type'    : 'stepwise',
-              'stepwise': {
-                'boundaries': [
-                  30 * steps_per_epoch,
-                  60 * steps_per_epoch,
-                  80 * steps_per_epoch
-                ],
-                'values'    : [
-                  0.1 * train_batch_size / 256,
-                  0.01 * train_batch_size / 256,
-                  0.001 * train_batch_size / 256,
-                  0.0001 * train_batch_size / 256,
-                ]
-              }
-            },
-            'warmup'       : {
-              'type'  : 'linear',
-              'linear': {
-                'warmup_steps'        : 5 * steps_per_epoch,
-                'warmup_learning_rate': 0
-              }
-            }
           })),
       restrictions=[
-        'task.train_data.is_training != None',
-        'task.validation_data.is_training != None'
+          'task.train_data.is_training != None',
+          'task.validation_data.is_training != None'
       ])
 
   return config
@@ -216,34 +216,34 @@ def image_classification_imagenet_resnetrs() -> cfg.ExperimentConfig:
           validation_steps=IMAGENET_VAL_EXAMPLES // eval_batch_size,
           validation_interval=steps_per_epoch,
           optimizer_config=optimization.OptimizationConfig({
-            'optimizer'    : {
-              'type': 'sgd',
-              'sgd' : {
-                'momentum': 0.9
+              'optimizer': {
+                  'type': 'sgd',
+                  'sgd': {
+                      'momentum': 0.9
+                  }
+              },
+              'ema': {
+                  'average_decay': 0.9999,
+                  'trainable_weights_only': False,
+              },
+              'learning_rate': {
+                  'type': 'cosine',
+                  'cosine': {
+                      'initial_learning_rate': 1.6,
+                      'decay_steps': 350 * steps_per_epoch
+                  }
+              },
+              'warmup': {
+                  'type': 'linear',
+                  'linear': {
+                      'warmup_steps': 5 * steps_per_epoch,
+                      'warmup_learning_rate': 0
+                  }
               }
-            },
-            'ema'          : {
-              'average_decay'         : 0.9999,
-              'trainable_weights_only': False,
-            },
-            'learning_rate': {
-              'type'  : 'cosine',
-              'cosine': {
-                'initial_learning_rate': 1.6,
-                'decay_steps'          : 350 * steps_per_epoch
-              }
-            },
-            'warmup'       : {
-              'type'  : 'linear',
-              'linear': {
-                'warmup_steps'        : 5 * steps_per_epoch,
-                'warmup_learning_rate': 0
-              }
-            }
           })),
       restrictions=[
-        'task.train_data.is_training != None',
-        'task.validation_data.is_training != None'
+          'task.train_data.is_training != None',
+          'task.validation_data.is_training != None'
       ])
   return config
 
@@ -282,33 +282,33 @@ def image_classification_imagenet_revnet() -> cfg.ExperimentConfig:
           validation_steps=IMAGENET_VAL_EXAMPLES // eval_batch_size,
           validation_interval=steps_per_epoch,
           optimizer_config=optimization.OptimizationConfig({
-            'optimizer'    : {
-              'type': 'sgd',
-              'sgd' : {
-                'momentum': 0.9
+              'optimizer': {
+                  'type': 'sgd',
+                  'sgd': {
+                      'momentum': 0.9
+                  }
+              },
+              'learning_rate': {
+                  'type': 'stepwise',
+                  'stepwise': {
+                      'boundaries': [
+                          30 * steps_per_epoch, 60 * steps_per_epoch,
+                          80 * steps_per_epoch
+                      ],
+                      'values': [0.8, 0.08, 0.008, 0.0008]
+                  }
+              },
+              'warmup': {
+                  'type': 'linear',
+                  'linear': {
+                      'warmup_steps': 5 * steps_per_epoch,
+                      'warmup_learning_rate': 0
+                  }
               }
-            },
-            'learning_rate': {
-              'type'    : 'stepwise',
-              'stepwise': {
-                'boundaries': [
-                  30 * steps_per_epoch, 60 * steps_per_epoch,
-                  80 * steps_per_epoch
-                ],
-                'values'    : [0.8, 0.08, 0.008, 0.0008]
-              }
-            },
-            'warmup'       : {
-              'type'  : 'linear',
-              'linear': {
-                'warmup_steps'        : 5 * steps_per_epoch,
-                'warmup_learning_rate': 0
-              }
-            }
           })),
       restrictions=[
-        'task.train_data.is_training != None',
-        'task.validation_data.is_training != None'
+          'task.train_data.is_training != None',
+          'task.validation_data.is_training != None'
       ])
 
   return config
@@ -349,38 +349,35 @@ def image_classification_imagenet_mobilenet() -> cfg.ExperimentConfig:
           validation_steps=IMAGENET_VAL_EXAMPLES // eval_batch_size,
           validation_interval=steps_per_epoch,
           optimizer_config=optimization.OptimizationConfig({
-            'optimizer'    : {
-              'type'   : 'rmsprop',
-              'rmsprop': {
-                'rho'     : 0.9,
-                'momentum': 0.9,
-                'epsilon' : 0.002,
-              }
-            },
-            'learning_rate': {
-              'type'       : 'exponential',
-              'exponential': {
-                'initial_learning_rate':
-                  0.008 * (train_batch_size // 128),
-                'decay_steps'          :
-                  int(2.5 * steps_per_epoch),
-                'decay_rate'           :
-                  0.98,
-                'staircase'            :
-                  True
-              }
-            },
-            'warmup'       : {
-              'type'  : 'linear',
-              'linear': {
-                'warmup_steps'        : 5 * steps_per_epoch,
-                'warmup_learning_rate': 0
-              }
-            },
+              'optimizer': {
+                  'type': 'rmsprop',
+                  'rmsprop': {
+                      'rho': 0.9,
+                      'momentum': 0.9,
+                      'epsilon': 0.002,
+                  }
+              },
+              'learning_rate': {
+                  'type': 'exponential',
+                  'exponential': {
+                      'initial_learning_rate':
+                          0.008 * (train_batch_size // 128),
+                      'decay_steps': int(2.5 * steps_per_epoch),
+                      'decay_rate': 0.98,
+                      'staircase': True
+                  }
+              },
+              'warmup': {
+                  'type': 'linear',
+                  'linear': {
+                      'warmup_steps': 5 * steps_per_epoch,
+                      'warmup_learning_rate': 0
+                  }
+              },
           })),
       restrictions=[
-        'task.train_data.is_training != None',
-        'task.validation_data.is_training != None'
+          'task.train_data.is_training != None',
+          'task.validation_data.is_training != None'
       ])
 
   return config

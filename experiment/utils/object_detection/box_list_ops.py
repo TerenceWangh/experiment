@@ -31,7 +31,7 @@ class SortOrder:
   descend = 2
 
 
-def area(box_list, scope = None):
+def area(box_list, scope=None):
   """Computes area of boxes.
 
   Parameters
@@ -52,7 +52,7 @@ def area(box_list, scope = None):
     return tf.squeeze((ymax - ymin) * (xmax - xmin), [1])
 
 
-def height_width(box_list, scope = None):
+def height_width(box_list, scope=None):
   """Computes height and width of boxes.
 
   Parameters
@@ -75,7 +75,7 @@ def height_width(box_list, scope = None):
     return tf.squeeze((ymax - ymin) * (xmax - xmin), [1])
 
 
-def scale(box_list, y_scale, x_scale, scope = None):
+def scale(box_list, y_scale, x_scale, scope=None):
   """Scale box coordinates in x and y dimensions.
 
   Parameters
@@ -109,7 +109,7 @@ def scale(box_list, y_scale, x_scale, scope = None):
 
 
 def clip_to_window(
-    box_list, window, filter_non_overlapping = True, scope = None):
+    box_list, window, filter_non_overlapping=True, scope=None):
   """Clip bounding boxes to a window.
 
   This op clips any input bounding boxes (represented by bounding box
@@ -153,7 +153,7 @@ def clip_to_window(
     return clipped
 
 
-def prune_outside_window(box_list, window, scope = None):
+def prune_outside_window(box_list, window, scope=None):
   """Prunes bounding boxes that fall outside a given window.
 
   This function prunes bounding boxes that even partially fall outside the given
@@ -184,17 +184,17 @@ def prune_outside_window(box_list, window, scope = None):
         value=box_list.get(), num_or_size_splits=4, axis=1)
     win_y_min, win_x_min, win_y_max, win_x_max = tf.unstack(window)
     coordinate_violations = tf.concat([
-      tf.less(y_min, win_y_min),
-      tf.less(x_min, win_x_min),
-      tf.greater(y_max, win_y_max),
-      tf.greater(x_max, win_x_max)
+        tf.less(y_min, win_y_min),
+        tf.less(x_min, win_x_min),
+        tf.greater(y_max, win_y_max),
+        tf.greater(x_max, win_x_max)
     ], 1)
     valid_indices = tf.reshape(
         tf.where(tf.logical_not(tf.reduce_any(coordinate_violations, 1))), [-1])
     return gather(box_list, valid_indices), valid_indices
 
 
-def prune_completely_outside_window(box_list, window, scope = None):
+def prune_completely_outside_window(box_list, window, scope=None):
   """Prunes bounding boxes that fall completely outside of the given window.
 
   The function clip_to_window prunes bounding boxes that fall
@@ -224,17 +224,17 @@ def prune_completely_outside_window(box_list, window, scope = None):
         value=box_list.get(), num_or_size_splits=4, axis=1)
     win_y_min, win_x_min, win_y_max, win_x_max = tf.unstack(window)
     coordinate_violations = tf.concat([
-      tf.greater_equal(y_min, win_y_max),
-      tf.greater_equal(x_min, win_x_max),
-      tf.less_equal(y_max, win_y_min),
-      tf.less_equal(x_max, win_x_min)
+        tf.greater_equal(y_min, win_y_max),
+        tf.greater_equal(x_min, win_x_max),
+        tf.less_equal(y_max, win_y_min),
+        tf.less_equal(x_max, win_x_min)
     ], 1)
     valid_indices = tf.reshape(
         tf.where(tf.logical_not(tf.reduce_any(coordinate_violations, 1))), [-1])
     return gather(box_list, valid_indices), valid_indices
 
 
-def intersection(box_list1, box_list2, scope = None):
+def intersection(box_list1, box_list2, scope=None):
   """Compute pairwise intersection areas between boxes.
 
   Parameters
@@ -265,7 +265,7 @@ def intersection(box_list1, box_list2, scope = None):
     return intersect_heights * intersect_widths
 
 
-def matched_intersection(box_list1, box_list2, scope = None):
+def matched_intersection(box_list1, box_list2, scope=None):
   """Compute intersection areas between corresponding boxes in two box_lists.
 
   Parameters
@@ -296,7 +296,7 @@ def matched_intersection(box_list1, box_list2, scope = None):
     return tf.reshape(intersect_heights * intersect_widths, [-1])
 
 
-def iou(box_list1, box_list2, scope = None):
+def iou(box_list1, box_list2, scope=None):
   """Computes pairwise intersection-over-union between box collections.
 
   Parameters
@@ -322,7 +322,7 @@ def iou(box_list1, box_list2, scope = None):
         tf.truediv(intersections, unions))
 
 
-def matched_iou(box_list1, box_list2, scope = None):
+def matched_iou(box_list1, box_list2, scope=None):
   """Compute intersection-over-union between corresponding boxes in box_lists.
 
   Parameters
@@ -349,7 +349,7 @@ def matched_iou(box_list1, box_list2, scope = None):
         tf.truediv(intersections, unions))
 
 
-def ioa(box_list1, box_list2, scope = None):
+def ioa(box_list1, box_list2, scope=None):
   """Computes pairwise intersection-over-area between box collections.
 
   intersection-over-area (IOA) between two boxes box1 and box2 is defined as
@@ -379,8 +379,8 @@ def ioa(box_list1, box_list2, scope = None):
 def prune_non_overlapping_boxes(
     box_list1,
     box_list2,
-    min_overlap = 0.0,
-    scope = None):
+    min_overlap=0.0,
+    scope=None):
   """Prunes the boxes in box_list1 that overlap less than thresh with box_list2.
 
   For each box in box_list1, we want its IOA to be more than minoverlap with
@@ -414,7 +414,7 @@ def prune_non_overlapping_boxes(
     return new_box_list1, keep_indices
 
 
-def prune_small_boxes(box_list, min_side, scope = None):
+def prune_small_boxes(box_list, min_side, scope=None):
   """Prunes small boxes in the box_list which have a side smaller than min_side.
 
   Parameters
@@ -438,7 +438,7 @@ def prune_small_boxes(box_list, min_side, scope = None):
     return gather(box_list, tf.reshape(tf.where(is_valid), [-1]))
 
 
-def change_coordinate_frame(box_list, window, scope = None):
+def change_coordinate_frame(box_list, window, scope=None):
   """Change coordinate frame of the box_list to be relative to window's frame.
 
   Given a window of the form [ymin, xmin, ymax, xmax],
@@ -468,13 +468,13 @@ def change_coordinate_frame(box_list, window, scope = None):
     win_width = window[3] - window[1]
     box_list_new = scale(
         BoxList(box_list.get() -
-                         [window[0], window[1], window[0], window[1]]),
+                [window[0], window[1], window[0], window[1]]),
         1.0 / win_height, 1.0 / win_width)
     box_list_new = _copy_extra_fields(box_list_new, box_list)
     return box_list_new
 
 
-def sq_dist(box_list1, box_list2, scope = None):
+def sq_dist(box_list1, box_list2, scope=None):
   """Computes the pairwise squared distances between box corners.
 
   This op treats each box as if it were a point in a 4d Euclidean space and
@@ -503,8 +503,8 @@ def sq_dist(box_list1, box_list2, scope = None):
       A tensor with shape [N, M] representing pairwise distances
   """
   with tf.name_scope(scope or 'SqDist'):
-    sqnorm1 = tf.reduce_sum(tf.square(box_list1.get()), 1, keep_dims=True)
-    sqnorm2 = tf.reduce_sum(tf.square(box_list2.get()), 1, keep_dims=True)
+    sqnorm1 = tf.reduce_sum(tf.square(box_list1.get()), axis=1, keepdims=True)
+    sqnorm2 = tf.reduce_sum(tf.square(box_list2.get()), axis=1, keepdims=True)
     innerprod = tf.matmul(
         box_list1.get(), box_list2.get(), transpose_a=False, transpose_b=True)
     return sqnorm1 + tf.transpose(sqnorm2) - 2.0 * innerprod
@@ -513,10 +513,10 @@ def sq_dist(box_list1, box_list2, scope = None):
 def boolean_mask(
     box_list,
     indicator,
-    fields = None,
-    scope = None,
-    use_static_shapes = False,
-    indicator_sum = None):
+    fields=None,
+    scope=None,
+    use_static_shapes=False,
+    indicator_sum=None):
   """Select boxes from BoxList according to indicator and return new BoxList.
 
   `boolean_mask` returns the subset of boxes that are marked as "True" by the
@@ -587,7 +587,7 @@ def boolean_mask(
 
 
 def gather(
-    box_list, indices, fields = None, scope = None, use_static_shapes = False):
+    box_list, indices, fields=None, scope=None, use_static_shapes=False):
   """Gather boxes from BoxList according to indices and return new BoxList.
 
   By default, `gather` returns boxes corresponding to the input index list, as
@@ -642,7 +642,7 @@ def gather(
     return subbox_list
 
 
-def concatenate(box_lists, fields = None, scope = None):
+def concatenate(box_lists, fields=None, scope=None):
   """Concatenate list of BoxLists.
 
   This op concatenates a list of input BoxLists into a larger BoxList.  It also
@@ -704,7 +704,7 @@ def concatenate(box_lists, fields = None, scope = None):
     return concatenated
 
 
-def sort_by_field(box_list, field, order = SortOrder.descend, scope = None):
+def sort_by_field(box_list, field, order=SortOrder.descend, scope=None):
   """Sort boxes and associated fields according to a scalar field.
 
   A common use case is reordering the boxes according to descending scores.
@@ -754,7 +754,7 @@ def sort_by_field(box_list, field, order = SortOrder.descend, scope = None):
     return gather(box_list, sorted_indices)
 
 
-def visualize_boxes_in_image(image, box_list, normalized = False, scope = None):
+def visualize_boxes_in_image(image, box_list, normalized=False, scope=None):
   """Overlay bounding box list on image.
 
   Currently this visualization plots a 1 pixel thick red bounding box on top
@@ -785,10 +785,10 @@ def visualize_boxes_in_image(image, box_list, normalized = False, scope = None):
                        1.0 / tf.cast(width, tf.float32))
     corners = tf.expand_dims(box_list.get(), 0)
     image = tf.expand_dims(image, 0)
-    return tf.squeeze(tf.image.draw_bounding_boxes(image, corners), [0])
+    return tf.squeeze(tf.image.draw_bounding_boxes(image, corners, None), [0])
 
 
-def filter_field_value_equals(box_list, field, value, scope = None):
+def filter_field_value_equals(box_list, field, value, scope=None):
   """Filter to keep only boxes with field entries equal to the given value.
 
   Parameters
@@ -823,7 +823,7 @@ def filter_field_value_equals(box_list, field, value, scope = None):
     return gather(box_list, gather_index)
 
 
-def filter_greater_than(box_list, threshold, scope = None):
+def filter_greater_than(box_list, threshold, scope=None):
   """Filter to keep only boxes with score exceeding a given threshold.
 
   This op keeps the collection of boxes whose corresponding scores are
@@ -865,7 +865,7 @@ def filter_greater_than(box_list, threshold, scope = None):
     return gather(box_list, high_score_indices)
 
 
-def non_max_suppression(box_list, threshold, max_output_size, scope = None):
+def non_max_suppression(box_list, threshold, max_output_size, scope=None):
   """Non maximum suppression.
 
   This op greedily selects a subset of detection bounding boxes, pruning
@@ -934,8 +934,8 @@ def to_normalized_coordinates(
     box_list,
     height,
     width,
-    check_range = True,
-    scope = None):
+    check_range=True,
+    scope=None):
   """Converts absolute box coordinates to normalized coordinates in [0, 1].
 
   Usually one uses the dynamic shape of the image or conv-layer tensor:
@@ -984,9 +984,9 @@ def to_absolute_coordinates(
     box_list,
     height,
     width,
-    check_range = True,
-    maximum_normalized_coordinate = 1.1,
-    scope = None):
+    check_range=True,
+    maximum_normalized_coordinate=1.1,
+    scope=None):
   """Converts normalized box coordinates to absolute pixel coordinates.
 
   This function raises an assertion failed error when the maximum box coordinate
@@ -1022,8 +1022,8 @@ def to_absolute_coordinates(
       box_maximum = tf.reduce_max(box_list.get())
       max_assert = tf.Assert(
           tf.greater_equal(maximum_normalized_coordinate, box_maximum), [
-            'maximum box coordinate value is larger '
-            'than %f: ' % maximum_normalized_coordinate, box_maximum
+              'maximum box coordinate value is larger '
+              'than %f: ' % maximum_normalized_coordinate, box_maximum
           ])
       with tf.control_dependencies([max_assert]):
         width = tf.identity(width)
@@ -1036,7 +1036,7 @@ def refine_boxes_multi_class(
     num_classes,
     nms_iou_thresh,
     nms_max_detections,
-    voting_iou_thresh = 0.5):
+    voting_iou_thresh=0.5):
   """Refines a pool of boxes using non max suppression and box voting.
 
   Box refinement is done independently for each class.
@@ -1090,7 +1090,7 @@ def refine_boxes(
     pool_boxes,
     nms_iou_thresh,
     nms_max_detections,
-    voting_iou_thresh = 0.5):
+    voting_iou_thresh=0.5):
   """Refines a pool of boxes using non max suppression and box voting.
 
   Parameters
@@ -1130,7 +1130,7 @@ def refine_boxes(
   return box_voting(nms_boxes, pool_boxes, voting_iou_thresh)
 
 
-def box_voting(selected_boxes, pool_boxes, iou_thresh = 0.5):
+def box_voting(selected_boxes, pool_boxes, iou_thresh=0.5):
   """Performs box voting as described in S. Gidaris and N.
   Komodakis, ICCV 2015.
 
@@ -1200,7 +1200,7 @@ def box_voting(selected_boxes, pool_boxes, iou_thresh = 0.5):
   return averaged_boxes
 
 
-def get_minimal_coverage_box(box_list, default_box = None, scope = None):
+def get_minimal_coverage_box(box_list, default_box=None, scope=None):
   """Creates a single bounding box which covers all boxes in the box_list.
 
   Parameters
@@ -1245,8 +1245,8 @@ def get_minimal_coverage_box(box_list, default_box = None, scope = None):
 def sample_boxes_by_jittering(
     box_list,
     num_boxes_to_sample,
-    stddev = 0.1,
-    scope = None):
+    stddev=0.1,
+    scope=None):
   """Samples num_boxes_to_sample boxes by jittering around box_list boxes.
 
   It is possible that this function might generate boxes with size 0. The larger

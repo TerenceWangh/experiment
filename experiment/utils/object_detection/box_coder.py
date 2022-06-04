@@ -16,13 +16,14 @@ from abc import ABCMeta
 from abc import abstractmethod
 
 import tensorflow as tf
-from experiment.utils.object_detection import BoxList
 
+# pylint: disable=bad-whitespace
 # Box coder types.
 FASTER_RCNN   = 'faster_rcnn'
 KEYPOINT      = 'keypoint'
 MEAN_STDDEV   = 'mean_stddev'
 SQUARE        = 'square'
+# pylint: enable=bad-whitespace
 
 
 class BoxCoder:
@@ -157,6 +158,6 @@ def batch_decode(encoded_boxes, box_coder, anchors):
             encoded_boxes.get_shape()[1].value, anchors.num_boxes_static()))
 
   decoded_boxes = tf.stack([
-    box_coder.decode(boxes, anchors).get()
-    for boxes in tf.unstack(encoded_boxes)])
+      box_coder.decode(boxes, anchors).get()
+      for boxes in tf.unstack(encoded_boxes)])
   return decoded_boxes

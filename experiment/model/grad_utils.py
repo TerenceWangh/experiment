@@ -22,8 +22,8 @@ def _filter_grads(grads_and_vars):
         [v.name for _, v in grads_and_vars],))
   if vars_with_empty_grads:
     logging.warning(
-      'Gradients do not exist for variables %s when minimizing the loss.',
-      [v.name for v in vars_with_empty_grads])
+        'Gradients do not exist for variables %s when minimizing the loss.',
+        [v.name for v in vars_with_empty_grads])
   return filtered
 
 
@@ -40,8 +40,8 @@ def _filter_and_all_reduce_grads(grads_and_vars,
   :param grads_and_vars: gradients and variables pairs.
   :param all_reduce_precision: Whether to all reduce gradients in float32 or
       float16.
-  :param bytes_per_pack: A non-negative integer. Breaks collective operations into
-      packs of certain size. If it's zero, all gradients are in one pack.
+  :param bytes_per_pack: A non-negative integer. Breaks collective operations
+      into packs of certain size. If it's zero, all gradients are in one pack.
   :return: pairs of all reduced non-None gradients and variables.
   """
   filtered_grads_and_vars = _filter_grads(grads_and_vars)
@@ -51,7 +51,8 @@ def _filter_and_all_reduce_grads(grads_and_vars,
   hints = tf.distribute.experimental.CommunicationOptions(
       bytes_per_pack=bytes_per_pack)
   all_reduce_grads = tf.distribute.get_strategy( # pylint: disable=protected-access
-      ).extended._replica_ctx_all_reduce(tf.distribute.ReduceOp.SUM, grads, hints)
+      ).extended._replica_ctx_all_reduce(
+          tf.distribute.ReduceOp.SUM, grads, hints)
   if all_reduce_precision == 'float16':
     all_reduce_grads = [tf.cast(grad, 'float32') for grad in all_reduce_grads]
   return all_reduce_grads, variables
@@ -102,11 +103,11 @@ def minimize_using_explicit_all_reduce(tape: tf.GradientTape,
     if pre_all_reduce_callbacks:
       grads_and_vars = _run_callbacks(pre_all_reduce_callbacks, grads_and_vars)
 
-    (all_reduced_scaled_grads,
-     filtered_training_vars) = _filter_and_all_reduce_grads(
-        grads_and_vars,
-        all_reduce_precision="float16",
-        bytes_per_pack=all_reduce_bytes_per_pack)
+    (all_reduced_scaled_grads, filtered_training_vars) = \
+        _filter_and_all_reduce_grads(
+            grads_and_vars,
+            all_reduce_precision="float16",
+            bytes_per_pack=all_reduce_bytes_per_pack)
 
     all_reduced_scaled_grads = optimizer.get_unscaled_gradients(
         all_reduced_scaled_grads)
@@ -119,11 +120,11 @@ def minimize_using_explicit_all_reduce(tape: tf.GradientTape,
     if pre_all_reduce_callbacks:
       grads_and_vars = _run_callbacks(pre_all_reduce_callbacks, grads_and_vars)
 
-    (all_reduced_scaled_grads,
-     filtered_training_vars) = _filter_and_all_reduce_grads(
-        grads_and_vars,
-        all_reduce_precision="float32",
-        bytes_per_pack=all_reduce_bytes_per_pack)
+    (all_reduced_scaled_grads, filtered_training_vars) = \
+        _filter_and_all_reduce_grads(
+            grads_and_vars,
+            all_reduce_precision="float32",
+            bytes_per_pack=all_reduce_bytes_per_pack)
     grads_and_vars = zip(all_reduced_scaled_grads, filtered_training_vars)
 
   if post_all_reduce_callbacks:

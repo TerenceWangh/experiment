@@ -66,7 +66,7 @@ class StandardTrainer(runner.AbstractTrainer, metaclass=abc.ABCMeta):
   """
 
   def __init__(self, train_dataset,
-               options: Optional[StandardTrainerOptions]=None):
+               options: Optional[StandardTrainerOptions] = None):
     """Initializes the `StandardTrainer` instance.
 
     :param train_dataset: A `tf.nest`-compatible structure of `tf.data.Dataset`
@@ -233,7 +233,7 @@ class StandardEvaluator(runner.AbstractEvaluator, metaclass=abc.ABCMeta):
   """
 
   def __init__(self, eval_dataset,
-               options: Optional[StandardEvaluatorOptions]=None):
+               options: Optional[StandardEvaluatorOptions] = None):
     """Initializes the `StandardEvaluator` instance.
 
     :param eval_dataset: A `tf.nest`-compatible structure of `tf.data.Dataset`
@@ -309,7 +309,7 @@ class StandardEvaluator(runner.AbstractEvaluator, metaclass=abc.ABCMeta):
       self._eval_loop_fn(eval_iterator, num_steps)
     else:
       outputs = self._eval_loop_fn(
-        eval_iterator, num_steps, state=outputs, reduce_fn=self.eval_reduce)
+          eval_iterator, num_steps, state=outputs, reduce_fn=self.eval_reduce)
 
     if outputs is None:
       return self.eval_end()
@@ -368,8 +368,8 @@ class StandardEvaluator(runner.AbstractEvaluator, metaclass=abc.ABCMeta):
     pass
 
   def eval_reduce(self,
-                  state: Optional[Any]=None,
-                  step_outputs: Optional[runner.Output]=None) -> Any:
+                  state: Optional[Any] = None,
+                  step_outputs: Optional[runner.Output] = None) -> Any:
     """A function to perform per-step reduction on the evaluation outputs.
 
     This is useful for passing state throughout evaluation, especially in cases

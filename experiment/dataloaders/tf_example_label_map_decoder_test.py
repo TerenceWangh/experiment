@@ -81,7 +81,7 @@ class TfExampleDecoderLabelMapTest(tf.test.TestCase, parameterized.TestCase):
     ymaxs = [0.5, 1.0]
     labels = [b'class_2', b'class_0']
     areas = [
-      0.25 * image_height * image_width, 0.75 * image_height * image_width
+        0.25 * image_height * image_width, 0.75 * image_height * image_width
     ]
     is_crowds = [1, 0]
     mask_content = [[[255, 255, 0, 0],
@@ -93,38 +93,40 @@ class TfExampleDecoderLabelMapTest(tf.test.TestCase, parameterized.TestCase):
                      [0, 255, 255, 255],
                      [0, 255, 255, 255]]]
     masks = [
-      tf_example_utils.encode_image(np.uint8(m), fmt='PNG')
-      for m in list(mask_content)
+        tf_example_utils.encode_image(np.uint8(m), fmt='PNG')
+        for m in list(mask_content)
     ]
+    # pylint: disable=bad-whitespace
     serialized_example = tf.train.Example(
         features=tf.train.Features(
             feature={
-              'image/encoded'          : (tf.train.Feature(
-                  bytes_list=tf.train.BytesList(value=[image]))),
-              'image/source_id'        : (tf.train.Feature(
-                  bytes_list=tf.train.BytesList(
-                      value=[tf_example_utils.DUMP_SOURCE_ID]))),
-              'image/height'           : (tf.train.Feature(
-                  int64_list=tf.train.Int64List(value=[image_height]))),
-              'image/width'            : (tf.train.Feature(
-                  int64_list=tf.train.Int64List(value=[image_width]))),
-              'image/object/bbox/xmin' : (tf.train.Feature(
-                  float_list=tf.train.FloatList(value=xmins))),
-              'image/object/bbox/xmax' : (tf.train.Feature(
-                  float_list=tf.train.FloatList(value=xmaxs))),
-              'image/object/bbox/ymin' : (tf.train.Feature(
-                  float_list=tf.train.FloatList(value=ymins))),
-              'image/object/bbox/ymax' : (tf.train.Feature(
-                  float_list=tf.train.FloatList(value=ymaxs))),
-              'image/object/class/text': (tf.train.Feature(
-                  bytes_list=tf.train.BytesList(value=labels))),
-              'image/object/is_crowd'  : (tf.train.Feature(
-                  int64_list=tf.train.Int64List(value=is_crowds))),
-              'image/object/area'      : (tf.train.Feature(
-                  float_list=tf.train.FloatList(value=areas))),
-              'image/object/mask'      : (tf.train.Feature(
-                  bytes_list=tf.train.BytesList(value=masks))),
+                'image/encoded'          : (tf.train.Feature(
+                    bytes_list=tf.train.BytesList(value=[image]))),
+                'image/source_id'        : (tf.train.Feature(
+                    bytes_list=tf.train.BytesList(
+                        value=[tf_example_utils.DUMP_SOURCE_ID]))),
+                'image/height'           : (tf.train.Feature(
+                    int64_list=tf.train.Int64List(value=[image_height]))),
+                'image/width'            : (tf.train.Feature(
+                    int64_list=tf.train.Int64List(value=[image_width]))),
+                'image/object/bbox/xmin' : (tf.train.Feature(
+                    float_list=tf.train.FloatList(value=xmins))),
+                'image/object/bbox/xmax' : (tf.train.Feature(
+                    float_list=tf.train.FloatList(value=xmaxs))),
+                'image/object/bbox/ymin' : (tf.train.Feature(
+                    float_list=tf.train.FloatList(value=ymins))),
+                'image/object/bbox/ymax' : (tf.train.Feature(
+                    float_list=tf.train.FloatList(value=ymaxs))),
+                'image/object/class/text': (tf.train.Feature(
+                    bytes_list=tf.train.BytesList(value=labels))),
+                'image/object/is_crowd'  : (tf.train.Feature(
+                    int64_list=tf.train.Int64List(value=is_crowds))),
+                'image/object/area'      : (tf.train.Feature(
+                    float_list=tf.train.FloatList(value=areas))),
+                'image/object/mask'      : (tf.train.Feature(
+                    bytes_list=tf.train.BytesList(value=masks))),
             })).SerializeToString()
+    # pylint: enable=bad-whitespace
     decoded_tensors = decoder.decode(
         tf.convert_to_tensor(value=serialized_example))
 

@@ -39,7 +39,7 @@ class SummaryManager:
 
     if self._enable:
       self._summary_writers[relative_path] = tf.summary.create_file_writer(
-        os.path.join(self._summary_dir, relative_path))
+          os.path.join(self._summary_dir, relative_path))
     else:
       self._summary_writers[relative_path] = tf.summary.create_noop_writer()
     return self._summary_writers[relative_path]
@@ -88,7 +88,7 @@ class SummaryManager:
     for name, value in summary_dict.items():
       if isinstance(value, dict):
         self._write_summaries(
-          value, relative_path=os.path.join(relative_path, name))
+            value, relative_path=os.path.join(relative_path, name))
       else:
         with self.summary_writer(relative_path).as_default():
           self._summary_fn(name, value, step=self._global_step)

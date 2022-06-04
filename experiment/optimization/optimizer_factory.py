@@ -12,31 +12,33 @@ from experiment.optimization import legacy_adamw
 from experiment.optimization import lr_schedule
 from experiment.optimization.configuration import optimization_config as opt_cfg
 
+# pylint: disable=bad-whitespace
 OPTIMIZERS_CLS = {
-  'lamb'    : lamb_optimizer.LAMB,
-  'lars'    : lars_optimizer.LARS,
-  'sgd'     : tf.keras.optimizers.SGD,
-  'adam'    : tf.keras.optimizers.Adam,
-  'adamw'   : legacy_adamw.AdamWeightDecay,
-  'rmsprop' : tf.keras.optimizers.RMSprop,
-  'adagrad' : tf.keras.optimizers.Adagrad,
+    'lamb'    : lamb_optimizer.LAMB,
+    'lars'    : lars_optimizer.LARS,
+    'sgd'     : tf.keras.optimizers.SGD,
+    'adam'    : tf.keras.optimizers.Adam,
+    'adamw'   : legacy_adamw.AdamWeightDecay,
+    'rmsprop' : tf.keras.optimizers.RMSprop,
+    'adagrad' : tf.keras.optimizers.Adagrad,
 }
 
 LR_CLS = {
-  'stepwise'                : lr_schedule.PiecewiseConstantDecayWithOffset,
-  'polynomial'              : lr_schedule.PolynomialDecayWithOffset,
-  'exponential'             : lr_schedule.ExponentialDecayWithOffset,
-  'cosine'                  : lr_schedule.CosineDecayWithOffset,
-  'power'                   : lr_schedule.DirectPowerDecay,
-  'power_linear'            : lr_schedule.PowerAndLinearDecay,
-  'power_with_offset'       : lr_schedule.PowerDecayWithOffset,
-  'step_cosine_with_offset' : lr_schedule.StepCosineDecayWithOffset,
+    'stepwise'                : lr_schedule.PiecewiseConstantDecayWithOffset,
+    'polynomial'              : lr_schedule.PolynomialDecayWithOffset,
+    'exponential'             : lr_schedule.ExponentialDecayWithOffset,
+    'cosine'                  : lr_schedule.CosineDecayWithOffset,
+    'power'                   : lr_schedule.DirectPowerDecay,
+    'power_linear'            : lr_schedule.PowerAndLinearDecay,
+    'power_with_offset'       : lr_schedule.PowerDecayWithOffset,
+    'step_cosine_with_offset' : lr_schedule.StepCosineDecayWithOffset,
 }
 
 WARMUP_CLS = {
-  'linear'    : lr_schedule.LinearWarmup,
-  'polynomial': lr_schedule.PolynomialWarmup,
+    'linear'    : lr_schedule.LinearWarmup,
+    'polynomial': lr_schedule.PolynomialWarmup,
 }
+# pylint: enable=bad-whitespace
 
 
 def register_optimizer_cls(key: str,
@@ -144,13 +146,13 @@ class OptimizerFactory:
       self,
       lr: Union[tf.keras.optimizers.schedules.LearningRateSchedule, float],
       gradient_aggregator: Optional[Callable[
-        [List[Tuple[tf.Tensor, tf.Tensor]]],
-        List[Tuple[tf.Tensor, tf.Tensor]]]] = None,
+          [List[Tuple[tf.Tensor, tf.Tensor]]],
+          List[Tuple[tf.Tensor, tf.Tensor]]]] = None,
       gradient_transformers: Optional[List[Callable[
-        [List[Tuple[tf.Tensor, tf.Tensor]]],
-        List[Tuple[tf.Tensor, tf.Tensor]]]]] = None,
+          [List[Tuple[tf.Tensor, tf.Tensor]]],
+          List[Tuple[tf.Tensor, tf.Tensor]]]]] = None,
       postprocessor: Optional[Callable[[tf.keras.optimizers.Optimizer],
-                                        tf.keras.optimizers.Optimizer]] = None):
+                                       tf.keras.optimizers.Optimizer]] = None):
     """Build optimizer.
 
     Builds optimizer from config. It takes learning rate as input, and builds

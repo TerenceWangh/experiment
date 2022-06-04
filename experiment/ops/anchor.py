@@ -123,8 +123,8 @@ class AnchorLabeler:
   """Labeler for dense object detector."""
 
   def __init__(self,
-               match_threshold = 0.5,
-               unmatched_threshold = 0.5):
+               match_threshold=0.5,
+               unmatched_threshold=0.5):
     """Constructs anchor labeler to assign labels to anchors.
 
     Parameters
@@ -245,10 +245,10 @@ class RPNAnchorLabeler(AnchorLabeler):
   """Labeler for Region Proposal Network."""
 
   def __init__(self,
-               match_threshold = 0.7,
-               unmatched_threshold = 0.3,
-               rpn_batch_size_per_image = 256,
-               rpn_fg_fraction = 0.5):
+               match_threshold=0.7,
+               unmatched_threshold=0.3,
+               rpn_batch_size_per_image=256,
+               rpn_fg_fraction=0.5):
     """Construct the RPNAnchorLabeler.
 
     Parameters

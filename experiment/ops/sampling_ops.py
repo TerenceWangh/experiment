@@ -20,9 +20,9 @@ from experiment.utils.object_detection import shape_utils
 
 def indices_to_dense_vector(indices,
                             size,
-                            indices_value = 1.,
-                            default_value = 0,
-                            dtype = tf.float32):
+                            indices_value=1.,
+                            default_value=0,
+                            dtype=tf.float32):
   """Creates dense vector with indices set to specific value and rest to zeros.
 
   This function exists because it is unclear if it is safe to use
@@ -56,7 +56,7 @@ def indices_to_dense_vector(indices,
       [tf.range(size), tf.cast(indices, dtype=tf.int32)], [zeros, values])
 
 
-def matmul_gather_on_zeroth_axis(params, indices, scope = None):
+def matmul_gather_on_zeroth_axis(params, indices, scope=None):
   """Matrix multiplication based implementation of tf.gather on zeroth axis.
 
   Parameters

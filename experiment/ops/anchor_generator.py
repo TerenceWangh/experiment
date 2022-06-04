@@ -17,7 +17,7 @@ class _SingleAnchorGenerator:
                scales,
                aspect_ratios,
                stride,
-               clip_boxes = False):
+               clip_boxes=False):
     """Constructs single scale anchor.
 
     Parameters
@@ -100,7 +100,7 @@ class AnchorGenerator():
                scales,
                aspect_ratios,
                strides,
-               clip_boxes = False):
+               clip_boxes=False):
     """Constructs multiscale anchors.
 
     Parameters
@@ -126,19 +126,21 @@ class AnchorGenerator():
       self._anchor_generators = {}
       for k in anchor_sizes.keys():
         self._anchor_generators[k] = _SingleAnchorGenerator(
-          anchor_sizes[k], scales[k], aspect_ratios[k], strides[k],
-          clip_boxes)
+            anchor_sizes[k], scales[k], aspect_ratios[k], strides[k],
+            clip_boxes)
     elif isinstance(anchor_sizes, (list, tuple)):
       self._anchor_generators = []
       for anchor_size, scale_list, ar_list, stride in zip(
           anchor_sizes, scales, aspect_ratios, strides):
         self._anchor_generators.append(
-          _SingleAnchorGenerator(
-            anchor_size, scale_list, ar_list, stride, clip_boxes))
+            _SingleAnchorGenerator(
+                anchor_size, scale_list, ar_list, stride, clip_boxes))
 
   def __call__(self, image_size):
     anchor_generators = tf.nest.flatten(self._anchor_generators)
+    # pylint: disable=not-callable
     results = [anchor_gen(image_size) for anchor_gen in anchor_generators]
+    # pylint: enable=not-callable
     return tf.nest.pack_sequence_as(self._anchor_generators, results)
 
 

@@ -12,17 +12,17 @@ import yaml
 # matches on values that are within single quotes, double quotes, single
 # values (e.g. floats, ints, etc.), and a lists within brackets.
 _PARAM_RE = re.compile(
-  r'''
-  (?P<name>[a-zA-Z][\w\.]*)    # variable name: "var" or "x"
-  \s*=\s*
-  ((?P<val>\'(.*?)\'           # single quote
-  |
-  \"(.*?)\"                    # double quote
-  |
-  [^,\[]*                      # single value
-  |
-  \[[^\]]*\]))                 # list of values
-  ($|,\s*)''', re.VERBOSE)
+    r'''
+    (?P<name>[a-zA-Z][\w\.]*)    # variable name: "var" or "x"
+    \s*=\s*
+    ((?P<val>\'(.*?)\'           # single quote
+    |
+    \"(.*?)\"                    # double quote
+    |
+    [^,\[]*                      # single value
+    |
+    \[[^\]]*\]))                 # list of values
+    ($|,\s*)''', re.VERBOSE)
 
 _CONST_VALUE_RE = re.compile(r'(\d.*|-\d.*|None)')
 
@@ -98,7 +98,7 @@ class ParamsDict(object):
                        '`override` with `is_strict` = True.'.format(k))
       if self._locked:
         raise ValueError(
-          'The paramsDict has been locked. No change is allowed.')
+            'The paramsDict has been locked. No change is allowed.')
 
     self._set(k, v)
 
@@ -139,10 +139,10 @@ class ParamsDict(object):
     """
     if k in ParamsDict.RESERVED_ATTR:
       raise AttributeError(
-        'The key `{}` is reserved. No change is allowed.'.format(k))
+          'The key `{}` is reserved. No change is allowed.'.format(k))
     if k not in self.__dict__.keys():
       raise AttributeError(
-        'The key `{}` does not exists.'.format(k))
+          'The key `{}` does not exists.'.format(k))
     if self._locked:
       raise ValueError('The ParamsDict has been locked. No change is allowed.')
     del self.__dict__[k]

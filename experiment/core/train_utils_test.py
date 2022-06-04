@@ -16,18 +16,18 @@ def foo():
   """Multitask experiment for test."""
   experiment_config = hyperparams.Config(
       default_params={
-        'runtime': {
-          'tpu': 'fake',
-        },
-        'task'   : {
-          'model': {
-            'model_id': 'bar',
+          'runtime': {
+              'tpu': 'fake',
           },
-        },
-        'trainer': {
-          'train_steps'     : -1,
-          'validation_steps': -1,
-        },
+          'task': {
+              'model': {
+                  'model_id': 'bar',
+              },
+          },
+          'trainer': {
+              'train_steps': -1,
+              'validation_steps': -1,
+          },
       })
   return experiment_config
 
@@ -74,12 +74,12 @@ class TrainUtilsTest(tf.test.TestCase):
     actual = tf.io.gfile.GFile(filepath, 'r').read().splitlines()
 
     expected = [
-      'fake_keras_model/dense/kernel:0 [3, 4]',
-      'fake_keras_model/dense/bias:0 [4]',
-      'fake_keras_model/dense_1/kernel:0 [4, 4]',
-      'fake_keras_model/dense_1/bias:0 [4]',
-      '',
-      'Total params: 36',
+        'fake_keras_model/dense/kernel:0 [3, 4]',
+        'fake_keras_model/dense/bias:0 [4]',
+        'fake_keras_model/dense_1/kernel:0 [4, 4]',
+        'fake_keras_model/dense_1/bias:0 [4]',
+        '',
+        'Total params: 36',
     ]
     self.assertEqual(actual, expected)
 
@@ -93,12 +93,12 @@ class TrainUtilsTest(tf.test.TestCase):
     actual = tf.io.gfile.GFile(filepath, 'r').read().splitlines()
 
     expected = [
-      'fake_module/dense/b:0 [4]',
-      'fake_module/dense/w:0 [3, 4]',
-      'fake_module/dense_1/b:0 [4]',
-      'fake_module/dense_1/w:0 [4, 4]',
-      '',
-      'Total params: 36',
+        'fake_module/dense/b:0 [4]',
+        'fake_module/dense/w:0 [3, 4]',
+        'fake_module/dense_1/b:0 [4]',
+        'fake_module/dense_1/w:0 [4, 4]',
+        '',
+        'Total params: 36',
     ]
     self.assertEqual(actual, expected)
 

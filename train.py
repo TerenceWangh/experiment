@@ -30,18 +30,18 @@ def main(_):
   if params.runtime.mixed_precision_dtype:
     performance.set_mixed_precision_policy(params.runtime.mixed_precision_dtype)
   distribution_strategy = distribute_utils.get_distribution_strategy(
-    distribution_strategy=params.runtime.distribution_strategy,
-    all_reduce_alg=params.runtime.all_reduce_alg,
-    num_gpus=params.runtime.num_gpus)
+      distribution_strategy=params.runtime.distribution_strategy,
+      all_reduce_alg=params.runtime.all_reduce_alg,
+      num_gpus=params.runtime.num_gpus)
   with distribution_strategy.scope():
     task = task_factory.get_task(params.task, logging_dir=model_dir)
 
   train_lib.run_experiment(
-    distribution_strategy=distribution_strategy,
-    task=task,
-    mode=FLAGS.mode,
-    params=params,
-    model_dir=model_dir)
+      distribution_strategy=distribution_strategy,
+      task=task,
+      mode=FLAGS.mode,
+      params=params,
+      model_dir=model_dir)
 
   train_utils.save_gin_config(FLAGS.mode, model_dir)
 

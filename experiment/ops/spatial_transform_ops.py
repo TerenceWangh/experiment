@@ -39,8 +39,10 @@ def _feature_bilinear_interpolation(features, kernel_y, kernel_x):
   """
   features_shape = tf.shape(features)
   batch_size, num_boxes, output_size, num_filters = (
-    features_shape[0], features_shape[1], features_shape[2],
-    features_shape[4])
+      features_shape[0],
+      features_shape[1],
+      features_shape[2],
+      features_shape[4])
 
   output_size = output_size // 2
   kernel_y = tf.reshape(kernel_y, [batch_size, num_boxes, output_size * 2, 1])
@@ -142,8 +144,8 @@ def _compute_grid_positions(boxes, boundaries, output_size, sample_offset):
 def multilevel_crop_and_resize(
     features,
     boxes,
-    output_size = 7,
-    sample_offset = 0.5):
+    output_size=7,
+    sample_offset=0.5):
   """Crop and resize on multilevel feature pyramid.
 
   Generate the (output_size, output_size) set of pixels for each input box
@@ -177,8 +179,10 @@ def multilevel_crop_and_resize(
     max_level = int(max(levels))
     features_shape = tf.shape(features[str(min_level)])
     batch_size, max_feature_height, max_feature_width, num_filters = (
-      features_shape[0], features_shape[1], features_shape[2],
-      features_shape[3])
+        features_shape[0],
+        features_shape[1],
+        features_shape[2],
+        features_shape[3])
 
     num_boxes = tf.shape(boxes)[1]
 
@@ -199,8 +203,8 @@ def multilevel_crop_and_resize(
 
     # Calculate height_l * width_l for each level.
     level_dim_sizes = [
-      feature_widths[i] * feature_heights[i]
-      for i in range(len(feature_widths))
+        feature_widths[i] * feature_heights[i]
+        for i in range(len(feature_widths))
     ]
     # level_dim_offsets is accumulated sum of level_dim_size.
     level_dim_offsets = [0]
@@ -240,14 +244,13 @@ def multilevel_crop_and_resize(
     level_strides = tf.pow([[2.0]], tf.cast(levels, tf.float32))
     boundary = tf.cast(
         tf.concat([
-          tf.expand_dims(
-              [[tf.cast(max_feature_height, tf.float32)]] / level_strides - 1,
-              axis=-1),
-          tf.expand_dims(
-              [[tf.cast(max_feature_width, tf.float32)]] / level_strides - 1,
-              axis=-1),
-        ],
-            axis=-1), boxes.dtype)
+            tf.expand_dims(
+                [[tf.cast(max_feature_height, tf.float32)]] / level_strides - 1,
+                axis=-1),
+            tf.expand_dims(
+                [[tf.cast(max_feature_width, tf.float32)]] / level_strides - 1,
+                axis=-1),
+        ], axis=-1), boxes.dtype)
 
     # Compute grid positions.
     kernel_y, kernel_x, box_gridy0y1, box_gridx0x1 = _compute_grid_positions(
@@ -299,9 +302,9 @@ def _selective_crop_and_resize(
     boxes,
     box_levels,
     boundaries,
-    output_size = 7,
-    sample_offset = 0.5,
-    use_einsum_gather = False):
+    output_size=7,
+    sample_offset=0.5,
+    use_einsum_gather=False):
   """Crop and resize boxes on a set of feature maps.
 
   Given multiple features maps indexed by different levels, and a set of boxes
@@ -461,8 +464,8 @@ def crop_mask_in_target_box(
     boxes,
     target_boxes,
     output_size,
-    sample_offset = 0,
-    use_einsum = True):
+    sample_offset=0,
+    use_einsum=True):
   """Crop masks in target boxes.
 
   Parameters
@@ -523,8 +526,10 @@ def crop_mask_in_target_box(
         gt_x_max - gt_x_min + _EPSILON)
 
     boundaries = tf.concat(
-        [tf.ones_like(y_transform) * ((height + 4) - 1),
-         tf.ones_like(x_transform) * ((width + 4) - 1)],
+        [
+            tf.ones_like(y_transform) * ((height + 4) - 1),
+            tf.ones_like(x_transform) * ((width + 4) - 1)
+        ],
         axis=-1)
     boundaries = tf.cast(boundaries, dtype=y_transform.dtype)
 
@@ -547,7 +552,7 @@ def crop_mask_in_target_box(
   return cropped_masks
 
 
-def nearest_upsampling(data, scale, use_keras_layer = False):
+def nearest_upsampling(data, scale, use_keras_layer=False):
   """Nearest neighbor upsampling implementation.
 
   Parameters

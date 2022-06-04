@@ -21,17 +21,17 @@ class OptimizerConfigTest(tf.test.TestCase):
 
   def test_config(self):
     opt_config = optimization_config.OptimizationConfig({
-      'optimizer'    : {
-        'type': 'sgd',
-        'sgd' : {}  # default config
-      },
-      'learning_rate': {
-        'type'      : 'polynomial',
-        'polynomial': {}
-      },
-      'warmup'       : {
-        'type': 'linear'
-      }
+        'optimizer': {
+            'type': 'sgd',
+            'sgd': {}  # default config
+        },
+        'learning_rate': {
+            'type': 'polynomial',
+            'polynomial': {}
+        },
+        'warmup': {
+            'type': 'linear'
+        }
     })
     self.assertEqual(opt_config.optimizer.get(), opt_cfg.SGDConfig())
     self.assertEqual(opt_config.learning_rate.get(),

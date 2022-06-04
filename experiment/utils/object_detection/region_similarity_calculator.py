@@ -9,7 +9,7 @@ from abc import abstractmethod
 import tensorflow as tf
 
 
-def area(box_list, scope = None):
+def area(box_list, scope=None):
   """Computes area of boxes.
 
   Parameters
@@ -30,7 +30,7 @@ def area(box_list, scope = None):
     return tf.squeeze((ymax - ymin) * (xmax - xmin), [1])
 
 
-def intersection(box_list1, box_list2, scope = None):
+def intersection(box_list1, box_list2, scope=None):
   """Compute pairwise intersection areas between boxes.
 
   Parameters
@@ -60,7 +60,7 @@ def intersection(box_list1, box_list2, scope = None):
     intersect_widths = tf.maximum(0.0, all_pairs_min_xmax - all_pairs_max_xmin)
     return intersect_heights * intersect_widths
 
-def iou(box_list1, box_list2, scope = None):
+def iou(box_list1, box_list2, scope=None):
   """Computes pairwise intersection-over-union between box collections.
 
   Parameters
@@ -92,7 +92,7 @@ class RegionSimilarityCalculator:
   """Abstract base class for region similarity calculator."""
   __metaclass__ = ABCMeta
 
-  def compare(self, box_list1, box_list2, scope = None):
+  def compare(self, box_list1, box_list2, scope=None):
     """Computes matrix of pairwise similarity between BoxLists.
 
     This op (to be overridden) computes a measure of pairwise similarity between

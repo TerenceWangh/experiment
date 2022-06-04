@@ -34,11 +34,16 @@ class Task(tf.Module, metaclass=abc.ABCMeta):
                name: Optional[str] = None):
     """Task initialization.
 
-    :param params: the task configuration instance, which can be any of dataclass,
+    Parameters
+    ==========
+    params : dataclass or ConfigDict or namedtuple
+        the task configuration instance, which can be any of dataclass,
         ConfigDict, namedtuple, etc.
-    :param logging_dir: a string pointing to where the model, summaries etc. will be
-        saved. You can also write additional stuff in this directory.
-      name: the task name.
+    logging_dir : str, optional
+        Where the model, summaries etc. will be saved. You can also write
+        additional stuff in this directory.
+    name : str, optional
+        The task name.
     """
     super(Task, self).__init__(name=name)
     self._task_config = params
@@ -59,34 +64,43 @@ class Task(tf.Module, metaclass=abc.ABCMeta):
                        dp_config: Optional[DifferentialPrivacyConfig] = None):
     """Creates an TF optimizer from configuration.
 
-    :param optimizer_config: the parameters of the Optimization settings.
-    :param runtime_config: the parameters of the runtime.
-    :param dp_config: the parameter of differential privacy.
-    :return: A tf.optimizers.Optimizer object.
+    Parameters
+    ==========
+    optimizer_config : OptimizationConfig
+        The parameters of the Optimization settings.
+    runtime_config : RuntimeConfig, optional
+        The parameters of the runtime.
+    dp_config : DifferentialPrivacyConfig, optional
+        The parameter of  differential privacy.
+
+    Returns
+    =======
+    tf.optimizers.Optimizer
+        The optimizer object.
     """
     gradient_transformers = None
     if dp_config is not None:
       logging.info('Adding differential privacy transform with config '
-                   '{}}.'.format(dp_config.as_dict()))
+                   '{}.'.format(dp_config.as_dict()))
       noise_stddev = dp_config.clipping_norm * dp_config.noise_multiplier
       gradient_transformers = [
-        functools.partial(
-          ops.clip_l2_norm, l2_norm_clip=dp_config.clipping_norm),
-        functools.partial(
-          ops.add_noise, noise_stddev=noise_stddev),
+          functools.partial(
+              ops.clip_l2_norm, l2_norm_clip=dp_config.clipping_norm),
+          functools.partial(
+              ops.add_noise, noise_stddev=noise_stddev),
       ]
 
     opt_factory = optimization.OptimizerFactory(optimizer_config)
     optimizer = opt_factory.build_optimizer(
-      opt_factory.build_learning_rate(),
-      gradient_transformers=gradient_transformers)
+        opt_factory.build_learning_rate(),
+        gradient_transformers=gradient_transformers)
     # Configuring optimizer when loss_scale is set in runtime config. This helps
     # avoiding overflow/underflow for float16 computations.
     if runtime_config:
       optimizer = performance.configure_optimizer(
-        optimizer,
-        use_float16=runtime_config.mixed_precision_dtype == "float16",
-        loss_scale=runtime_config.loss_scale)
+          optimizer,
+          use_float16=runtime_config.mixed_precision_dtype == "float16",
+          loss_scale=runtime_config.loss_scale)
     return optimizer
 
 
@@ -98,14 +112,18 @@ class Task(tf.Module, metaclass=abc.ABCMeta):
     will not be called. You can use this callback function to load a pretrained
     checkpoint, saved under a directory other than the model_dir.
 
-    :param model: The keras.Model built or used by this task.
+    Parameters
+    model : tf.keras.Model
+        The keras.Model built or used by this task.
     """
     ckpt_dir_or_file = self.task_config.init_checkpoint
-    logging.info('Trying to load pretrained checkpoint from %s', ckpt_dir_or_file)
+    logging.info('Trying to load pretrained checkpoint from %s',
+                 ckpt_dir_or_file)
     if ckpt_dir_or_file and tf.io.gfile.isdir(ckpt_dir_or_file):
       ckpt_dir_or_file = tf.train.latest_checkpoint(ckpt_dir_or_file)
     if not ckpt_dir_or_file:
-      logging.info('No checkpoint file found from %s. Will not load.', ckpt_dir_or_file)
+      logging.info('No checkpoint file found from %s. Will not load.',
+                   ckpt_dir_or_file)
       return
 
     if hasattr(model, 'checkpoint_items'):
@@ -116,12 +134,16 @@ class Task(tf.Module, metaclass=abc.ABCMeta):
     ckpt = tf.train.Checkpoint(**checkpoint_items)
     status = ckpt.read(ckpt_dir_or_file)
     status.expect_partial().assert_existing_objects_matched()
-    logging.info('Finished loading pretrained checkpoint from %s.', ckpt_dir_or_file)
+    logging.info('Finished loading pretrained checkpoint from %s.',
+                 ckpt_dir_or_file)
 
   def build_model(self) -> tf.keras.Model:
     """[Optional] Creates model architecture.
 
-    :return: a model instance.
+    Returns
+    =======
+    tf.keras.Model
+        A model instance.
     """ # pytype: disable=bad-return-type  # typed-keras
 
   @abc.abstractmethod
@@ -133,23 +155,40 @@ class Task(tf.Module, metaclass=abc.ABCMeta):
     Dataset functions define per-host datasets with the per-replica batch size.
     With distributed training, this method runs on remote hosts.
 
-    :param params: hyperparams to create input pipelines, which can be any of
+    Parameters
+    ==========
+    params
+        The hyperparams to create input pipelines, which can be any of
         dataclass, ConfigDict, namedtuple, etc.
-    :param input_context: optional distribution input pipeline context.
-    :return: a nested structure of per-replica input functions.
+    input_context : tf.distribute.InputContext, optional
+        The distribution input pipeline context.
+
+    Returns
+    =======
+    function
+        A nested structure of per-replica input functions.
     """
 
 
   def build_losses(self,
                    labels,
                    model_outputs,
-                   aux_losses = None) -> tf.Tensor:
+                   aux_losses=None) -> tf.Tensor:
     """Standard interface to compute loss
 
-    :param labels: optional label Tensor.
-    :param model_outputs: a nested structure of output tensors.
-    :param aux_losses: auxiliary loss tensor, i.e. `losses` in keras.Model.
-    :return: the total loss tensor.
+    Parameters
+    ==========
+    labels : tf.Tensor
+        The optional label Tensor.
+    model_outputs : tf.Tensor
+        A nested structure of output tensors.
+    aux_losses : tf.Tensor, optional
+        The auxiliary loss tensor, i.e. `losses` in keras.Model.
+
+    Returns
+    =======
+    tf.Tensor
+        The total loss tensor.
     """
     del model_outputs, labels
 
@@ -172,12 +211,18 @@ class Task(tf.Module, metaclass=abc.ABCMeta):
 
     Called when using custom training loop API.
 
-    :param metrics: a nested structure of metrics objects. The return of function
+    Parameters
+    ==========
+    metrics :
+        A nested structure of metrics objects. The return of function
         self.build_metrics.
-    :param labels: a tensor or a nested structure of tensors.
-    :param model_outputs: a tensor or a nested structure of tensors. For example,
-        output of the keras model built by self.build_model.
-    :param **kwargs: other args.
+    labels : tf.Tensor
+        A tensor or a nested structure of tensors.
+    model_outputs : tf.Tensor
+        A tensor or a nested structure of tensors. For example, output of the
+        keras model built by self.build_model.
+    kwargs : dict
+        Other arguments.
     """
     for metric in metrics:
       metric.update_state(labels, model_outputs)
@@ -187,10 +232,15 @@ class Task(tf.Module, metaclass=abc.ABCMeta):
 
     call when using compile/fit API.
 
-    :param compiled_metrics: the compiled metrics (model.compiled_metrics).
-    :param labels: a tensor or a nested structure of tensors.
-    :param model_outputs: a tensor or a nested structure of tensors. For example,
-        output of the keras model built by self.build_model.
+    Parameters
+    ==========
+    compiled_metrics :
+        The compiled metrics (model.compiled_metrics).
+    labels : tf.Tensor
+        A tensor or a nested structure of tensors.
+    model_outputs : tf.Tensor
+        A tensor or a nested structure of tensors. For example, output of the
+        keras model built by self.build_model.
     """
     compiled_metrics.update_state(labels, model_outputs)
 
@@ -203,11 +253,21 @@ class Task(tf.Module, metaclass=abc.ABCMeta):
 
     With distribution strategies, this method runs on devices.
 
-    :param inputs: a dictionary of input tensors.
-    :param model: the model, forward pass definition.
-    :param optimizer: the optimizer for this training step.
-    :param metrics: a nested structure of metrics objects.
-    :return a dictionary of logs.
+    Parameters
+    ==========
+    inputs : dict of tf.Tensor
+        A dictionary of input tensors.
+    model : tf.keras.Model
+        The model, forward pass definition.
+    optimizer : tf.keras.optimizers.Optimizer
+        The optimizer for this training step.
+    metrics : tf.Tensor, optional
+        A nested structure of metrics objects.
+
+    Returns
+    =======
+    dict
+        A dictionary of logs.
     """
     if isinstance(inputs, tuple) and len(inputs) == 2:
       features, labels = inputs
@@ -218,12 +278,12 @@ class Task(tf.Module, metaclass=abc.ABCMeta):
       # Computes per-replica loss.
       if model.compiled_loss:
         loss = model.compiled_loss(
-          labels, outputs, regularization_losses=model.losses)
+            labels, outputs, regularization_losses=model.losses)
         loss += self.build_losses(
-          labels=labels, model_outputs=outputs, aux_losses=None)
+            labels=labels, model_outputs=outputs, aux_losses=None)
       else:
         loss = self.build_losses(
-          labels=labels, model_outputs=outputs, aux_losses=model.losses)
+            labels=labels, model_outputs=outputs, aux_losses=model.losses)
       # Scales loss as the default gradients allreduce performs sum inside the
       # optimizer.
       scaled_loss = loss / tf.distribute.get_strategy().num_replicas_in_sync
@@ -255,10 +315,19 @@ class Task(tf.Module, metaclass=abc.ABCMeta):
 
     With distribution strategies, this method runs on devices.
 
-    :param inputs: a dictionary of input tensors.
-    :param model: the keras.Model.
-    :param metrics: a nested structure of metrics objects.
-    :return A dictionary of logs.
+    Parameters
+    ==========
+    inputs : dict of tf.Tensor
+        A dictionary of input tensors.
+    model : tf.keras.Model
+        The keras.Model.
+    metrics : tf.Tensor
+        A nested structure of metrics objects.
+
+    Returns
+    =======
+    dict
+        A dictionary of logs.
     """
     if isinstance(inputs, tuple) and len(inputs) == 2:
       features, labels = inputs
@@ -266,7 +335,7 @@ class Task(tf.Module, metaclass=abc.ABCMeta):
       features, labels = inputs, inputs
     outputs = self.inference_step(features, model)
     loss = self.build_losses(
-      labels=labels, model_outputs=outputs, aux_losses=model.losses)
+        labels=labels, model_outputs=outputs, aux_losses=model.losses)
     logs = {self.loss: loss}
     if metrics:
       self.process_metrics(metrics, labels, outputs)
@@ -281,9 +350,17 @@ class Task(tf.Module, metaclass=abc.ABCMeta):
 
     With distribution strategies, this method runs on devices.
 
-    :param inputs: a dictionary of input tensors.
-    :param model: the keras.Model.
-    :return model outputs.
+    Parameters
+    ==========
+    inputs : dict of tf.Tensor
+        A dictionary of input tensors.
+    model : tf.keras.Model
+        The keras.Model.
+
+    Returns
+    =======
+    tf.Tensor
+        model outputs.
     """
     return model(inputs, training=False)
 
@@ -299,9 +376,13 @@ class Task(tf.Module, metaclass=abc.ABCMeta):
     tuple with elements from replicas, and a concatenation of the elements is
     needed in such case.
 
-    :param state: The current state of training, for example, it can be a sequence of
+    Parameters
+    ==========
+    state : list
+        The current state of training, for example, it can be a sequence of
         metrics.
-    :param step_logs: Logs from a validation step. Can be a dictionary.
+    step_logs : dict
+        Logs from a validation step. Can be a dictionary.
     """
     pass
 
@@ -314,8 +395,16 @@ class Task(tf.Module, metaclass=abc.ABCMeta):
     used to compute the final metrics. It runs on CPU and in each eval_end() in
     base trainer (see eval_end() function in official/core/base_trainer.py).
 
-    :param aggregated_logs: Aggregated logs over multiple validation steps.
-    :param global_step: An optional variable of global step.
-    :return a dictionary of reduced results.
+    Parameters
+    ==========
+    aggregated_logs : dict
+        Aggregated logs over multiple validation steps.
+    global_step : tf.Tensor, optional
+        An optional variable of global step.
+
+    Returns
+    =======
+    dict
+        A dictionary of reduced results.
     """
     return {}

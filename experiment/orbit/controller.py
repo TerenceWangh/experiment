@@ -70,20 +70,20 @@ class Controller:
   def __init__(self,
                *, # Makes all args keyword only
                global_step: tf.Variable,
-               trainer: Optional[runner.AbstractTrainer]=None,
-               evaluator: Optional[runner.AbstractEvaluator]=None,
-               strategy: Optional[tf.distribute.Strategy]=None,
+               trainer: Optional[runner.AbstractTrainer] = None,
+               evaluator: Optional[runner.AbstractEvaluator] = None,
+               strategy: Optional[tf.distribute.Strategy] = None,
                # Actions
-               train_actions: Optional[List[Action]]=None,
-               eval_actions: Optional[List[Action]]=None,
+               train_actions: Optional[List[Action]] = None,
+               eval_actions: Optional[List[Action]] = None,
                # Train related
-               steps_per_loop: Optional[int]=None,
-               checkpoint_manager: Optional[tf.train.CheckpointManager]=None,
+               steps_per_loop: Optional[int] = None,
+               checkpoint_manager: Optional[tf.train.CheckpointManager] = None,
                # Summary related
-               summary_interval: Optional[int]=None,
-               summary_dir: Optional[str]=None,
+               summary_interval: Optional[int] = None,
+               summary_dir: Optional[str] = None,
                # Evaluation related
-               eval_summary_dir: Optional[str]=None):
+               eval_summary_dir: Optional[str] = None):
     """Initializes a `Controller` instance.
 
     Note that if `checkpoint_manager` is provided and there are checkpoints in
@@ -141,19 +141,19 @@ class Controller:
     if trainer is not None:
       if steps_per_loop is None:
         raise ValueError(
-          '`steps_per_loop` is required when `trainer` is provided.')
+            '`steps_per_loop` is required when `trainer` is provided.')
       elif not isinstance(steps_per_loop, int) or steps_per_loop < 1:
         raise ValueError(
-          f'`steps_per_loop` ({steps_per_loop}) must be a positive integer.')
+            f'`steps_per_loop` ({steps_per_loop}) must be a positive integer.')
 
       if summary_interval is not None:
         if summary_interval <= 0:
           raise ValueError(
-            f'`summary_interval` ({summary_interval}) must be larger than 0.')
+              f'`summary_interval` ({summary_interval}) must be larger than 0.')
         elif summary_interval % steps_per_loop != 0:
           raise ValueError(
-            f'`summary interval` ({summary_interval}) must be a multiple '
-            f'of `steps_per_loop` ({steps_per_loop}).')
+              f'`summary interval` ({summary_interval}) must be a multiple '
+              f'of `steps_per_loop` ({steps_per_loop}).')
 
     if not isinstance(global_step, tf.Variable):
       raise ValueError('`global_step` must be a `tf.Variable`.')
@@ -174,7 +174,7 @@ class Controller:
       self._steps_per_loop = steps_per_loop
       self._summary_interval = summary_interval
       self._summary_manager = utils.SummaryManager(
-        summary_dir, tf.summary.scalar, global_step=self._global_step)
+          summary_dir, tf.summary.scalar, global_step=self._global_step)
 
     if self._evaluator is not None:
       eval_summary_dir = eval_summary_dir or summary_dir
@@ -184,7 +184,7 @@ class Controller:
         self._eval_summary_manager = self._summary_manager
       else:
         self._eval_summary_manager = utils.SummaryManager(
-          eval_summary_dir, tf.summary.scalar, global_step=self._global_step)
+            eval_summary_dir, tf.summary.scalar, global_step=self._global_step)
     tf.summary.experimental.set_step(self._global_step)
 
     # Restores the model if needed.
@@ -193,7 +193,7 @@ class Controller:
       if restored_path:
         _log(f'Restored from checkpoint: {restored_path}')
 
-  def train(self, steps: int, checkpoint_at_completion: bool=True):
+  def train(self, steps: int, checkpoint_at_completion: bool = True):
     """Runs training until the specified global step count has been reached.
 
     This method makes calls to `self.trainer.train()` until the global step
@@ -221,7 +221,7 @@ class Controller:
     if checkpoint_at_completion:
       self._maybe_save_checkpoint(check_interval=False)
 
-  def evaluate(self, steps: int=-1) -> Optional[runner.Output]:
+  def evaluate(self, steps: int = -1) -> Optional[runner.Output]:
     """Runs evaluation for the given number of steps.
 
     This method calls `self.evaluator.evaluate(steps)`, then writes the returned
@@ -261,7 +261,7 @@ class Controller:
     eval_output = tf.nest.map_structure(utils.get_value, eval_output)
 
     _log(' eval | step: {:7d} | eval time: {:6.1f} sec | output: {}'.format(
-      current_step, elapsed, _format_output(eval_output)))
+        current_step, elapsed, _format_output(eval_output)))
 
     self._eval_summary_manager.write_summaries(eval_output)
     self._eval_summary_manager.flush()
@@ -271,7 +271,7 @@ class Controller:
   def train_and_evaluate(self,
                          train_steps: int,
                          eval_steps: int,
-                         eval_interval: Optional[int]=None) -> None:
+                         eval_interval: Optional[int] = None) -> None:
     """Runs interleaved training and evaluation.
 
     This method interleaves calls to `self.train()` and `self.evaluate()`,
@@ -288,9 +288,10 @@ class Controller:
         steps, even if this results in a shorter inner loop than specified by
         `steps_per_loop` setting. If None, evaluation will only be performed
         after training is complete.
-    :raise ValueError: If eval_interval is not a multiple of self.steps_per_loop.
+    :raise ValueError: If eval_interval is not a multiple of
+        self.steps_per_loop.
     """
-    self._require('_trainer',   for_method='train_and_evaluate')
+    self._require('_trainer', for_method='train_and_evaluate')
     self._require('_evaluator', for_method='train_and_evaluate')
 
     current_step = self._global_step.numpy()  # Cache, since this is expensive.
@@ -305,8 +306,8 @@ class Controller:
 
   def evaluate_continuously(self,
                             steps: int = -1,
-                            timeout: Optional[Union[int, float]]=None,
-                            timeout_fn: Optional[Callable[[], bool]]=None):
+                            timeout: Optional[Union[int, float]] = None,
+                            timeout_fn: Optional[Callable[[], bool]] = None):
     """Continuously monitors a directory and evaluates new checkpoints in it.
 
     This method continuously monitors a directory as specified by this
@@ -324,7 +325,7 @@ class Controller:
         `self.checkpoint_manager.directory`, or if `evaluator` was not provided
         as a controller init arg.
     """
-    self._require('_evaluator',          for_method='evaluate_continuously')
+    self._require('_evaluator', for_method='evaluate_continuously')
     self._require('_checkpoint_manager', for_method='evaluate_continuously')
 
     for checkpoint_path in tf.train.checkpoints_iterator(
@@ -333,7 +334,7 @@ class Controller:
       self.restore_checkpoint(checkpoint_path)
       self.evaluate(steps)
 
-  def restore_checkpoint(self, checkpoint_path: Optional[str]=None):
+  def restore_checkpoint(self, checkpoint_path: Optional[str] = None):
     """Restores the model from a checkpoint.
 
     :param checkpoint_path: An optional string specifying the checkpoint path to
@@ -415,13 +416,13 @@ class Controller:
     current_step = self._global_step.numpy()
     steps_per_second = self._step_timer.steps_per_second()
     _log('train | step: {:7d} | steps/sec: {:6.1f} | output: {}'.format(
-      current_step, steps_per_second, _format_output(train_output)))
+        current_step, steps_per_second, _format_output(train_output)))
 
     train_output['steps_per_second'] = steps_per_second
     self._summary_manager.write_summaries(train_output)
     self._summary_manager.flush()
 
-  def _maybe_save_checkpoint(self, check_interval: bool=True):
+  def _maybe_save_checkpoint(self, check_interval: bool = True):
     """Conditionally saves a checkpoint.
 
     A checkpoint is saved if a `CheckpointManager` is available, and if the
@@ -437,8 +438,8 @@ class Controller:
     if self._checkpoint_manager and \
        self._checkpoint_manager.checkpoint_interval:
       ckpt_path = self._checkpoint_manager.save(
-        checkpoint_number=self._global_step.numpy(),
-        check_interval=check_interval)
+          checkpoint_number=self._global_step.numpy(),
+          check_interval=check_interval)
       if ckpt_path is not None:
         _log('Save checkpoint to {}'.format(ckpt_path))
         return True

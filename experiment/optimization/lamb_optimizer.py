@@ -1,5 +1,4 @@
 import re
-import warnings
 
 import numpy as np
 import tensorflow as tf
@@ -94,18 +93,18 @@ class LAMB(tf.keras.optimizers.Optimizer):
     beta2_p = tf.pow(beta2_t, local_step)
     apply_state[(var_device, var_dtype)].update(
         dict(
-            weight_decay = weight_decay,
-            epsilon = tf.convert_to_tensor(self._epsilon, var_dtype),
-            beta1_t = beta1_t,
-            beta1_p = beta1_p,
-            one_minus_beta1_t = 1 - beta1_t,
-            beta2_t = beta2_t,
-            beta2_p = beta2_p,
-            one_minus_beta2_t = 1 - beta2_t,
+            weight_decay=weight_decay,
+            epsilon=tf.convert_to_tensor(self._epsilon, var_dtype),
+            beta1_t=beta1_t,
+            beta1_p=beta1_p,
+            one_minus_beta1_t=1 - beta1_t,
+            beta2_t=beta2_t,
+            beta2_p=beta2_p,
+            one_minus_beta2_t=1 - beta2_t,
         )
     )
 
-  def _resource_apply_dense(self, grad, var, apply_state = None):
+  def _resource_apply_dense(self, grad, var, apply_state=None):
     var_device, var_dtype = var.device, var.dtype.base_dtype
     coefficients = (apply_state or {}).get(
         (var_device, var_dtype)
@@ -133,7 +132,7 @@ class LAMB(tf.keras.optimizers.Optimizer):
 
     ratio = 1.0
     if self._do_layer_adaptation(var):
-      w_n = tf.norm(var,    ord=2)
+      w_n = tf.norm(var, ord=2)
       g_n = tf.norm(update, ord=2)
       ratio = tf.where(
           tf.greater(w_n, 0),
@@ -174,7 +173,7 @@ class LAMB(tf.keras.optimizers.Optimizer):
 
     ratio = 1.0
     if self._do_layer_adaptation(var):
-      w_n = tf.norm(var,    ord=2)
+      w_n = tf.norm(var, ord=2)
       g_n = tf.norm(update, ord=2)
       ratio = tf.where(
           tf.greater(w_n, 0),
@@ -189,14 +188,14 @@ class LAMB(tf.keras.optimizers.Optimizer):
   def get_config(self):
     config = super(LAMB, self).get_config()
     config.update({
-      'learning_rate': self._serialize_hyperparameter('learning_rate'),
-      'weight_decay': self._serialize_hyperparameter('weight_decay'),
-      'decay': self._serialize_hyperparameter('decay'),
-      'beta_1': self._serialize_hyperparameter('beta_1'),
-      'beta_2': self._serialize_hyperparameter('beta_2'),
-      'epsilon': self._epsilon,
-      'exclude_weight_decay': self._exclude_weight_decay,
-      'exclude_layer_adaptation': self._exclude_layer_adaptation,
+        'learning_rate': self._serialize_hyperparameter('learning_rate'),
+        'weight_decay': self._serialize_hyperparameter('weight_decay'),
+        'decay': self._serialize_hyperparameter('decay'),
+        'beta_1': self._serialize_hyperparameter('beta_1'),
+        'beta_2': self._serialize_hyperparameter('beta_2'),
+        'epsilon': self._epsilon,
+        'exclude_weight_decay': self._exclude_weight_decay,
+        'exclude_layer_adaptation': self._exclude_layer_adaptation,
     })
     return config
 

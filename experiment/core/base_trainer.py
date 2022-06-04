@@ -73,13 +73,22 @@ class _AsyncTrainer(orbit.StandardTrainer, orbit.StandardEvaluator):
   def distribute_dataset(self, dataset_or_fn, *args, **kwargs):
     """A utility function to help create a `tf.distribute.DistributedDataset`.
 
-    :param dataset_or_fn: A instance of `tf.data.Dataset`, or a "dataset function"
-        returning a `tf.data.Dataset`. If it is a function, it may optionally
-        have an argument named `input_context` which will be passed a
-        `tf.distribute.InputContext` instance.
-    :param *args: Any positional arguments to pass through to `dataset_or_fn`.
-    :param **kwargs: Any keyword arguments to pass through to `dataset_or_fn`.
-    :return: A distributed Dataset.
+    Parameters
+    ==========
+    dataset_or_fn :
+        A instance of `tf.data.Dataset`, or a "dataset function" returning a
+        `tf.data.Dataset`. If it is a function, it may optionally have an
+        argument named `input_context` which will be passed a
+        tf.distribute.InputContext` instance.
+    args :
+        Any positional arguments to pass through to `dataset_or_fn`.
+    kwargs :
+        Any keyword arguments to pass through to `dataset_or_fn`.
+
+    Returns
+    =======
+    tf.data.Dataset:
+        A distributed Dataset.
     """
     if getattr(self, "_is_async", False):
       per_worker_dataset_fn = functools.partial(
@@ -122,22 +131,30 @@ class Trainer(_AsyncTrainer):
           tf.data.Dataset, tf.distribute.DistributedDataset]] = None,
       checkpoint_exporter=None):
     """Initialize common trainer for TensorFlow models.
-    :param config: An `ExperimentConfig` instance specifying experiment config.
-    :param task: A base_task.Task instance.
-    :param model: The model instance, e.g. a tf.keras.Model instance.
-    :param optimizer: tf.optimizers.Optimizer instance.
-    :param train: bool, whether or not this trainer will be used for training.
-        default to True.
-    :param evaluate: bool, whether or not this trainer will be used for evaluation.
-        default to True.
-    :param train_dataset: a dataset object created for training. With tf.distribute,
-        it needs to be a `DistributedDataset`.
-    :param validation_dataset: a dataset object created for evaluation. With
-        tf.distribute, it needs to be a `DistributedDataset`. The evaluator will
-        create a dataset iterator for each eval round, so the dataset does not
-        need to repeat.
-    :param checkpoint_exporter: an object that has the `maybe_export_checkpoint`
-        interface.
+
+    Parameters
+    ==========
+    config : ExperimentConfig
+        An `ExperimentConfig` instance specifying experiment config.
+    task : base_task.Task
+        The task instance.
+    model : tf.keras.Model
+        The model instance, e.g. a tf.keras.Model instance.
+    optimizer : tf.optimizers.Optimizer
+        The optimizer instance.
+    train : bool, default True
+        Whether this trainer will be used for training.
+    evaluate : bool, default True
+        Whether this trainer will be used for evaluation.
+    train_dataset : tf.data.Dataset or tf.distribute.DistributedDataset
+        A dataset object created for training.
+        With tf.distribute, it needs to be a `DistributedDataset`.
+    validation_dataset : tf.data.Dataset or tf.distribute.DistributedDataset
+        A dataset object created for evaluation. With tf.distribute, it needs to
+        be a `DistributedDataset`. The evaluator will create a dataset
+        iterator for each eval round, so the dataset does not need to repeat.
+    checkpoint_exporter : optional
+        An object that has the `maybe_export_checkpoint` interface.
     """
     # Gets the current distribution strategy. If not inside any strategy scope,
     # it gets a single-replica no-op strategy.
@@ -219,9 +236,14 @@ class Trainer(_AsyncTrainer):
         \train_data
         \validation_data
 
-    :param config: a namedtuple, dataclass, ConfigDict, etc.
-    :param check_train_data: whether to check task.train_data field.
-    :param check_validation_data: whether to check task.validation_data field.
+    Parameters
+    ==========
+    config :
+        A namedtuple, dataclass, ConfigDict, etc.
+    check_train_data : bool, default True
+        Whether to check task.train_data field.
+    check_validation_data : bool, default True
+        Whether to check task.validation_data field.
     """
     if not hasattr(config, "trainer"):
       raise AttributeError("The trainer requires the configuration contains an"

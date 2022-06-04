@@ -80,7 +80,7 @@ class ExponentialMovingAverage(tf.keras.optimizers.Optimizer):
       self.add_slot(var, 'average', initializer='zeros')
 
     self._average_weights = [
-      self.get_slot(var, 'avreage') for var in self._model_weights]
+        self.get_slot(var, 'avreage') for var in self._model_weights]
 
   @property
   def has_shadow_copy(self):
@@ -89,7 +89,7 @@ class ExponentialMovingAverage(tf.keras.optimizers.Optimizer):
 
   def _create_slots(self, var_list):
     self._optimizer._create_slots(
-      var_list=var_list)  # pylint: disable=protected-access
+        var_list=var_list)  # pylint: disable=protected-access
 
   def apply_gradients(self, grads_and_vars, name: Optional[Text] = None):
     result = self._optimizer.apply_gradients(grads_and_vars, name)
@@ -168,8 +168,8 @@ class ExponentialMovingAverage(tf.keras.optimizers.Optimizer):
     their average.
     """
     assign_op = tf.group([
-      var.assign(self.get_slot(var, 'average')) for var in var_list
-      if var.trainable
+        var.assign(self.get_slot(var, 'average')) for var in var_list
+        if var.trainable
     ])
     return assign_op
 
@@ -178,7 +178,7 @@ class ExponentialMovingAverage(tf.keras.optimizers.Optimizer):
 
   def _prepare(self, var_list):
     return self._optimizer._prepare(
-      var_list=var_list)  # pylint: disable=protected-access
+        var_list=var_list)  # pylint: disable=protected-access
 
   @property
   def iterations(self):
@@ -214,17 +214,19 @@ class ExponentialMovingAverage(tf.keras.optimizers.Optimizer):
         grad, var, indices)
 
   def get_config(self):
-    config = {
-      'optimizer'    : tf.keras.optimizers.serialize(self._optimizer),
-      'average_decay': self._average_decay,
-      'start_step'   : self._start_step,
-      'dynamic_decay': self._dynamic_decay,
-    }
-    base_config = super(ExponentialMovingAverage, self).get_config()
-    return dict(list(base_config.items()) + list(config.items()))
+    config = super(ExponentialMovingAverage, self).get_config()
+    # pylint: disable=bad-whitespace
+    config.update({
+        'optimizer'    : tf.keras.optimizers.serialize(self._optimizer),
+        'average_decay': self._average_decay,
+        'start_step'   : self._start_step,
+        'dynamic_decay': self._dynamic_decay,
+    })
+    # pylint: enable=bad-whitespace
+    return config
 
   @classmethod
-  def from_config(cls, config, custom_objects = None):
+  def from_config(cls, config, custom_objects=None):
     optimizer = tf.keras.optimizers.descrialize(
         config.pop('optimizer'),
         custom_objects=custom_objects)

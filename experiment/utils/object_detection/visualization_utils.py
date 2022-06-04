@@ -26,29 +26,29 @@ _TITLE_LEFT_MARGIN = 10
 _TITLE_TOP_MARGIN = 10
 
 STANDARD_COLORS = [
-  'AliceBlue', 'Chartreuse', 'Aqua', 'Aquamarine', 'Azure', 'Beige', 'Bisque',
-  'BlanchedAlmond', 'BlueViolet', 'BurlyWood', 'CadetBlue', 'AntiqueWhite',
-  'Chocolate', 'Coral', 'CornflowerBlue', 'Cornsilk', 'Crimson', 'Cyan',
-  'DarkCyan', 'DarkGoldenRod', 'DarkGrey', 'DarkKhaki', 'DarkOrange',
-  'DarkOrchid', 'DarkSalmon', 'DarkSeaGreen', 'DarkTurquoise', 'DarkViolet',
-  'DeepPink', 'DeepSkyBlue', 'DodgerBlue', 'FireBrick', 'FloralWhite',
-  'ForestGreen', 'Fuchsia', 'Gainsboro', 'GhostWhite', 'Gold', 'GoldenRod',
-  'Salmon', 'Tan', 'HoneyDew', 'HotPink', 'IndianRed', 'Ivory', 'Khaki',
-  'Lavender', 'LavenderBlush', 'LawnGreen', 'LemonChiffon', 'LightBlue',
-  'LightCoral', 'LightCyan', 'LightGoldenRodYellow', 'LightGray', 'LightGrey',
-  'LightGreen', 'LightPink', 'LightSalmon', 'LightSeaGreen', 'LightSkyBlue',
-  'LightSlateGray', 'LightSlateGrey', 'LightSteelBlue', 'LightYellow', 'Lime',
-  'LimeGreen', 'Linen', 'Magenta', 'MediumAquaMarine', 'MediumOrchid',
-  'MediumPurple', 'MediumSeaGreen', 'MediumSlateBlue', 'MediumSpringGreen',
-  'MediumTurquoise', 'MediumVioletRed', 'MintCream', 'MistyRose', 'Moccasin',
-  'NavajoWhite', 'OldLace', 'Olive', 'OliveDrab', 'Orange', 'OrangeRed',
-  'Orchid', 'PaleGoldenRod', 'PaleGreen', 'PaleTurquoise', 'PaleVioletRed',
-  'PapayaWhip', 'PeachPuff', 'Peru', 'Pink', 'Plum', 'PowderBlue', 'Purple',
-  'Red', 'RosyBrown', 'RoyalBlue', 'SaddleBrown', 'Green', 'SandyBrown',
-  'SeaGreen', 'SeaShell', 'Sienna', 'Silver', 'SkyBlue', 'SlateBlue',
-  'SlateGray', 'SlateGrey', 'Snow', 'SpringGreen', 'SteelBlue', 'GreenYellow',
-  'Teal', 'Thistle', 'Tomato', 'Turquoise', 'Violet', 'Wheat', 'White',
-  'WhiteSmoke', 'Yellow', 'YellowGreen',
+    'AliceBlue', 'Chartreuse', 'Aqua', 'Aquamarine', 'Azure', 'Beige', 'Bisque',
+    'BlanchedAlmond', 'BlueViolet', 'BurlyWood', 'CadetBlue', 'AntiqueWhite',
+    'Chocolate', 'Coral', 'CornflowerBlue', 'Cornsilk', 'Crimson', 'Cyan',
+    'DarkCyan', 'DarkGoldenRod', 'DarkGrey', 'DarkKhaki', 'DarkOrange',
+    'DarkOrchid', 'DarkSalmon', 'DarkSeaGreen', 'DarkTurquoise', 'DarkViolet',
+    'DeepPink', 'DeepSkyBlue', 'DodgerBlue', 'FireBrick', 'FloralWhite',
+    'ForestGreen', 'Fuchsia', 'Gainsboro', 'GhostWhite', 'Gold', 'GoldenRod',
+    'Salmon', 'Tan', 'HoneyDew', 'HotPink', 'IndianRed', 'Ivory', 'Khaki',
+    'Lavender', 'LavenderBlush', 'LawnGreen', 'LemonChiffon', 'LightBlue',
+    'LightCoral', 'LightCyan', 'LightGoldenRodYellow', 'LightGray', 'LightGrey',
+    'LightGreen', 'LightPink', 'LightSalmon', 'LightSeaGreen', 'LightSkyBlue',
+    'LightSlateGray', 'LightSlateGrey', 'LightSteelBlue', 'LightYellow', 'Lime',
+    'LimeGreen', 'Linen', 'Magenta', 'MediumAquaMarine', 'MediumOrchid',
+    'MediumPurple', 'MediumSeaGreen', 'MediumSlateBlue', 'MediumSpringGreen',
+    'MediumTurquoise', 'MediumVioletRed', 'MintCream', 'MistyRose', 'Moccasin',
+    'NavajoWhite', 'OldLace', 'Olive', 'OliveDrab', 'Orange', 'OrangeRed',
+    'Orchid', 'PaleGoldenRod', 'PaleGreen', 'PaleTurquoise', 'PaleVioletRed',
+    'PapayaWhip', 'PeachPuff', 'Peru', 'Pink', 'Plum', 'PowderBlue', 'Purple',
+    'Red', 'RosyBrown', 'RoyalBlue', 'SaddleBrown', 'Green', 'SandyBrown',
+    'SeaGreen', 'SeaShell', 'Sienna', 'Silver', 'SkyBlue', 'SlateBlue',
+    'SlateGray', 'SlateGrey', 'Snow', 'SpringGreen', 'SteelBlue', 'GreenYellow',
+    'Teal', 'Thistle', 'Tomato', 'Turquoise', 'Violet', 'Wheat', 'White',
+    'WhiteSmoke', 'Yellow', 'YellowGreen',
 ]
 
 
@@ -118,10 +118,10 @@ def draw_bounding_box_on_image_array(
     xmin,
     ymax,
     xmax,
-    color = 'red',
-    thickness = 4,
-    display_str_list = (),
-    use_normalized_coordinates = True):
+    color='red',
+    thickness=4,
+    display_str_list=(),
+    use_normalized_coordinates=True):
   """Adds a bounding box to an image (numpy array).
 
   Bounding box coordinates can be specified in either absolute (pixel) or
@@ -162,10 +162,10 @@ def draw_bounding_box_on_image(
     xmin,
     ymax,
     xmax,
-    color = 'red',
-    thickness = 4,
-    display_str_list = (),
-    use_normalized_coordinates = True):
+    color='red',
+    thickness=4,
+    display_str_list=(),
+    use_normalized_coordinates=True):
   """Adds a bounding box to an image.
 
   Bounding box coordinates can be specified in either absolute (pixel) or
@@ -242,9 +242,9 @@ def draw_bounding_box_on_image(
 def draw_bounding_boxes_on_image_array(
     image,
     boxes,
-    color = 'red',
-    thickness = 4,
-    display_str_list_list = ()):
+    color='red',
+    thickness=4,
+    display_str_list_list=()):
   """Draws bounding boxes on image (numpy array).
 
   Parameters
@@ -271,9 +271,9 @@ def draw_bounding_boxes_on_image_array(
 def draw_bounding_boxes_on_image(
     image,
     boxes,
-    color = 'red',
-    thickness = 4,
-    display_str_list_list = ()):
+    color='red',
+    thickness=4,
+    display_str_list_list=()):
   """Draws bounding boxes on image.
 
   Parameters
@@ -368,13 +368,13 @@ def draw_bounding_boxes_on_image_tensors(
     classes,
     scores,
     category_index,
-    original_image_spatial_shape = None,
-    true_image_shape = None,
-    instance_masks = None,
-    keypoints = None,
-    max_boxes_to_draw = 20,
-    min_score_thresh = 0.2,
-    use_normalized_coordinates = True):
+    original_image_spatial_shape=None,
+    true_image_shape=None,
+    instance_masks=None,
+    keypoints=None,
+    max_boxes_to_draw=20,
+    min_score_thresh=0.2,
+    use_normalized_coordinates=True):
   """Draws bounding boxes, masks, and keypoints on batch of image tensors.
 
   Parameters
@@ -420,13 +420,15 @@ def draw_bounding_boxes_on_image_tensors(
     images = images[:, :, :, 0:3]
   elif images.shape[3] == 1:
     images = tf.image.grayscale_to_rgb(images)
+  # pylint: disable=bad-whitespace
   visualization_keyword_args = {
-    'use_normalized_coordinates': use_normalized_coordinates,
-    'max_boxes_to_draw'         : max_boxes_to_draw,
-    'min_score_thresh'          : min_score_thresh,
-    'agnostic_mode'             : False,
-    'line_thickness'            : 4
+      'use_normalized_coordinates': use_normalized_coordinates,
+      'max_boxes_to_draw'         : max_boxes_to_draw,
+      'min_score_thresh'          : min_score_thresh,
+      'agnostic_mode'             : False,
+      'line_thickness'            : 4
   }
+  # pylint: enable=bad-whitespace
   if true_image_shape is None:
     true_shapes = tf.constant(-1, shape=[images.shape.as_list()[0], 3])
   else:
@@ -442,8 +444,8 @@ def draw_bounding_boxes_on_image_tensors(
         category_index=category_index,
         **visualization_keyword_args)
     elems = [
-      true_shapes, original_shapes, images, boxes, classes, scores,
-      instance_masks
+        true_shapes, original_shapes, images, boxes, classes, scores,
+        instance_masks
     ]
   elif instance_masks is None and keypoints is not None:
     visualize_boxes_fn = functools.partial(
@@ -451,7 +453,7 @@ def draw_bounding_boxes_on_image_tensors(
         category_index=category_index,
         **visualization_keyword_args)
     elems = [
-      true_shapes, original_shapes, images, boxes, classes, scores, keypoints
+        true_shapes, original_shapes, images, boxes, classes, scores, keypoints
     ]
   elif instance_masks is not None and keypoints is not None:
     visualize_boxes_fn = functools.partial(
@@ -459,8 +461,8 @@ def draw_bounding_boxes_on_image_tensors(
         category_index=category_index,
         **visualization_keyword_args)
     elems = [
-      true_shapes, original_shapes, images, boxes, classes, scores,
-      instance_masks, keypoints
+        true_shapes, original_shapes, images, boxes, classes, scores,
+        instance_masks, keypoints
     ]
   else:
     visualize_boxes_fn = functools.partial(
@@ -490,9 +492,9 @@ def draw_bounding_boxes_on_image_tensors(
 def draw_keypoints_on_image_array(
     image,
     keypoints,
-    color = 'red',
-    radius = 2,
-    use_normalized_coordinates = True):
+    color='red',
+    radius=2,
+    use_normalized_coordinates=True):
   """Draws keypoints on an image (numpy array).
 
   Parameters
@@ -518,9 +520,9 @@ def draw_keypoints_on_image_array(
 def draw_keypoints_on_image(
     image,
     keypoints,
-    color = 'red',
-    radius = 2,
-    use_normalized_coordinates = True):
+    color='red',
+    radius=2,
+    use_normalized_coordinates=True):
   """Draws keypoints on an image.
 
   Parameters
@@ -551,7 +553,7 @@ def draw_keypoints_on_image(
                  fill=color)
 
 
-def draw_mask_on_image_array(image, mask, color = 'red', alpha = 0.4):
+def draw_mask_on_image_array(image, mask, color='red', alpha=0.4):
   """Draws mask on an image.
 
   Parameters
@@ -597,17 +599,17 @@ def visualize_boxes_and_labels_on_image_array(
     classes,
     scores,
     category_index,
-    instance_masks = None,
-    instance_boundaries = None,
-    keypoints = None,
-    use_normalized_coordinates = False,
-    max_boxes_to_draw = 20,
-    min_score_thresh = .5,
-    agnostic_mode = False,
-    line_thickness = 4,
-    groundtruth_box_visualization_color = 'black',
-    skip_scores = False,
-    skip_labels = False):
+    instance_masks=None,
+    instance_boundaries=None,
+    keypoints=None,
+    use_normalized_coordinates=False,
+    max_boxes_to_draw=20,
+    min_score_thresh=.5,
+    agnostic_mode=False,
+    line_thickness=4,
+    groundtruth_box_visualization_color='black',
+    skip_scores=False,
+    skip_labels=False):
   """Overlay labeled boxes on an image with formatted scores and label names.
 
   This function groups boxes that correspond to the same location

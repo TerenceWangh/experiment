@@ -29,11 +29,16 @@ class PruningAction:
   ):
     """Initializes the instance.
 
-    :param export_dir: `str` for the export directory of the pruning summaries.
-      model: `tf.keras.Model` model instance used for training. This will
-        be used to assign a pruning step to each prunable weight.
-    :param optimizer: `tf.keras.optimizers.Optimizer` optimizer instance used
-        for training. This will be used to find the current training steps.
+    Parameters
+    ==========
+    export_dir : str
+        The export directory of the pruning summaries.
+    model : tf.keras.Model
+        The model instance used for training. This will be used to assign
+        a pruning step to each prunable weight.
+    optimizer : tf.keras.optimizers.Optimizer
+        The optimizer instance used for training. This will be used to find the
+        current training steps.
     """
     self._optimizer = optimizer
     self.update_pruning_step = tfmot.sparsity.keras.UpdatePruningStep()
@@ -49,7 +54,10 @@ class PruningAction:
   def __call__(self, output: orbit.runner.Output):
     """Update pruning step and log pruning summaries.
 
-    :param output: The train output.
+    Parameters
+    ==========
+    output : orbit.runner.Output
+        The train output.
     """
     self.update_pruning_step.on_epoch_end(batch=None)
     self.pruning_summaries.on_epoch_begin(epoch=None)
@@ -72,12 +80,17 @@ class EMACheckpointing:
       max_to_keep: int = 1):
     """Initializes the instance.
 
-    :param export_dir: `str` for the export directory of the EMA average weights.
-    :param optimizer: `tf.keras.optimizers.Optimizer` optimizer instance used for
-        training. This will be used to swap the model weights with the average
-        weights.
-    :param checkpoint: `tf.train.Checkpoint` instance.
-    :param max_to_keep: `int` for max checkpoints to keep in ema_checkpoints subdir.
+    Parameters
+    ==========
+    export_dir : str
+        The export directory of the EMA average weights.
+    optimizer : tf.keras.optimizers.Optimizer
+        The optimizer instance used for training. This will be used to swap
+        the model weights with the average weights.
+    checkpoint : tf.train.Checkpoint
+        The instance of checkpoint.
+    max_to_keep : int, default 1
+        The max checkpoints to keep in  ema_checkpoints subdir.
     """
     if not isinstance(optimizer, optimization.ExponentialMovingAverage):
       raise ValueError('Optimizer has to be instance of',
@@ -119,7 +132,8 @@ class RecoveryAction:
   def __call__(self, _):
     """Recovers the training by triggering checkpoint restoration."""
     checkpoint_path = self.checkpoint_manager.restore_or_initialize()
-    logging.warning('Recovering the model from checkpoint: %s.', checkpoint_path)
+    logging.warning(
+        'Recovering the model from checkpoint: %s.', checkpoint_path)
 
 
 class RecoveryCondition:
@@ -150,8 +164,9 @@ class RecoveryCondition:
       self.recover_counter += 1
       if self.recover_counter > self.recovery_max_trials:
         raise RuntimeError(
-            f'The loss value is {loss_value}, which is larger than the bound {self.loss_upper_bound}, happens {self.recover_counter} times.'
-        )
+            'The loss value is {}, which is larger than the bound {}, happens '
+            '{} times.'.format(
+                loss_value, self.loss_upper_bound, self.recover_counter))
       return True
     return False
 
@@ -173,10 +188,11 @@ def get_eval_actions(params: config_definitions.ExperimentConfig,
 
 
 @gin.configurable
-def get_train_actions(params: config_definitions.ExperimentConfig,
-                      trainer: base_trainer.Trainer,
-                      model_dir: str,
-                      checkpoint_manager: tf.train.CheckpointManager) -> List[orbit.Action]:
+def get_train_actions(
+    params: config_definitions.ExperimentConfig,
+    trainer: base_trainer.Trainer,
+    model_dir: str,
+    checkpoint_manager: tf.train.CheckpointManager) -> List[orbit.Action]:
   """Get train actions for trainer."""
   train_actions = []
   # add pruning callback actions.

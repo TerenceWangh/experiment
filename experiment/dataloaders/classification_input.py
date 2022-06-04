@@ -26,17 +26,18 @@ class ClassificationDecoder(Decoder):
       keys_to_features: Optional[Dict[str, Any]] = None):
     if not keys_to_features:
       keys_to_features = {
-        image_field_key:
-          tf.io.FixedLenFeature((), tf.string, default_value='')
+          image_field_key:
+              tf.io.FixedLenFeature((), tf.string, default_value='')
       }
 
       if is_multilabel:
         keys_to_features.update({
-          label_field_key: tf.io.VarLenFeature(dtype=tf.int64)
+            label_field_key: tf.io.VarLenFeature(dtype=tf.int64)
         })
       else:
         keys_to_features.update({
-          label_field_key: tf.io.FixedLenFeature((), tf.int64, default_value=-1)
+            label_field_key: tf.io.FixedLenFeature(
+                (), tf.int64, default_value=-1)
         })
 
     self._keys_to_features = keys_to_features

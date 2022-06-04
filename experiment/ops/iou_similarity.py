@@ -46,9 +46,9 @@ def intersection(gt_boxes, boxes):
   """
   with tf.name_scope('Intersection'):
     y_min1, x_min1, y_max1, x_max1 = tf.split(
-      value=gt_boxes, num_or_size_splits=4, axis=-1)
+        value=gt_boxes, num_or_size_splits=4, axis=-1)
     y_min2, x_min2, y_max2, x_max2 = tf.split(
-      value=boxes, num_or_size_splits=4, axis=-1)
+        value=boxes, num_or_size_splits=4, axis=-1)
 
     boxes_rank = len(boxes.shape)
     perm = [1, 0] if boxes_rank == 2 else [0, 2, 1]
@@ -99,15 +99,16 @@ def iou(gt_boxes, boxes):
     unions = gt_boxes_areas + boxes_areas
     unions = unions - intersections
     return tf.where(
-      tf.equal(intersections, 0.0), tf.zeros_like(intersections),
-      tf.truediv(intersections, unions))
+        tf.equal(intersections, 0.0),
+        tf.zeros_like(intersections),
+        tf.truediv(intersections, unions))
 
 
 class IoUSimilarity:
   """Class to compute similarity based on Intersection over Union (IOU) metric.
   """
 
-  def __init__(self, mask_value = -1):
+  def __init__(self, mask_value=-1):
     """Constructor IoUSimilarity.
 
     Parameters
@@ -118,7 +119,7 @@ class IoUSimilarity:
     self._mask_value = mask_value
 
 
-  def __call__(self, boxes1, boxes2, boxes1_masks = None, boxes2_masks = None):
+  def __call__(self, boxes1, boxes2, boxes1_masks=None, boxes2_masks=None):
     """Compute pairwise IOU similarity between ground truth boxes and anchors.
 
     B: batch_size.
@@ -149,21 +150,20 @@ class IoUSimilarity:
 
     if boxes1_rank < 2 or boxes1_rank > 3:
       raise ValueError(
-        '`ground_truth_boxes` must be rank 2 or 3, got {}'.format(boxes1_rank))
+          'ground_truth_boxes must be rank 2 or 3, got {}'.format(boxes1_rank))
     if boxes2_rank < 2 or boxes2_rank > 3:
       raise ValueError(
-        '`anchors` must be rank 2 or 3, got {}'.format(boxes2_rank))
+          'anchors must be rank 2 or 3, got {}'.format(boxes2_rank))
     if boxes1_rank < boxes2_rank:
       raise ValueError(
-        '`ground_truth_boxes` is unbatched while `anchors` is batched is not a '
-        'valid use case, got ground_truth_box rank {}, and anchors rank '
-        '{}'.format(boxes1_rank, boxes2_rank))
+          'ground_truth_boxes is unbatched while `anchors` is batched is not'
+          ' a valid use case, got ground_truth_box rank {}, and anchors rank '
+          '{}'.format(boxes1_rank, boxes2_rank))
 
     result = iou(boxes1, boxes2)
     if boxes1_masks is None and boxes2_masks is None:
       return result
 
-    background_mask = None
     mask_value_t = tf.cast(self._mask_value, result.dtype) * \
                    tf.ones_like(result)
     perm = [1, 0] if boxes2_rank == 2 else [0, 2, 1]

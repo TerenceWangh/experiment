@@ -1,5 +1,6 @@
 """Adam optimizer with weight decay that exactly matches the original BERT."""
 
+from typing import Optional, List
 import re
 import tensorflow as tf
 
@@ -20,16 +21,16 @@ class AdamWeightDecay(tf.keras.optimizers.Adam):
   """
 
   def __init__(self,
-               learning_rate = 0.001,
-               beta_1 = 0.9,
-               beta_2 = 0.999,
-               epsilon = 1e-7,
-               amsgrad = False,
-               weight_decay = 0.0,
-               include_weight_decay = None,
-               exclude_weight_decay = None,
-               gradient_clip_norm = 1.0,
-               name = 'AdamWeightDecay',
+               learning_rate: float = 0.001,
+               beta_1: float = 0.9,
+               beta_2: float = 0.999,
+               epsilon: float = 1e-7,
+               amsgrad: bool = False,
+               weight_decay: float = 0.0,
+               include_weight_decay: Optional[List[str]] = None,
+               exclude_weight_decay: Optional[List[str]] = None,
+               gradient_clip_norm: float = 1.0,
+               name: str = 'AdamWeightDecay',
                **kwargs):
     super(AdamWeightDecay, self).__init__(learning_rate, beta_1, beta_2,
                                           epsilon, amsgrad, name, **kwargs)
@@ -42,7 +43,7 @@ class AdamWeightDecay(tf.keras.optimizers.Adam):
     super(AdamWeightDecay, self)._prepare_local(var_device, var_dtype,
                                                 apply_state)
     apply_state[(var_device, var_dtype)]['weight_decay'] = tf.constant(
-      self._weight_decay, name='adam_weight_decay')
+        self._weight_decay, name='adam_weight_decay')
 
   def _decay_weights_op(self, var, learning_rate, apply_state):
     do_decay = self._do_use_weight_decay(var.name)
@@ -53,8 +54,10 @@ class AdamWeightDecay(tf.keras.optimizers.Adam):
           use_locking=self._use_locking)
     return tf.no_op()
 
-  def apply_gradients(self, grads_and_vars, name = None,
-                      experimental_aggregate_gradients = True):
+  def apply_gradients(self,
+                      grads_and_vars,
+                      name=None,
+                      experimental_aggregate_gradients=True):
     grads, tvars = list(zip(*grads_and_vars))
     if experimental_aggregate_gradients and self.gradient_clip_norm > 0.0:
       # when experimental_aggregate_gradients = False, apply_gradients() no
@@ -81,7 +84,7 @@ class AdamWeightDecay(tf.keras.optimizers.Adam):
 
     return coefficients['learning_rate_t'], dict(apply_state=apply_state)
 
-  def _resource_apply_dense(self, grad, var, apply_state = None):
+  def _resource_apply_dense(self, grad, var, apply_state=None):
     learning_rate_t, kwargs = self._get_learning_rate(
         var.device, var.dtype.base_dtype, apply_state)
     decay = self._decay_weights_op(var, learning_rate_t, apply_state)
@@ -89,7 +92,7 @@ class AdamWeightDecay(tf.keras.optimizers.Adam):
       return super(AdamWeightDecay, self)._resource_apply_dense(
           grad, var, **kwargs)
 
-  def _resource_apply_sparse(self, grad, var, indices, apply_state = None):
+  def _resource_apply_sparse(self, grad, var, indices, apply_state=None):
     learning_rate_t, kwargs = self._get_learning_rate(
         var.device, var.dtype.base_dtype, apply_state)
     decay = self._decay_weights_op(var, learning_rate_t, apply_state)
@@ -100,7 +103,7 @@ class AdamWeightDecay(tf.keras.optimizers.Adam):
   def get_config(self):
     config = super(AdamWeightDecay, self).get_config()
     config.update({
-      'weight_decay': self._weight_decay,
+        'weight_decay': self._weight_decay,
     })
     return config
 

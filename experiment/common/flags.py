@@ -29,8 +29,8 @@ def define_flags():
 
   flags.DEFINE_enum(
       'mode', default=None, enum_values=[
-        'train', 'eval', 'train_and_eval', 'continuous_eval',
-        'continuous_train_and_eval', 'train_and_validate'
+          'train', 'eval', 'train_and_eval', 'continuous_eval',
+          'continuous_train_and_eval', 'train_and_validate'
       ],
       help='Mode to run: `train`, `eval`, `train_and_eval`, '
            '`continuous_eval`, `continuous_train_and_eval` and '

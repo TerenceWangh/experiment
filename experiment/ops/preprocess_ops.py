@@ -10,7 +10,7 @@ from experiment.ops import box_ops
 CENTER_CROP_FRACTION = 0.875
 
 
-def clip_or_pad_to_fixed_size(input_tensor, size, constant_values = 0):
+def clip_or_pad_to_fixed_size(input_tensor, size, constant_values=0):
   """Pads data to a fixed length at the first dimension.
 
   Parameters
@@ -55,8 +55,8 @@ def clip_or_pad_to_fixed_size(input_tensor, size, constant_values = 0):
 
 def normalize_image(
     image,
-    offset = (0.485, 0.456, 0.406),
-    scale = (0.229, 0.224, 0.225)):
+    offset=(0.485, 0.456, 0.406),
+    scale=(0.229, 0.224, 0.225)):
   """Normalizes the image to zero mean and unit variance."""
   with tf.name_scope('normalize_image'):
     image = tf.image.convert_image_dtype(image, dtype=tf.float32)
@@ -107,10 +107,10 @@ def resize_and_crop_image(
     image,
     desired_size,
     padded_size,
-    aug_scale_min = 1.0,
-    aug_scale_max = 1.0,
-    seed = 1,
-    method = tf.image.ResizeMethod.BILINEAR):
+    aug_scale_min=1.0,
+    aug_scale_max=1.0,
+    seed=1,
+    method=tf.image.ResizeMethod.BILINEAR):
   """Resizes the input image to output size (RetinaNet style).
 
   Resize and pad images given the desired output size of the image and
@@ -184,7 +184,7 @@ def resize_and_crop_image(
       max_offset = scaled_size - desired_size
       max_offset = tf.where(
           tf.less(max_offset, 0), tf.zeros_like(max_offset), max_offset)
-      offset = max_offset * tf.random.uniform([2, ], 0, 1, seed=seed)
+      offset = max_offset * tf.random.uniform([2,], 0, 1, seed=seed)
       offset = tf.cast(offset, tf.int32)
     else:
       offset = tf.zeros((2,), tf.int32)
@@ -194,17 +194,17 @@ def resize_and_crop_image(
 
     if random_jittering:
       scaled_image = scaled_image[
-                     offset[0]:offset[0] + desired_size[0],
-                     offset[1]:offset[1] + desired_size[1], :]
+          offset[0]:offset[0] + desired_size[0],
+          offset[1]:offset[1] + desired_size[1], :]
 
     output_image = tf.image.pad_to_bounding_box(
         scaled_image, 0, 0, padded_size[0], padded_size[1])
 
     image_info = tf.stack([
-      image_size,
-      tf.constant(desired_size, dtype=tf.float32),
-      image_scale,
-      tf.cast(offset, tf.float32)])
+        image_size,
+        tf.constant(desired_size, dtype=tf.float32),
+        image_scale,
+        tf.cast(offset, tf.float32)])
     return output_image, image_info
 
 
@@ -213,10 +213,10 @@ def resize_and_crop_image_v2(
     short_side,
     long_side,
     padded_size,
-    aug_scale_min = 1.0,
-    aug_scale_max = 1.0,
-    seed = 1,
-    method = tf.image.ResizeMethod.BILINEAR):
+    aug_scale_min=1.0,
+    aug_scale_max=1.0,
+    seed=1,
+    method=tf.image.ResizeMethod.BILINEAR):
   """Resizes the input image to output size (Faster R-CNN style).
 
   Resize and pad images given the specified short / long side length and the
@@ -299,7 +299,7 @@ def resize_and_crop_image_v2(
       max_offset = scaled_size - desired_size
       max_offset = tf.where(
           tf.math.less(max_offset, 0), tf.zeros_like(max_offset), max_offset)
-      offset = max_offset * tf.random.uniform([2, ], 0, 1, seed=seed)
+      offset = max_offset * tf.random.uniform([2,], 0, 1, seed=seed)
       offset = tf.cast(offset, tf.int32)
     else:
       offset = tf.zeros((2,), tf.int32)
@@ -309,17 +309,17 @@ def resize_and_crop_image_v2(
 
     if random_jittering:
       scaled_image = scaled_image[
-                     offset[0]:offset[0] + desired_size[0],
-                     offset[1]:offset[1] + desired_size[1], :]
+          offset[0]:offset[0] + desired_size[0],
+          offset[1]:offset[1] + desired_size[1], :]
 
     output_image = tf.image.pad_to_bounding_box(
         scaled_image, 0, 0, padded_size[0], padded_size[1])
 
     image_info = tf.stack([
-      image_size,
-      tf.cast(desired_size, dtype=tf.float32),
-      image_scale,
-      tf.cast(offset, tf.float32)])
+        image_size,
+        tf.cast(desired_size, dtype=tf.float32),
+        image_scale,
+        tf.cast(offset, tf.float32)])
     return output_image, image_info
 
 
@@ -360,7 +360,7 @@ def resize_image(
       dimension / original dimension.
   """
 
-  def get_size_with_aspect_ratio(image_size, size, max_size = None):
+  def get_size_with_aspect_ratio(image_size, size, max_size=None):
     h = image_size[0]
     w = image_size[1]
     if max_size is not None:
@@ -393,7 +393,7 @@ def resize_image(
 
     return tf.stack([oh, ow])
 
-  def get_size(image_size, size, max_size = None):
+  def get_size(image_size, size, max_size=None):
     if isinstance(size, (list, tuple)):
       return size[::-1]
     else:
@@ -405,10 +405,10 @@ def resize_image(
       image, tf.cast(size, tf.int32), method=method)
   image_scale = size / orignal_size
   image_info = tf.stack([
-    tf.cast(orignal_size, dtype=tf.float32),
-    tf.cast(size, dtype=tf.float32),
-    tf.cast(image_scale, tf.float32),
-    tf.constant([0.0, 0.0], dtype=tf.float32)
+      tf.cast(orignal_size, dtype=tf.float32),
+      tf.cast(size, dtype=tf.float32),
+      tf.cast(image_scale, tf.float32),
+      tf.constant([0.0, 0.0], dtype=tf.float32)
   ])
   return rescaled_image, image_info
 
@@ -441,8 +441,8 @@ def center_crop_image(image):
     crop_offset = tf.cast((image_size - crop_size) / 2.0, dtype=tf.int32)
     crop_size = tf.cast(crop_size, dtype=tf.int32)
     cropped_image = image[
-                    crop_offset[0]:crop_offset[0] + crop_size,
-                    crop_offset[1]:crop_offset[1] + crop_size, :]
+        crop_offset[0]:crop_offset[0] + crop_size,
+        crop_offset[1]:crop_offset[1] + crop_size, :]
     return cropped_image
 
 
@@ -487,10 +487,10 @@ def center_crop_image_v2(image_bytes, image_shape):
 
 def random_crop_image(
     image,
-    aspect_ratio_range = (3. / 4., 4. / 3.),
-    area_range = (0.08, 1.0),
-    max_attempts = 10,
-    seed = 1):
+    aspect_ratio_range=(3. / 4., 4. / 3.),
+    area_range=(0.08, 1.0),
+    max_attempts=10,
+    seed=1):
   """Randomly crop an arbitrary shaped slice from the input image.
 
   Parameters
@@ -531,10 +531,10 @@ def random_crop_image(
 def random_crop_image_v2(
     image_bytes,
     image_shape,
-    aspect_ratio_range = (3. / 4., 4. / 3.),
-    area_range = (0.08, 1.0),
-    max_attempts = 10,
-    seed = 1):
+    aspect_ratio_range=(3. / 4., 4. / 3.),
+    area_range=(0.08, 1.0),
+    max_attempts=10,
+    seed=1):
   """Randomly crop an arbitrary shaped slice from the input image.
 
   This is a faster version of `random_crop_image` which takes the original
@@ -652,10 +652,10 @@ def resize_and_crop_masks(
         masks, scaled_size, method=tf.image.ResizeMethod.NEAREST_NEIGHBOR)
     offset = tf.cast(offset, tf.int32)
     scaled_masks = scaled_masks[
-                   :,
-                   offset[0]:offset[0] + output_size[0],
-                   offset[1]:offset[1] + output_size[1],
-                   :]
+        :,
+        offset[0]:offset[0] + output_size[0],
+        offset[1]:offset[1] + output_size[1],
+        :]
 
     output_masks = tf.image.pad_to_bounding_box(
         scaled_masks, 0, 0, output_size[0], output_size[1])
@@ -685,7 +685,7 @@ def horizontal_flip_masks(masks):
 
 
 def random_horizontal_flip(
-    image, normalized_boxes = None, masks = None, seed = 1):
+    image, normalized_boxes=None, masks=None, seed=1):
   """Randomly flips input image and bounding boxes."""
   with tf.name_scope('random_horizontal_flip'):
     do_flip = tf.greater(tf.random.uniform([], seed=seed), 0.5)
@@ -915,25 +915,21 @@ def random_crop_image_with_boxes_and_labels(
     top = tf.random.uniform([], 0, original_h - new_h, dtype=tf.int32)
     bottom = top + new_h
 
-    normalized_left = tf.cast(
-        left, dtype=tf.float32) / tf.cast(
+    normalized_left = tf.cast(left, dtype=tf.float32) / tf.cast(
         original_w, dtype=tf.float32)
-    normalized_right = tf.cast(
-        right, dtype=tf.float32) / tf.cast(
+    normalized_right = tf.cast(right, dtype=tf.float32) / tf.cast(
         original_w, dtype=tf.float32)
-    normalized_top = tf.cast(
-        top, dtype=tf.float32) / tf.cast(
+    normalized_top = tf.cast(top, dtype=tf.float32) / tf.cast(
         original_h, dtype=tf.float32)
-    normalized_bottom = tf.cast(
-        bottom, dtype=tf.float32) / tf.cast(
+    normalized_bottom = tf.cast(bottom, dtype=tf.float32) / tf.cast(
         original_h, dtype=tf.float32)
 
     cropped_box = tf.expand_dims(
         tf.stack([
-          normalized_top,
-          normalized_left,
-          normalized_bottom,
-          normalized_right,
+            normalized_top,
+            normalized_left,
+            normalized_bottom,
+            normalized_right,
         ]),
         axis=0)
     iou = box_ops.bbox_overlap(
@@ -957,11 +953,11 @@ def random_crop_image_with_boxes_and_labels(
       indices = tf.squeeze(tf.where(mask), axis=1)
 
       filtered_boxes = tf.gather(boxes, indices)
+      original_boxes = tf.stack(
+          [original_h, original_w, original_h, original_w])
 
       boxes = tf.clip_by_value(
-          (filtered_boxes[..., :] * tf.cast(
-              tf.stack([original_h, original_w, original_h, original_w]),
-              dtype=tf.float32) -
+          (filtered_boxes[..., :] * tf.cast(original_boxes, dtype=tf.float32) -
            tf.cast(tf.stack([top, left, top, left]), dtype=tf.float32)) /
           tf.cast(tf.stack([new_h, new_w, new_h, new_w]), dtype=tf.float32),
           0.0, 1.0)
@@ -979,11 +975,11 @@ def random_crop(
     image,
     boxes,
     labels,
-    min_scale = 0.3,
-    aspect_ratio_range = (0.5, 2.0),
-    min_overlap_params = (0.0, 1.4, 0.2, 0.1),
-    max_retry = 50,
-    seed = None):
+    min_scale=0.3,
+    aspect_ratio_range=(0.5, 2.0),
+    min_overlap_params=(0.0, 1.4, 0.2, 0.1),
+    max_retry=50,
+    seed=None):
   """Randomly crop the image and boxes, filtering labels.
 
   Parameters
@@ -1021,10 +1017,8 @@ def random_crop(
   with tf.name_scope('random_crop'):
     do_crop = tf.greater(tf.random.uniform([], seed=seed), 0.5)
     if do_crop:
-      return random_crop_image_with_boxes_and_labels(image, boxes, labels,
-                                                     min_scale,
-                                                     aspect_ratio_range,
-                                                     min_overlap_params,
-                                                     max_retry)
+      return random_crop_image_with_boxes_and_labels(
+          image, boxes, labels, min_scale, aspect_ratio_range,
+          min_overlap_params, max_retry)
     else:
       return image, boxes, labels

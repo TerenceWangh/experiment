@@ -8,19 +8,21 @@ from experiment.dataloaders import tfds_factory
 class TFDSFactoryTest(tf.test.TestCase, parameterized.TestCase):
 
   def _create_test_example(self):
+    # pylint: disable=bad-whitespace
     serialized_example = {
-      'image'             : tf.ones(shape=(100, 100, 3), dtype=tf.uint8),
-      'label'             : 1,
-      'image/id'          : 0,
-      'objects'           : {
-        'label'   : 1,
-        'is_crowd': 0,
-        'area'    : 0.5,
-        'bbox'    : [0.1, 0.2, 0.3, 0.4]
-      },
-      'segmentation_label': tf.ones((100, 100, 1), dtype=tf.uint8),
-      'image_left'        : tf.ones(shape=(100, 100, 3), dtype=tf.uint8)
+        'image'             : tf.ones(shape=(100, 100, 3), dtype=tf.uint8),
+        'label'             : 1,
+        'image/id'          : 0,
+        'objects'           : {
+            'label'   : 1,
+            'is_crowd': 0,
+            'area'    : 0.5,
+            'bbox'    : [0.1, 0.2, 0.3, 0.4]
+        },
+        'segmentation_label': tf.ones((100, 100, 1), dtype=tf.uint8),
+        'image_left'        : tf.ones(shape=(100, 100, 3), dtype=tf.uint8)
     }
+    # pylint: enable=bad-whitespace
     return serialized_example
 
   @parameterized.parameters(

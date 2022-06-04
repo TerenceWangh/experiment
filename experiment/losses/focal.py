@@ -7,7 +7,11 @@ class FocalLoss(tf.keras.losses.Loss):
     [Focal Loss for Dense Object Detection](https://arxiv.org/abs/1708.02002).
   """
 
-  def __init__(self, alpha, gamma, reduction=tf.keras.losses.Rediction.AUTO, name=None):
+  def __init__(self,
+               alpha,
+               gamma,
+               reduction=tf.keras.losses.Rediction.AUTO,
+               name=None):
     """Initializes `FocalLoss`.
 
     Args:
@@ -44,21 +48,23 @@ class FocalLoss(tf.keras.losses.Loss):
       y_pred = tf.cast(y_pred, dtype=tf.float32)
       positive_label_mask = tf.equal(y_true, 1.0)
       cross_entropy = (
-        tf.nn.sigmoid_cross_entropy_with_logits(labels=y_true, logits=y_pred))
+          tf.nn.sigmoid_cross_entropy_with_logits(labels=y_true, logits=y_pred))
       probs = tf.sigmoid(y_pred)
       probs_gt = tf.where(positive_label_mask, probs, 1.0 - probs)
       modulator = tf.pow(1.0 - probs_gt, self._gamma)
       loss = modulator * cross_entropy
-      weighted_loss = tf.where(positive_label_mask, self._alpha * loss,
-        (1.0 - self._alpha) * loss)
+      weighted_loss = tf.where(
+          positive_label_mask,
+          self._alpha * loss,
+          (1.0 - self._alpha) * loss)
     return weighted_loss
 
   def get_config(self):
-    config = {
-      'alpha': self._alpha,
-      'gamma': self._gamma,
-    }
-    base_config = super(FocalLoss, self).get_config()
-    return dict(list(base_config.items()) + list(config.items()))
+    config = super(FocalLoss, self).get_config()
+    config.update({
+        'alpha': self._alpha,
+        'gamma': self._gamma,
+    })
+    return config
 
 

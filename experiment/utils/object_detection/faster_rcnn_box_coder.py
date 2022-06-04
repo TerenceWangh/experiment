@@ -24,7 +24,7 @@ EPSILON = 1e-8
 class FasterRCNNBoxCoder(BoxCoder):
   """Faster RCNN box coder."""
 
-  def __init__(self, scale_factors = None):
+  def __init__(self, scale_factors=None):
     """Constructor for FasterRCNNBoxCoder.
 
     Parameters

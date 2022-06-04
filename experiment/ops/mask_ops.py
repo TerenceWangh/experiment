@@ -82,10 +82,10 @@ def paste_instance_masks(masks,
     y_0 = min(max(ref_box[1], 0), image_height)
     y_1 = min(max(ref_box[3] + 1, 0), image_height)
 
-    im_mask[y_0:y_1, x_0:x_1] = mask[
-                                (y_0 - ref_box[1]):(y_1 - ref_box[1]),
-                                (x_0 - ref_box[0]):(x_1 - ref_box[0])
-                                ]
+    x_s, x_e = x_0 - ref_box[0], x_1 - ref_box[0]
+    y_s, y_e = y_0 - ref_box[1], y_1 - ref_box[1]
+
+    im_mask[y_0:y_1, x_0:x_1] = mask[y_s:y_e, x_s:x_e]
     segms.append(im_mask)
 
   segms = np.array(segms)
@@ -174,9 +174,11 @@ def paste_instance_masks_v2(masks,
     x1 = max(min(xmax_int, image_width), 0)
     y0 = max(min(ymin_int, image_height), 0)
     y1 = max(min(ymax_int, image_height), 0)
-    img_mask[y0:y1, x0:x1] = cropped_mask[
-                             (y0 - ymin_int):(y1 - ymin_int),
-                             (x0 - xmin_int):(x1 - xmin_int)]
+
+    x_s, x_e = x0 - xmin_int, x1 - xmin_int
+    y_s, y_e = y0 - ymin_int, y1 - ymin_int
+
+    img_mask[y0:y1, x0:x1] = cropped_mask[y_s:y_e, x_s:x_e]
 
     segms.append(img_mask)
 

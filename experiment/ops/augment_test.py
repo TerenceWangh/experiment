@@ -11,10 +11,10 @@ from experiment.ops import augment
 
 def get_dtype_test_cases():
   return [
-    ('uint8', tf.uint8),
-    ('int32', tf.int32),
-    ('float16', tf.float16),
-    ('float32', tf.float32),
+      ('uint8', tf.uint8),
+      ('int32', tf.int32),
+      ('float16', tf.float16),
+      ('float32', tf.float32),
   ]
 
 
@@ -33,11 +33,11 @@ class TransformsTest(parameterized.TestCase, tf.test.TestCase):
   def test_transform(self, dtype):
     image = tf.constant([[1, 2], [3, 4]], dtype=dtype)
     self.assertAllEqual(
-      augment.transform(image, transforms=[1] * 8), [[4, 4], [4, 4]])
+        augment.transform(image, transforms=[1] * 8), [[4, 4], [4, 4]])
 
   def test_translate(self, dtype):
     image = tf.constant(
-      [[1, 0, 1, 0], [0, 1, 0, 1], [1, 0, 1, 0], [0, 1, 0, 1]], dtype=dtype)
+        [[1, 0, 1, 0], [0, 1, 0, 1], [1, 0, 1, 0], [0, 1, 0, 1]], dtype=dtype)
     translations = [-1, -1]
     translated = augment.translate(image=image, translations=translations)
     expected = [[1, 0, 1, 1], [0, 1, 0, 0], [1, 0, 1, 1], [1, 0, 1, 1]]
@@ -71,13 +71,13 @@ class TransformsTest(parameterized.TestCase, tf.test.TestCase):
 
 class AutoaugmentTest(tf.test.TestCase, parameterized.TestCase):
   AVAILABLE_POLICIES = [
-    'v0',
-    'test',
-    'simple',
-    'reduced_cifar10',
-    'svhn',
-    'reduced_imagenet',
-    'detection_v0',
+      'v0',
+      'test',
+      'simple',
+      'reduced_cifar10',
+      'svhn',
+      'reduced_imagenet',
+      'detection_v0',
   ]
 
   def test_autoaugment(self):
@@ -129,10 +129,10 @@ class AutoaugmentTest(tf.test.TestCase, parameterized.TestCase):
 
     augmenter = augment.RandAugment.build_for_detection()
     self.assertCountEqual(augmenter.available_ops, [
-      'AutoContrast', 'Equalize', 'Invert', 'Posterize', 'Solarize', 'Color',
-      'Contrast', 'Brightness', 'Sharpness', 'Cutout', 'SolarizeAdd',
-      'Rotate_BBox', 'ShearX_BBox', 'ShearY_BBox', 'TranslateX_BBox',
-      'TranslateY_BBox'
+        'AutoContrast', 'Equalize', 'Invert', 'Posterize', 'Solarize', 'Color',
+        'Contrast', 'Brightness', 'Sharpness', 'Cutout', 'SolarizeAdd',
+        'Rotate_BBox', 'ShearX_BBox', 'ShearY_BBox', 'TranslateX_BBox',
+        'TranslateY_BBox'
     ])
 
     aug_image, aug_bboxes = augmenter.distort_with_boxes(image, bboxes)
@@ -250,12 +250,12 @@ class AutoaugmentTest(tf.test.TestCase, parameterized.TestCase):
                                                  replace_value, cutout_const,
                                                  translate_const)
       if op_name in {
-        'Rotate_BBox',
-        'ShearX_BBox',
-        'ShearY_BBox',
-        'TranslateX_BBox',
-        'TranslateY_BBox',
-        'TranslateY_Only_BBoxes',
+          'Rotate_BBox',
+          'ShearX_BBox',
+          'ShearY_BBox',
+          'TranslateX_BBox',
+          'TranslateY_BBox',
+          'TranslateY_Only_BBoxes',
       }:
         with self.assertRaises(ValueError):
           func(image, bboxes, *args)
@@ -286,10 +286,16 @@ class AutoaugmentTest(tf.test.TestCase, parameterized.TestCase):
     self.assertEqual((224, 224, 3), aug_image.shape)
 
   @parameterized.named_parameters(
-    {'testcase_name': '_OutOfRangeProb',
-     'sub_policy'   : ('Equalize', 1.1, 3), 'value': '1.1'},
-    {'testcase_name': '_OutOfRangeMag',
-     'sub_policy'   : ('Equalize', 0.9, 11), 'value': '11'},
+      {
+          'testcase_name': '_OutOfRangeProb',
+          'sub_policy': ('Equalize', 1.1, 3),
+          'value': '1.1'
+      },
+      {
+          'testcase_name': '_OutOfRangeMag',
+          'sub_policy': ('Equalize', 0.9, 11),
+          'value': '11'
+      },
   )
   def test_invalid_custom_sub_policy(self, sub_policy, value):
     """Test autoaugment with out-of-range values in the custom policy."""
@@ -358,17 +364,17 @@ class MixupAndCutmixTest(tf.test.TestCase, parameterized.TestCase):
     images = tf.random.normal((batch_size, 224, 224, 3), dtype=tf.float32)
     labels = tf.range(batch_size)
     augmenter = augment.MixupAndCutmix(
-      num_classes=num_classes, label_smoothing=label_smoothing)
+        num_classes=num_classes, label_smoothing=label_smoothing)
 
     aug_images, aug_labels = augmenter.distort(images, labels)
 
     self.assertEqual(images.shape, aug_images.shape)
     self.assertEqual(images.dtype, aug_images.dtype)
     self.assertEqual([batch_size, num_classes], aug_labels.shape)
-    self.assertAllLessEqual(aug_labels, 1. - label_smoothing +
-                            2. / num_classes)  # With tolerance
-    self.assertAllGreaterEqual(aug_labels, label_smoothing / num_classes -
-                               1e4)  # With tolerance
+    self.assertAllLessEqual(
+        aug_labels, 1. - label_smoothing + 2. / num_classes)  # With tolerance
+    self.assertAllGreaterEqual(
+        aug_labels, label_smoothing / num_classes - 1e4)  # With tolerance
 
   def test_mixup_changes_image(self):
     batch_size = 12
@@ -378,17 +384,17 @@ class MixupAndCutmixTest(tf.test.TestCase, parameterized.TestCase):
     images = tf.random.normal((batch_size, 224, 224, 3), dtype=tf.float32)
     labels = tf.range(batch_size)
     augmenter = augment.MixupAndCutmix(
-      mixup_alpha=1., cutmix_alpha=0., num_classes=num_classes)
+        mixup_alpha=1., cutmix_alpha=0., num_classes=num_classes)
 
     aug_images, aug_labels = augmenter.distort(images, labels)
 
     self.assertEqual(images.shape, aug_images.shape)
     self.assertEqual(images.dtype, aug_images.dtype)
     self.assertEqual([batch_size, num_classes], aug_labels.shape)
-    self.assertAllLessEqual(aug_labels, 1. - label_smoothing +
-                            2. / num_classes)  # With tolerance
-    self.assertAllGreaterEqual(aug_labels, label_smoothing / num_classes -
-                               1e4)  # With tolerance
+    self.assertAllLessEqual(
+        aug_labels, 1. - label_smoothing + 2. / num_classes)  # With tolerance
+    self.assertAllGreaterEqual(
+        aug_labels, label_smoothing / num_classes - 1e4)  # With tolerance
     self.assertFalse(tf.math.reduce_all(images == aug_images))
 
   def test_cutmix_changes_image(self):
@@ -399,17 +405,17 @@ class MixupAndCutmixTest(tf.test.TestCase, parameterized.TestCase):
     images = tf.random.normal((batch_size, 224, 224, 3), dtype=tf.float32)
     labels = tf.range(batch_size)
     augmenter = augment.MixupAndCutmix(
-      mixup_alpha=0., cutmix_alpha=1., num_classes=num_classes)
+        mixup_alpha=0., cutmix_alpha=1., num_classes=num_classes)
 
     aug_images, aug_labels = augmenter.distort(images, labels)
 
     self.assertEqual(images.shape, aug_images.shape)
     self.assertEqual(images.dtype, aug_images.dtype)
     self.assertEqual([batch_size, num_classes], aug_labels.shape)
-    self.assertAllLessEqual(aug_labels, 1. - label_smoothing +
-                            2. / num_classes)  # With tolerance
-    self.assertAllGreaterEqual(aug_labels, label_smoothing / num_classes -
-                               1e4)  # With tolerance
+    self.assertAllLessEqual(
+        aug_labels, 1. - label_smoothing + 2. / num_classes)  # With tolerance
+    self.assertAllGreaterEqual(
+        aug_labels, label_smoothing / num_classes - 1e4)  # With tolerance
     self.assertFalse(tf.math.reduce_all(images == aug_images))
 
 

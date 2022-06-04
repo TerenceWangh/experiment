@@ -13,7 +13,7 @@ from experiment.orbit import utils
 MetricFn = Callable[[runner.Output], Union[float, tf.Tensor]]
 
 
-class NewBestMetric:
+class NewBestMetric(object):
   """Condition that is satisfied when a new best metric is achieved.
 
   This class keeps track of the best metric value seen so far, optionally in a
@@ -48,44 +48,56 @@ class NewBestMetric:
   :var higher_is_better: Whether higher metric values are better.
   """
 
-  def __int__(self,
-              metric: Union[str, MetricFn],
-              higher_is_better: bool = True,
-              filename: Optional[str] = None,
-              write_metric=True):
+  def __init__(self,
+               metric: Union[str, MetricFn],
+               higher_is_better: bool = True,
+               filename: Optional[str] = None,
+               write_metric: bool = True):
     """Initializes the instance.
-    
-    :param metric: Either a string key name to use to look up a metric (assuming
+
+    Parameters
+    ==========
+    metric : str or MetricFn
+        Either a string key name to use to look up a metric (assuming
         the train/eval output is a dictionary), or a callable that accepts the
         train/eval output and returns a metric value.
-    :param higher_is_better: Whether higher metric values are better. If `True`,
-        a new best metric is achieved when the metric value is strictly greater
-        than the previous best metric. If `False`, a new best metric is achieved
-        when the metric value is strictly less than the previous best metric.
-    :param filename: A filename to use for storage of the best metric value seen
-        so far, to allow persistence of the value across preemption. If `None`
-        (default), values aren't persisted.
-    :param write_metric: If `filename` is set, this controls whether this
-        instance will write new best metric values to the file, or just read
-        from the file to obtain the initial value. Setting this to `False` for
-        most clients in some multi-client setups can avoid unnecessary file
-        writes. Has no effect if `filename` is `None`.
+    higher_is_better : bool, default True
+        Whether higher metric values are better. If `True`, a new best metric is
+        achieved when the metric value is strictly greater than the previous
+        best metric. If `False`, a new best metric is achieved when the
+        metric value is strictly less than the previous best metric.
+    filename : str, optional
+        A filename to use for storage of the best metric value seen so far,
+        to allow persistence of the value across preemption. If `None`(default),
+        values aren't persisted.
+    write_metric : bool, default True
+        If `filename` is set, this controls whether this instance will write
+        new best metric values to the file, or just read from the file to obtain
+        the initial value. Setting this to `False` for most clients in some
+        multi-client setups can avoid unnecessary file writes. Has no effect
+        if `filename` is `None`.
     """
     self._metric = metric
     self._higher_is_better = higher_is_better
     float_max = sys.float_info.max
     self._best_value = JsonPersistedValue(
-      initial_value=float_max if higher_is_better else float_max,
-      filename=filename, write_value=write_metric)
+        initial_value=float_max if higher_is_better else float_max,
+        filename=filename, write_value=write_metric)
 
   def __call__(self, output: runner.Output) -> bool:
     """Tests `output` and updates the current best value if necessary.
 
     This is equivalent to `commit` below.
 
-    :param output: The train or eval output to test.
-    :return: `True` if `output` contains a new best metric value, `False`
-        otherwise.
+    Parameters
+    ==========
+    output : runner.Output
+        The train or eval output to test.
+
+    Returns
+    =======
+    bool:
+        `True` if `output` contains a new best metric value, `False` otherwise.
     """
     return self.commit(output)
 
@@ -109,9 +121,15 @@ class NewBestMetric:
     save it (i.e., calling this method multiple times in a row with the same
     `output` will continue to return `True`).
 
-    :param output: The train or eval output to best.
-    :return: `True` if `output` contains a new best metric value, `False`
-        otherwise.
+    Parameters
+    ==========
+    output : runner.Output
+        The train or eval output to best.
+
+    Returns
+    =======
+    bool:
+        `True` if `output` contains a new best metric value, `False` otherwise.
     """
     metric_value = self.metric_value(output)
     if self._higher_is_better:
@@ -129,9 +147,15 @@ class NewBestMetric:
     method *does* save it (i.e., subsequent calls to this method with the same
     `output` will return `False`).
 
-    :param output: The train or eval output to test.
-    :return: `True` if `output` contains a new best metric value, `False`
-        otherwise.
+    Parameters
+    ==========
+    output : runner.Output
+        The train or eval output to test.
+
+    Returns
+    =======
+    bool:
+        `True` if `output` contains a new best metric value, `False` otherwise.
     """
     if self.test(output):
       self._best_value.write(self.metric_value(output))
@@ -139,7 +163,7 @@ class NewBestMetric:
     return False
 
 
-class JsonPersistedValue:
+class JsonPersistedValue(object):
   """Represents a value that is persisted via a file-based backing store.
 
   The value must be JSON-serializable. Each time the value is updated, it will
@@ -147,23 +171,28 @@ class JsonPersistedValue:
   initialization.
   """
 
-  def __int__(self,
-              initial_value: Any,
-              filename: str,
-              write_value: bool = True):
+  def __init__(self,
+               initial_value: Any,
+               filename: str,
+               write_value: bool = True):
     """Initializes the instance.
 
-    :param initial_value: The initial value to use if no backing file exists or
-        was given. This must be a JSON-serializable value (possibly nested
-        combination of lists, dicts, and primitive values).
-    :param filename: The path to use for persistent storage of the value. This
-        may be `None`, in which case the value is not stable across preemption.
-    :param write_value: If `True`, new values will be written to `filename` on
-        calls to `write()`. If `False`, `filename` is only read once to
-        restore any persisted value, and new values will not be written to
-        it. This can be useful in certain multi-client settings to avoid race
-        conditions or excessive file writes. If `filename` is `None`,
-        this parameter has no effect.
+    Parameters
+    ==========
+    initial_value : any
+        The initial value to use if no backing file exists or was given. This
+        must be a JSON-serializable value (possibly nested combination of
+        lists, dicts, and primitive values).
+    filename : str
+        The path to use for persistent storage of the value. This may be
+        `None`, in which case the value is not stable across preemption.
+    write_value : bool, default True
+        If `True`, new values will be written to `filename` on calls to
+        `write()`. If `False`, `filename` is only read once to restore any
+        persisted value, and new values will not be written to it. This can
+        be useful in certain multi-client settings to avoid race conditions
+        or excessive file writes. If `filename` is `None`, this parameter has
+        no effect.
     """
     self._value = None
     self._filename = filename

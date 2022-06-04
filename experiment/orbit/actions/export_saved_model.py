@@ -43,7 +43,7 @@ class ExportFileManager:
   """
 
   def __init__(self, base_name: str,
-               max_to_keep: int=5,
+               max_to_keep: int = 5,
                next_id_fn: Optional[Callable[[], int]] = None):
     """Initializes the instance.
 
@@ -95,7 +95,7 @@ class ExportSavedModel:
   def __init__(self, model: tf.Module,
                file_manager: ExportFileManager,
                signatures,
-               options: Optional[tf.saved_model.SaveOptions]=None):
+               options: Optional[tf.saved_model.SaveOptions] = None):
     """Initializes the instance.
 
     :param model: The model to export.

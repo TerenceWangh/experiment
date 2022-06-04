@@ -17,7 +17,7 @@ class MultiTaskBaseModel(tf.Module):
         represents the sub-task in the multi-task pool.
     """
     raise NotImplementedError(
-      '_instantiate_sub_task_models() is not implemented.')
+        '_instantiate_sub_task_models() is not implemented.')
 
   @property
   def sub_task(self):

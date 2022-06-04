@@ -201,14 +201,12 @@ class ResNet(tf.keras.Model):
           padding='same',
           kernel_initializer=self._kernel_initializer,
           kernel_regularizer=self._kernel_regularizer,
-          bias_regularizer=self._bias_regularizer)(
-          inputs)
+          bias_regularizer=self._bias_regularizer)(inputs)
       x = self._norm(
           axis=bn_axis,
           momentum=norm_momentum,
           epsilon=norm_epsilon,
-          trainable=bn_trainable)(
-          x)
+          trainable=bn_trainable)(x)
       x = tf_utils.get_activation(activation, use_keras_layer=True)(x)
     elif stem_type == 'v1':
       x = layers.Conv2D(
@@ -219,14 +217,12 @@ class ResNet(tf.keras.Model):
           padding='same',
           kernel_initializer=self._kernel_initializer,
           kernel_regularizer=self._kernel_regularizer,
-          bias_regularizer=self._bias_regularizer)(
-          inputs)
+          bias_regularizer=self._bias_regularizer)(inputs)
       x = self._norm(
           axis=bn_axis,
           momentum=norm_momentum,
           epsilon=norm_epsilon,
-          trainable=bn_trainable)(
-          x)
+          trainable=bn_trainable)(x)
       x = tf_utils.get_activation(activation, use_keras_layer=True)(x)
       x = layers.Conv2D(
           filters=int(32 * stem_depth_multiplier),
@@ -236,14 +232,12 @@ class ResNet(tf.keras.Model):
           padding='same',
           kernel_initializer=self._kernel_initializer,
           kernel_regularizer=self._kernel_regularizer,
-          bias_regularizer=self._bias_regularizer)(
-          x)
+          bias_regularizer=self._bias_regularizer)(x)
       x = self._norm(
           axis=bn_axis,
           momentum=norm_momentum,
           epsilon=norm_epsilon,
-          trainable=bn_trainable)(
-          x)
+          trainable=bn_trainable)(x)
       x = tf_utils.get_activation(activation, use_keras_layer=True)(x)
       x = layers.Conv2D(
           filters=int(64 * stem_depth_multiplier),
@@ -253,14 +247,12 @@ class ResNet(tf.keras.Model):
           padding='same',
           kernel_initializer=self._kernel_initializer,
           kernel_regularizer=self._kernel_regularizer,
-          bias_regularizer=self._bias_regularizer)(
-          x)
+          bias_regularizer=self._bias_regularizer)(x)
       x = self._norm(
           axis=bn_axis,
           momentum=norm_momentum,
           epsilon=norm_epsilon,
-          trainable=bn_trainable)(
-          x)
+          trainable=bn_trainable)(x)
       x = tf_utils.get_activation(activation, use_keras_layer=True)(x)
     else:
       raise ValueError('Stem type {} not supported.'.format(stem_type))
@@ -274,14 +266,12 @@ class ResNet(tf.keras.Model):
           padding='same',
           kernel_initializer=self._kernel_initializer,
           kernel_regularizer=self._kernel_regularizer,
-          bias_regularizer=self._bias_regularizer)(
-          x)
+          bias_regularizer=self._bias_regularizer)(x)
       x = self._norm(
           axis=bn_axis,
           momentum=norm_momentum,
           epsilon=norm_epsilon,
-          trainable=bn_trainable)(
-          x)
+          trainable=bn_trainable)(x)
       x = tf_utils.get_activation(activation, use_keras_layer=True)(x)
     else:
       x = layers.MaxPool2D(pool_size=3, strides=2, padding='same')(x)
@@ -379,28 +369,30 @@ class ResNet(tf.keras.Model):
     return tf.keras.layers.Activation('linear', name=name)(x)
 
   def get_config(self):
+    # pylint: disable=bad-whitespace
     config_dict = {
-      'model_id'                  : self._model_id,
-      'depth_multiplier'          : self._depth_multiplier,
-      'stem_type'                 : self._stem_type,
-      'resnetd_shortcut'          : self._resnetd_shortcut,
-      'replace_stem_max_pool'     : self._replace_stem_max_pool,
-      'activation'                : self._activation,
-      'se_ratio'                  : self._se_ratio,
-      'init_stochastic_depth_rate': self._init_stochastic_depth_rate,
-      'scale_stem'                : self._scale_stem,
-      'use_sync_bn'               : self._use_sync_bn,
-      'norm_momentum'             : self._norm_momentum,
-      'norm_epsilon'              : self._norm_epsilon,
-      'kernel_initializer'        : self._kernel_initializer,
-      'kernel_regularizer'        : self._kernel_regularizer,
-      'bias_regularizer'          : self._bias_regularizer,
-      'bn_trainable'              : self._bn_trainable,
+        'model_id'                  : self._model_id,
+        'depth_multiplier'          : self._depth_multiplier,
+        'stem_type'                 : self._stem_type,
+        'resnetd_shortcut'          : self._resnetd_shortcut,
+        'replace_stem_max_pool'     : self._replace_stem_max_pool,
+        'activation'                : self._activation,
+        'se_ratio'                  : self._se_ratio,
+        'init_stochastic_depth_rate': self._init_stochastic_depth_rate,
+        'scale_stem'                : self._scale_stem,
+        'use_sync_bn'               : self._use_sync_bn,
+        'norm_momentum'             : self._norm_momentum,
+        'norm_epsilon'              : self._norm_epsilon,
+        'kernel_initializer'        : self._kernel_initializer,
+        'kernel_regularizer'        : self._kernel_regularizer,
+        'bias_regularizer'          : self._bias_regularizer,
+        'bn_trainable'              : self._bn_trainable,
     }
+    # pylint: enable=bad-whitespace
     return config_dict
 
   @classmethod
-  def from_config(cls, config, custom_objects = None):
+  def from_config(cls, config, custom_objects=None):
     return cls(**config)
 
   @property

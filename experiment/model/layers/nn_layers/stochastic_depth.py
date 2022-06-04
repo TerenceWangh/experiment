@@ -48,11 +48,11 @@ class StochasticDepth(tf.keras.layers.Layer):
   def get_config(self):
     config = super(StochasticDepth, self).get_config()
     config.update({
-      'drop_rate': self._drop_rate,
+        'drop_rate': self._drop_rate,
     })
     return config
 
-  def call(self, inputs, training = None):
+  def call(self, inputs, training=None):
     if training is None:
       training = tf.keras.backend.learning_phase()
 

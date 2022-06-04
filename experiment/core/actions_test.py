@@ -27,18 +27,20 @@ class TestModel(tf.keras.Model):
 class ActionTest(tf.test.TestCase, parameterized.TestCase):
 
   @combinations.generate(
-    combinations.combine(
-      distribution=[
-        strategy_combinations.cloud_tpu_strategy,
-        strategy_combinations.one_device_strategy,
-      ],))
+      combinations.combine(
+          distribution=[
+              strategy_combinations.cloud_tpu_strategy,
+              strategy_combinations.one_device_strategy,
+          ],
+      )
+  )
   def test_ema_checkpointing(self, distribution):
     with distribution.scope():
       directory = self.create_tempdir()
       model = TestModel()
       optimizer = tf.keras.Optimizers.SGD()
       optimizer = optimization.ExponentialMovingAverage(
-        optimizer, trainable_wegits_only=False)
+          optimizer, trainable_wegits_only=False)
 
       # Creates average weights for the model variables.
       # Average weights are initialized to zero.
@@ -54,26 +56,30 @@ class ActionTest(tf.test.TestCase, parameterized.TestCase):
 
       ema_action({})
       self.assertNotEmpty(
-        tf.io.gfile.glob(os.path.join(directory, 'ema_checkpoints')))
+          tf.io.gfile.glob(os.path.join(directory, 'ema_checkpoints')))
 
       checkpoint.read(
-        tf.train.latest_checkpoint(
-          os.path.join(directory, 'ema_checkpoints')))
+          tf.train.latest_checkpoint(
+              os.path.join(directory, 'ema_checkpoints')))
 
       # Checks model.value is 0 after swapping.
       self.assertEqual(model(0.), 0)
 
       # Raises an error for a normal optimizer
-      with self.assertRaisesRegexp(ValueError, 'Optimizer has to be instance of.*'):
-        _ = actions.EMACheckpointing(directory, tf.keras.optimizers.SGD(), checkpoint)
+      with self.assertRaisesRegexp(ValueError,
+                                   'Optimizer has to be instance of.*'):
+        _ = actions.EMACheckpointing(
+            directory, tf.keras.optimizers.SGD(), checkpoint)
 
   @combinations.generate(
-  combinations.combine(
-      distribution=[
-          strategy_combinations.default_strategy,
-          strategy_combinations.cloud_tpu_strategy,
-          strategy_combinations.one_device_strategy_gpu,
-      ],))
+      combinations.combine(
+          distribution=[
+              strategy_combinations.default_strategy,
+              strategy_combinations.cloud_tpu_strategy,
+              strategy_combinations.one_device_strategy_gpu,
+          ],
+      )
+  )
   def test_recovery_condition(self, distribution):
     with distribution.scope():
       global_step = orbit.utils.create_global_step()
@@ -99,7 +105,9 @@ class ActionTest(tf.test.TestCase, parameterized.TestCase):
           distribution=[
               strategy_combinations.one_device_strategy_gpu,
               strategy_combinations.one_device_strategy,
-          ],))
+          ],
+      )
+  )
   def test_pruning(self, distribution):
     with distribution.scope():
       directory = self.get_temp_dir()

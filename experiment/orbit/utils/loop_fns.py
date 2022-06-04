@@ -36,8 +36,8 @@ def create_loop_fn(step_fn):
 
     :param iterator: A nested structure of `tf.data.Iterator` or
         `DistributedIterator`.
-    :param num_steps: The number of steps in the loop. If `num_steps == -1`, will
-        iterate until exhausting the iterator.
+    :param num_steps: The number of steps in the loop. If `num_steps == -1`,
+        will iterate until exhausting the iterator.
     :param state: An optional initial state before running the loop.
     :param reduce_fn: A callable taking two inputs, `state` and `value`, where
         `state` is the previous output from `reduce_fn`, and `value` is the
@@ -140,7 +140,7 @@ def create_tf_while_loop_fn_with_state(step_fn):
 
     def _get_relaxed_shape_structure(s):
       return tf.nest.pack_sequence_as(
-        state, [_get_relaxed_tensor_shape(t) for t in tf.nest.flatten(s)])
+          state, [_get_relaxed_tensor_shape(t) for t in tf.nest.flatten(s)])
 
     for _ in tf.range(num_steps):
       # Clear out the outer name scope so the ops created inside `tf.while_loop`
@@ -150,7 +150,7 @@ def create_tf_while_loop_fn_with_state(step_fn):
         # across iterations. This is useful to aggregate outputs from each step
         # and concat to `state`.
         tf.autograph.experimental.set_loop_options(
-          shape_invariants=[(state, _get_relaxed_shape_structure(state))])
+            shape_invariants=[(state, _get_relaxed_shape_structure(state))])
         outputs = step_fn(iterator)
         state = reduce_fn(state, outputs)
     return state

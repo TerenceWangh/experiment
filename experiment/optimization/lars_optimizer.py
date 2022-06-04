@@ -78,11 +78,11 @@ class LARS(tf.keras.optimizers.Optimizer):
 
     var_device, var_dtype = param.device, param.dtype.base_dtype
     coefficients = ((apply_state or {}).get((var_device, var_dtype)) or
-                   self._fallback_apply_state(var_device, var_dtype))
+                    self._fallback_apply_state(var_device, var_dtype))
     learning_rate = coefficients['lr_t']
 
     param_name = param.name
-    v =self. get_slot(param, 'momentum')
+    v = self.get_slot(param, 'momentum')
     if self._use_weight_decay(param_name):
       grad += self.weight_decay * param
 
@@ -90,12 +90,13 @@ class LARS(tf.keras.optimizers.Optimizer):
       trust_ratio = 1.0
       if self._do_layer_adaptation(param_name):
         w_norm = tf.norm(param, ord=2)
-        g_norm = tf.norm(grad,  ord=2)
+        g_norm = tf.norm(grad, ord=2)
         trust_ratio = tf.where(
-          tf.greater(w_norm, 0),
-          tf.where(tf.greater(g_norm, 0), (self.eeta * w_norm / g_norm), 1.0),
-          1.0
-        )
+            tf.greater(w_norm, 0),
+            tf.where(tf.greater(g_norm, 0),
+                     self.eeta * w_norm / g_norm,
+                     1.0),
+            1.0)
       scaled_lr = learning_rate * trust_ratio
 
       next_v = tf.multiply(self.momentum, v) + scaled_lr * grad
@@ -113,19 +114,20 @@ class LARS(tf.keras.optimizers.Optimizer):
 
       trust_ratio = 1.0
       if self._do_layer_adaptation(param_name):
-        w_norm = tf.norm(param,  ord=2)
+        w_norm = tf.norm(param, ord=2)
         v_norm = tf.norm(update, ord=2)
         trust_ratio = tf.where(
-          tf.greater(w_norm, 0),
-          tf.where(tf.greater(v_norm, 0), (self.eeta * w_norm / v_norm), 1.0),
-          1.0
-        )
+            tf.greater(w_norm, 0),
+            tf.where(tf.greater(v_norm, 0),
+                     self.eeta * w_norm / v_norm,
+                     1.0),
+            1.0)
       scaled_lr = trust_ratio * learning_rate
       next_param = param - scaled_lr * update
 
     return tf.group(*[
-      param.assign(next_param, use_locking=False),
-      v.assign(next_v, use_locking=False)
+        param.assign(next_param, use_locking=False),
+        v.assign(next_v, use_locking=False)
     ])
 
   def _resource_apply_sparse(self, grad, handle, indices, apply_state):
@@ -151,17 +153,19 @@ class LARS(tf.keras.optimizers.Optimizer):
 
   def get_config(self):
     config = super(LARS, self).get_config()
+    # pylint: disable=bad-whitespace
     config.update({
-      'learning_rate'   : self._serialize_hyperparameter('learning_rate'),
-      'decay'           : self._serialize_hyperparameter('decay'),
-      'momentum'        : self.momentum,
-      'classic_momentum': self.classic_momentum,
-      'weight_decay'    : self.weight_decay,
-      'eeta'            : self.eeta,
-      'nesterov'        : self.nesterov,
+        'learning_rate'   : self._serialize_hyperparameter('learning_rate'),
+        'decay'           : self._serialize_hyperparameter('decay'),
+        'momentum'        : self.momentum,
+        'classic_momentum': self.classic_momentum,
+        'weight_decay'    : self.weight_decay,
+        'eeta'            : self.eeta,
+        'nesterov'        : self.nesterov,
     })
+    # pylint: enable=bad-whitespace
     return config
 
   @classmethod
-  def from_config(cls, config, custom_objects = None):
+  def from_config(cls, config, custom_objects=None):
     return cls(**config)

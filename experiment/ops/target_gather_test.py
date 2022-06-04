@@ -7,13 +7,13 @@ class TargetGatherTest(tf.test.TestCase):
 
   def test_target_gather_batched(self):
     gt_boxes = tf.constant(
-      [[
-        [0, 0, 5, 5],
-        [0, 5, 5, 10],
-        [5, 0, 10, 5],
-        [5, 5, 10, 10],
-      ]],
-      dtype=tf.float32)
+        [[
+            [0, 0, 5, 5],
+            [0, 5, 5, 10],
+            [5, 0, 10, 5],
+            [5, 5, 10, 10],
+        ]],
+        dtype=tf.float32)
     gt_classes = tf.constant([[[2], [10], [3], [-1]]], dtype=tf.int32)
 
     labeler = target_gather.TargetGather()
@@ -27,19 +27,19 @@ class TargetGatherTest(tf.test.TestCase):
     matched_gt_boxes = labeler(gt_boxes, match_indices, box_mask)
 
     self.assertAllEqual(
-      matched_gt_classes.numpy(), [[[0], [3]]])
+        matched_gt_classes.numpy(), [[[0], [3]]])
     self.assertAllClose(
-      matched_gt_boxes.numpy(), [[[0, 0, 0, 0], [5, 0, 10, 5]]])
+        matched_gt_boxes.numpy(), [[[0, 0, 0, 0], [5, 0, 10, 5]]])
 
   def test_target_gather_unbatched(self):
     gt_boxes = tf.constant(
-      [
-        [0, 0, 5, 5],
-        [0, 5, 5, 10],
-        [5, 0, 10, 5],
-        [5, 5, 10, 10],
-      ],
-      dtype=tf.float32)
+        [
+            [0, 0, 5, 5],
+            [0, 5, 5, 10],
+            [5, 0, 10, 5],
+            [5, 5, 10, 10],
+        ],
+        dtype=tf.float32)
     gt_classes = tf.constant([[2], [10], [3], [-1]], dtype=tf.int32)
 
     labeler = target_gather.TargetGather()
@@ -53,9 +53,9 @@ class TargetGatherTest(tf.test.TestCase):
     matched_gt_boxes = labeler(gt_boxes, match_indices, box_mask)
 
     self.assertAllEqual(
-      matched_gt_classes.numpy(), [[0], [3]])
+        matched_gt_classes.numpy(), [[0], [3]])
     self.assertAllClose(
-      matched_gt_boxes.numpy(), [[0, 0, 0, 0], [5, 0, 10, 5]])
+        matched_gt_boxes.numpy(), [[0, 0, 0, 0], [5, 0, 10, 5]])
 
 
 if __name__ == '__main__':

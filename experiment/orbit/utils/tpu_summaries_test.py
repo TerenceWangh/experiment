@@ -38,7 +38,7 @@ class DummyTrainer(tf.Module):
 
   @train_function_with_summaries(
       input_signature=[tf.TensorSpec((), dtype=tf.int32)])
-  def train_with_tpu_summary_optimization_and_input_signature(self, num_steps):
+  def train_with_tpu_summary_optimization_and_signature(self, num_steps):
     for _ in tf.range(num_steps):
       tf.summary.scalar("step", self.step_counter, step=self.step_counter)
       self.step_counter.assign_add(1)
@@ -89,9 +89,9 @@ class TpuSummariesTest(tf.test.TestCase):
 
   def test_train_with_tpu_summary_optimization_and_input_signature(self):
     output = self._validate_tpu_summary_optimization(
-        self.trainer.train_with_tpu_summary_optimization_and_input_signature)
+        self.trainer.train_with_tpu_summary_optimization_and_signature)
     self.assertEqual(output, self.trainer.step_counter.numpy())
-    function = self.trainer.train_with_tpu_summary_optimization_and_input_signature
+    function = self.trainer.train_with_tpu_summary_optimization_and_signature
     expected = (tf.TensorSpec((), dtype=tf.int32),)
     input_signature = function.with_summaries.input_signature
     self.assertEqual(input_signature, expected)

@@ -27,7 +27,7 @@ class BoxMatcher:
       assigned positive_value.
   """
 
-  def __init__(self, thresholds, indicators, force_match_for_each_col = False):
+  def __init__(self, thresholds, indicators, force_match_for_each_col=False):
     """Construct BoxMatcher.
 
     Parameters
@@ -53,9 +53,9 @@ class BoxMatcher:
       raise ValueError('`threshold` must be sorted, got {}.'.format(thresholds))
     self._indicators = indicators
     if len(indicators) != len(thresholds) + 1:
-      raise ValueError('len(`indicators`) must be len(`thresholds`) + 1, got '
-                       'indicators {}, threshold {}.'.format(
-        indicators, thresholds))
+      raise ValueError(
+          'len(`indicators`) must be len(`thresholds`) + 1, got indicators {}, '
+          'threshold {}.'.format(indicators, thresholds))
 
     thresholds = thresholds[:]
     thresholds.insert(0, -float('inf'))
@@ -124,10 +124,10 @@ class BoxMatcher:
           lo_threshold = tf.cast(lo, matched_type)
           hi_threshold = tf.cast(hi, matched_type)
           mask = tf.logical_and(
-            tf.greater_equal(matched_values, lo_threshold),
-            tf.less(matched_values, hi_threshold))
+              tf.greater_equal(matched_values, lo_threshold),
+              tf.less(matched_values, hi_threshold))
           matched_indicators = self._set_values_using_indicator(
-            matched_indicators, mask, index)
+              matched_indicators, mask, index)
 
         if self._force_match_for_each_col:
           # [batch_size, M], for each col (gt_box), find the best matching

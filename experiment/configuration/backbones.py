@@ -93,19 +93,6 @@ class MobileDet(Config):
 @dataclasses.dataclass
 class Backbone(OneOfConfig):
   """Configuration for backbones.
-
-  ------
-
-  **Attributes**:
-    - type: 'str', type of backbone be used, one of the fields below.
-    - resnet: resnet backbone config.
-    - dilated_resnet: dilated resnet backbone for semantic segmentation config.
-    - revnet: revnet backbone config.
-    - efficientnet: efficientnet backbone config.
-    - spinenet: spinenet backbone config.
-    - spinenet_mobile: mobile spinenet backbone config.
-    - mobilenet: mobilenet backbone config.
-    - mobiledet: mobiledet backbone config.
   """
   type: Optional[str] = None
   resnet: ResNet = ResNet()

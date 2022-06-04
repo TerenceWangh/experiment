@@ -39,9 +39,9 @@ class ArgMaxMatcher(Matcher):
 
   def __init__(self,
                matched_threshold,
-               unmatched_threshold = None,
-               negatives_lower_than_unmatched = True,
-               force_match_for_each_row = False):
+               unmatched_threshold=None,
+               negatives_lower_than_unmatched=True,
+               force_match_for_each_row=False):
     """Construct ArgMaxMatcher.
 
     Parameters
@@ -85,10 +85,10 @@ class ArgMaxMatcher(Matcher):
 
     if not negatives_lower_than_unmatched:
       if self._unmatched_threshold == self._matched_threshold:
-        raise ValueError('When negatives are in between matched and unmatched '
-                         'thresholds, these cannot be of equal value. '
-                         'matched: {}, unmatched: {}'.format(
-            self._matched_threshold, self._unmatched_threshold))
+        raise ValueError(
+            'When negatives are in between matched and unmatched thresholds, '
+            'these cannot be of equal value. matched: {}, unmatched: {}'.format(
+                self._matched_threshold, self._unmatched_threshold))
     self._force_match_for_each_row = force_match_for_each_row
     self._negatives_lower_than_unmatched = negatives_lower_than_unmatched
 

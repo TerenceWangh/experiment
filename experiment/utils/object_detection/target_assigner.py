@@ -27,14 +27,14 @@ KEYPOINTS_FIELD_NAME = 'keypoints'
 class TargetAssigner:
   """Target assigner to compute classification and regression targets."""
 
-  def __init__(
-      self,
-      similarity_calc,
-      matcher,
-      box_coder,
-      negative_class_weight = 1.0,
-      unmatched_cls_target = None):
+  def __init__(self,
+               similarity_calc,
+               matcher,
+               box_coder,
+               negative_class_weight=1.0,
+               unmatched_cls_target=None):
     """Construct Object Detection Target Assigner.
+
     Parameters
     ----------
     similarity_calc : RegionSimilarityCalculator
@@ -74,13 +74,12 @@ class TargetAssigner:
   def box_coder(self):
     return self._box_coder
 
-  def assign(
-      self,
-      anchors,
-      groundtruth_boxes,
-      groundtruth_labels = None,
-      groundtruth_weights = None,
-      **params):
+  def assign(self,
+             anchors,
+             groundtruth_boxes,
+             groundtruth_labels=None,
+             groundtruth_weights=None,
+             **params):
     """Assign classification and regression targets to each anchor.
 
     For a given set of anchors and groundtruth detections, match anchors
@@ -305,7 +304,8 @@ class TargetAssigner:
     Returns
     -------
     tf.Tensor
-        A float32 tensor with shape [num_anchors] representing regression weights.
+        A float32 tensor with shape [num_anchors] representing regression
+        weights.
     """
     return match.gather_based_on_match(
         groundtruth_weights, ignored_value=0., unmatched_value=0.)
@@ -353,14 +353,13 @@ class TargetAssigner:
 class OlnTargetAssigner(TargetAssigner):
   """Target assigner to compute classification and regression targets."""
 
-  def __init__(
-      self,
-      similarity_calc,
-      matcher,
-      box_coder,
-      negative_class_weight = 1.0,
-      unmatched_cls_target = None,
-      center_matcher = None):
+  def __init__(self,
+               similarity_calc,
+               matcher,
+               box_coder,
+               negative_class_weight=1.0,
+               unmatched_cls_target=None,
+               center_matcher=None):
     """Construct Object Detection Target Assigner.
 
     Parameters
@@ -402,13 +401,12 @@ class OlnTargetAssigner(TargetAssigner):
     # centerness-matcher with independent sampling IoU threshold.
     self._center_matcher = center_matcher
 
-  def assign(
-      self,
-      anchors,
-      groundtruth_boxes,
-      groundtruth_labels = None,
-      groundtruth_weights = None,
-      **params):
+  def assign(self,
+             anchors,
+             groundtruth_boxes,
+             groundtruth_labels=None,
+             groundtruth_weights=None,
+             **params):
     """Assign classification and regression targets to each anchor.
 
     For a given set of anchors and groundtruth detections, match anchors
@@ -506,9 +504,9 @@ class OlnTargetAssigner(TargetAssigner):
           groundtruth_boxes.get(), anchors.get())
       match = self._matcher.match(match_quality_matrix, **params)
       reg_targets, matched_gt_boxlist, matched_anchors_mask = (
-        self._create_regression_targets(anchors,
-                                        groundtruth_boxes,
-                                        match))
+          self._create_regression_targets(anchors,
+                                          groundtruth_boxes,
+                                          match))
       cls_targets = self._create_classification_targets(groundtruth_labels,
                                                         match)
       reg_weights = self._create_regression_weights(match, groundtruth_weights)
