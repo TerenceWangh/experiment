@@ -1,7 +1,8 @@
-runtime:
+gruntime:
   distribution_strategy: 'mirrored'
-  mixed_precision_dtype: 'float16'
+  mixed_precision_dtype: 'float32'
   loss_scale: 'dynamic'
+  num_gpus: 2
 task:
   model:
     num_classes: 1001
@@ -15,18 +16,20 @@ task:
     one_hot: true
     label_smoothing: 0.1
   train_data:
-    input_path: 'imagenet-2012-tfrecord/train*'
+    tfds_name: 'imagenet2012'
+    tfds_split: 'train'
     is_training: true
-    global_batch_size: 2048
-    dtype: 'float16'
+    global_batch_size: 128
+    dtype: 'float32'
     # Autotuning the prefetch buffer size causes OOMs, so set it to a reasonable
     # static value: 32.
     prefetch_buffer_size: 32
   validation_data:
-    input_path: 'imagenet-2012-tfrecord/valid*'
+    tfds_name: 'imagenet2012'
+    tfds_split: 'validation'
     is_training: false
-    global_batch_size: 2048
-    dtype: 'float16'
+    global_batch_size: 128
+    dtype: 'float32'
     drop_remainder: false
     prefetch_buffer_size: 32
 trainer:
