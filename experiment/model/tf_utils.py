@@ -49,7 +49,7 @@ def get_activation(identifier, use_keras_layer=False):
       }
       # pylint: enable=bad-whitespace
       if identifier in keras_layer_allow_list:
-        return tf.keras.layers.Activation(identifier)
+        return tf.keras.layers.Activation(keras_layer_allow_list[identifier])
 
     # pylint: disable=bad-whitespace
     name_to_fn = {
