@@ -1,2 +1,3 @@
 from experiment.model.layers.nn_blocks.bottleneck_block import BottleneckBlock
+from experiment.model.layers.nn_blocks.bottleneck_block import InvertedBottleneckBlock
 from experiment.model.layers.nn_blocks.residual_block import ResidualBlock
