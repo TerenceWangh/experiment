@@ -17,7 +17,7 @@ class DepthwiseSeparableConvBlock(tf.keras.layers.Layer):
                activation: Text = 'relu6',
                kernel_initializer: Text = 'VarianceScaling',
                kernel_regularizer: Optional[
-                 tf.keras.regularizers.Regularizer] = None,
+                   tf.keras.regularizers.Regularizer] = None,
                dilation_rate: int = 1,
                use_sync_bn: bool = False,
                norm_momentum: float = 0.99,
@@ -85,15 +85,15 @@ class DepthwiseSeparableConvBlock(tf.keras.layers.Layer):
   def get_config(self):
     config = super(DepthwiseSeparableConvBlock, self).get_config()
     config.update({
-      'filters': self._filters,
-      'strides': self._strides,
-      'regularize_depthwise': self._regularize_depthwise,
-      'kernel_initializer': self._kernel_initializer,
-      'kernel_regularizer': self._kernel_regularizer,
-      'activation': self._activation,
-      'use_sync_bn': self._use_sync_bn,
-      'norm_momentum': self._norm_momentum,
-      'norm_epsilon': self._norm_epsilon,
+        'filters': self._filters,
+        'strides': self._strides,
+        'regularize_depthwise': self._regularize_depthwise,
+        'kernel_initializer': self._kernel_initializer,
+        'kernel_regularizer': self._kernel_regularizer,
+        'activation': self._activation,
+        'use_sync_bn': self._use_sync_bn,
+        'norm_momentum': self._norm_momentum,
+        'norm_epsilon': self._norm_epsilon,
     })
     return config
 

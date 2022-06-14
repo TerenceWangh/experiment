@@ -28,9 +28,9 @@ class Conv2DBNBlock(layers.Layer):
                activation: str = 'relu6',
                kernel_initializer: str = 'VarianceScaling',
                kernel_regularizer: Optional[
-                 tf.keras.regularizers.Regularizer] = None,
+                   tf.keras.regularizers.Regularizer] = None,
                bias_regularizer: Optional[
-                 tf.keras.regularizers.Regularizer] = None,
+                   tf.keras.regularizers.Regularizer] = None,
                use_normalization: bool = True,
                use_sync_bn: bool = False,
                norm_momentum: float = 0.99,
@@ -68,19 +68,19 @@ class Conv2DBNBlock(layers.Layer):
   def get_config(self):
     config = super(Conv2DBNBlock, self).get_config()
     config.update({
-      'filters': self._filters,
-      'strides': self._strides,
-      'kernel_size': self._kernel_size,
-      'use_bias': self._use_bias,
-      'use_explicit_padding': self._use_explicit_padding,
-      'kernel_initializer': self._kernel_initializer,
-      'kernel_regularizer': self._kernel_regularizer,
-      'bias_regularizer': self._bias_regularizer,
-      'activation': self._activation,
-      'use_sync_bn': self._use_sync_bn,
-      'use_normalization': self._use_normalization,
-      'norm_momentum': self._norm_momentum,
-      'norm_epsilon': self._norm_epsilon
+        'filters': self._filters,
+        'strides': self._strides,
+        'kernel_size': self._kernel_size,
+        'use_bias': self._use_bias,
+        'use_explicit_padding': self._use_explicit_padding,
+        'kernel_initializer': self._kernel_initializer,
+        'kernel_regularizer': self._kernel_regularizer,
+        'bias_regularizer': self._bias_regularizer,
+        'activation': self._activation,
+        'use_sync_bn': self._use_sync_bn,
+        'use_normalization': self._use_normalization,
+        'norm_momentum': self._norm_momentum,
+        'norm_epsilon': self._norm_epsilon
     })
     return config
 
@@ -547,9 +547,9 @@ class MobileNet(tf.keras.Model):
                norm_epsilon: float = 0.001,
                kernel_initializer: str = 'VarianceScaling',
                kernel_regularizer: Optional[
-                 tf.keras.regularizers.Regularizer] = None,
+                   tf.keras.regularizers.Regularizer] = None,
                bias_regularizer: Optional[
-                 tf.keras.regularizers.Regularizer] = None,
+                   tf.keras.regularizers.Regularizer] = None,
                # The followings should be kept the same most of the times.
                output_stride: Optional[int] = None,
                min_depth: int = 8,
@@ -757,20 +757,20 @@ class MobileNet(tf.keras.Model):
 
   def get_config(self):
     return {
-      'model_id': self._model_id,
-      'filter_size_scale': self._filter_size_scale,
-      'min_depth': self._min_depth,
-      'output_stride': self._output_stride,
-      'divisible_by': self._divisible_by,
-      'stochastic_depth_drop_rate': self._stochastic_depth_drop_rate,
-      'regularize_depthwise': self._regularize_depthwise,
-      'kernel_initializer': self._kernel_initializer,
-      'kernel_regularizer': self._kernel_regularizer,
-      'bias_regularizer': self._bias_regularizer,
-      'use_sync_bn': self._use_sync_bn,
-      'norm_momentum': self._norm_momentum,
-      'norm_epsilon': self._norm_epsilon,
-      'finegrain_classification_mode': self._finegrain_classification_mode,
+        'model_id': self._model_id,
+        'filter_size_scale': self._filter_size_scale,
+        'min_depth': self._min_depth,
+        'output_stride': self._output_stride,
+        'divisible_by': self._divisible_by,
+        'stochastic_depth_drop_rate': self._stochastic_depth_drop_rate,
+        'regularize_depthwise': self._regularize_depthwise,
+        'kernel_initializer': self._kernel_initializer,
+        'kernel_regularizer': self._kernel_regularizer,
+        'bias_regularizer': self._bias_regularizer,
+        'use_sync_bn': self._use_sync_bn,
+        'norm_momentum': self._norm_momentum,
+        'norm_epsilon': self._norm_epsilon,
+        'finegrain_classification_mode': self._finegrain_classification_mode,
     }
 
   @classmethod

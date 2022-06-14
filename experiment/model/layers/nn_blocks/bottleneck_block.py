@@ -259,26 +259,26 @@ class InvertedBottleneckBlock(tf.keras.layers.Layer):
                out_filters,
                expand_ratio,
                strides,
-               kernel_size = 3,
-               se_ratio = None,
-               stochastic_depth_drop_rate = None,
-               kernel_initializer = 'VarianceScaling',
-               kernel_regularizer = None,
-               bias_regularizer = None,
-               activation = 'relu',
-               se_inner_activation = 'relu',
-               se_gating_activation = 'sigmoid',
-               se_round_down_protect = True,
-               expand_se_in_filters = False,
-               depthwise_activation = None,
-               use_sync_bn = False,
-               dilation_rate = 1,
-               divisible_by = 1,
-               regularize_depthwise = False,
-               use_residual = True,
-               norm_momentum = 0.99,
-               norm_epsilon = 0.001,
-               output_intermediate_endpoints = False,
+               kernel_size=3,
+               se_ratio=None,
+               stochastic_depth_drop_rate=None,
+               kernel_initializer='VarianceScaling',
+               kernel_regularizer=None,
+               bias_regularizer=None,
+               activation='relu',
+               se_inner_activation='relu',
+               se_gating_activation='sigmoid',
+               se_round_down_protect=True,
+               expand_se_in_filters=False,
+               depthwise_activation=None,
+               use_sync_bn=False,
+               dilation_rate=1,
+               divisible_by=1,
+               regularize_depthwise=False,
+               use_residual=True,
+               norm_momentum=0.99,
+               norm_epsilon=0.001,
+               output_intermediate_endpoints=False,
                **kwargs):
     """Initializes an inverted bottleneck block with BN after convolutions.
 
@@ -467,30 +467,30 @@ class InvertedBottleneckBlock(tf.keras.layers.Layer):
   def get_config(self):
     config = super(InvertedBottleneckBlock, self).get_config()
     config.update({
-      'in_filters': self._in_filters,
-      'out_filters': self._out_filters,
-      'expand_ratio': self._expand_ratio,
-      'strides': self._strides,
-      'kernel_size': self._kernel_size,
-      'se_ratio': self._se_ratio,
-      'divisible_by': self._divisible_by,
-      'stochastic_depth_drop_rate': self._stochastic_depth_drop_rate,
-      'kernel_initializer': self._kernel_initializer,
-      'kernel_regularizer': self._kernel_regularizer,
-      'bias_regularizer': self._bias_regularizer,
-      'activation': self._activation,
-      'se_inner_activation': self._se_inner_activation,
-      'se_gating_activation': self._se_gating_activation,
-      'se_round_down_protect': self._se_round_down_protect,
-      'expand_se_in_filters': self._expand_se_in_filters,
-      'depthwise_activation': self._depthwise_activation,
-      'dilation_rate': self._dilation_rate,
-      'use_sync_bn': self._use_sync_bn,
-      'regularize_depthwise': self._regularize_depthwise,
-      'use_residual': self._use_residual,
-      'norm_momentum': self._norm_momentum,
-      'norm_epsilon': self._norm_epsilon,
-      'output_intermediate_endpoints': self._output_intermediate_endpoints
+        'in_filters': self._in_filters,
+        'out_filters': self._out_filters,
+        'expand_ratio': self._expand_ratio,
+        'strides': self._strides,
+        'kernel_size': self._kernel_size,
+        'se_ratio': self._se_ratio,
+        'divisible_by': self._divisible_by,
+        'stochastic_depth_drop_rate': self._stochastic_depth_drop_rate,
+        'kernel_initializer': self._kernel_initializer,
+        'kernel_regularizer': self._kernel_regularizer,
+        'bias_regularizer': self._bias_regularizer,
+        'activation': self._activation,
+        'se_inner_activation': self._se_inner_activation,
+        'se_gating_activation': self._se_gating_activation,
+        'se_round_down_protect': self._se_round_down_protect,
+        'expand_se_in_filters': self._expand_se_in_filters,
+        'depthwise_activation': self._depthwise_activation,
+        'dilation_rate': self._dilation_rate,
+        'use_sync_bn': self._use_sync_bn,
+        'regularize_depthwise': self._regularize_depthwise,
+        'use_residual': self._use_residual,
+        'norm_momentum': self._norm_momentum,
+        'norm_epsilon': self._norm_epsilon,
+        'output_intermediate_endpoints': self._output_intermediate_endpoints
     })
     return config
 
@@ -498,7 +498,7 @@ class InvertedBottleneckBlock(tf.keras.layers.Layer):
     endpoints = {}
     shortcut = inputs
     if self._expand_ratio > 1:
-      x  = self._conv_0(inputs)
+      x = self._conv_0(inputs)
       x = self._norm_0(x)
       x = self._activation_layer(x)
     else:
