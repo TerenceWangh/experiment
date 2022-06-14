@@ -78,7 +78,7 @@ class DepthwiseSeparableConvBlockTest(parameterized.TestCase, tf.test.TestCase):
 
     output_tensor = block(input_tensor)
     expected_output_shape = [
-      batch_size, height // strides, width // strides, num_filters]
+        batch_size, height // strides, width // strides, num_filters]
     self.assertAllEqual(output_tensor.shape.as_list(), expected_output_shape)
 
     output_tensor = recreate_block(input_tensor)
