@@ -475,7 +475,6 @@ class BlockSpec(Config):
   expand_ratio: Optional[float] = 6.
   # Used for block type InvertedResConv with SE.
   se_ratio: Optional[float] = None
-  use_depthwise: bool = True
   use_residual: bool = True
   is_output: bool = True
 
@@ -719,7 +718,6 @@ class MobileNet(tf.keras.Model):
             expand_se_in_filters=True,
             se_gating_activation='hard_sigmoid',
             activation=block_def.activation,
-            use_depthwise=block_def.use_depthwise,
             use_residual=block_def.use_residual,
             dilation_rate=use_rate,
             regularize_depthwise=self._regularize_depthwise,

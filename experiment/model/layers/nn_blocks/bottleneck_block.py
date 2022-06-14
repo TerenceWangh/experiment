@@ -275,7 +275,6 @@ class InvertedBottleneckBlock(tf.keras.layers.Layer):
                dilation_rate = 1,
                divisible_by = 1,
                regularize_depthwise = False,
-               use_depthwise = True,
                use_residual = True,
                norm_momentum = 0.99,
                norm_epsilon = 0.001,
@@ -326,8 +325,6 @@ class InvertedBottleneckBlock(tf.keras.layers.Layer):
         The value ensures all inner dimensions are divisible by this number.
     regularize_depthwise : bool
         Whether or not apply regularization on depthwise.
-    use_depthwise : bool
-        Whether to uses fused convolutions instead of depthwise.
     use_residual : bool
         Whether to include residual connection between input and output.
     norm_momentum : float
@@ -352,7 +349,6 @@ class InvertedBottleneckBlock(tf.keras.layers.Layer):
     self._dilation_rate = dilation_rate
     self._use_sync_bn = use_sync_bn
     self._regularize_depthwise = regularize_depthwise
-    self._use_depthwise = use_depthwise
     self._use_residual = use_residual
     self._activation = activation
     self._se_inner_activation = se_inner_activation
@@ -388,11 +384,11 @@ class InvertedBottleneckBlock(tf.keras.layers.Layer):
       # First 1x1 conv for channel expansion.
       expand_filters = tf_utils.make_divisible(
           self._in_filters * self._expand_ratio, self._divisible_by)
-      expand_kernel = 1 if self._use_depthwise else self._kernel_size
-      expand_stride = 1 if self._use_depthwise else self._strides
+      expand_kernel = 1
+      expand_stride = 1
 
       self._conv_0 = tf.keras.layers.Conv2D(
-          filters=expand_stride,
+          filters=expand_filters,
           kernel_size=expand_kernel,
           strides=expand_stride,
           padding='same',
@@ -407,23 +403,22 @@ class InvertedBottleneckBlock(tf.keras.layers.Layer):
       self._activation_layer = tf_utils.get_activation(
           self._activation, use_keras_layer=True)
 
-    if self._use_depthwise:
-      self._conv_1 = tf.keras.layers.DepthwiseConv2D(
-          kernel_size=(self._kernel_size, self._kernel_size),
-          strides=self._strides,
-          padding='same',
-          depth_multiplier=1,
-          dilation_rate=self._dilation_rate,
-          use_bias=False,
-          depthwise_initializer=self._kernel_initializer,
-          depthwise_regularizer=self._depthsize_regularizer,
-          bias_regularizer=self._bias_regularizer)
-      self._norm_1 = self._norm(
-          axis=self._bn_axis,
-          momentum=self._norm_momentum,
-          epsilon=self._norm_epsilon)
-      self._depthwise_activation_layer = tf_utils.get_activation(
-          self._depthwise_activation, use_keras_layer=True)
+    self._conv_1 = tf.keras.layers.DepthwiseConv2D(
+        kernel_size=(self._kernel_size, self._kernel_size),
+        strides=self._strides,
+        padding='same',
+        depth_multiplier=1,
+        dilation_rate=self._dilation_rate,
+        use_bias=False,
+        depthwise_initializer=self._kernel_initializer,
+        depthwise_regularizer=self._depthsize_regularizer,
+        bias_regularizer=self._bias_regularizer)
+    self._norm_1 = self._norm(
+        axis=self._bn_axis,
+        momentum=self._norm_momentum,
+        epsilon=self._norm_epsilon)
+    self._depthwise_activation_layer = tf_utils.get_activation(
+        self._depthwise_activation, use_keras_layer=True)
 
     # Squeeze and excitation
     if self._se_ratio and self._se_ratio > 0 and self._se_ratio <= 1:
@@ -492,7 +487,6 @@ class InvertedBottleneckBlock(tf.keras.layers.Layer):
       'dilation_rate': self._dilation_rate,
       'use_sync_bn': self._use_sync_bn,
       'regularize_depthwise': self._regularize_depthwise,
-      'use_depthwise': self._use_depthwise,
       'use_residual': self._use_residual,
       'norm_momentum': self._norm_momentum,
       'norm_epsilon': self._norm_epsilon,
@@ -510,12 +504,11 @@ class InvertedBottleneckBlock(tf.keras.layers.Layer):
     else:
       x = inputs
 
-    if self._use_depthwise:
-      x = self._conv_1(x)
-      x = self._norm_1(x)
-      x = self._depthwise_activation_layer(x)
-      if self._output_intermediate_endpoints:
-        endpoints['depthwise'] = x
+    x = self._conv_1(x)
+    x = self._norm_1(x)
+    x = self._depthwise_activation_layer(x)
+    if self._output_intermediate_endpoints:
+      endpoints['depthwise'] = x
 
     if self._squeeze_excitation:
       x = self._squeeze_excitation(x)

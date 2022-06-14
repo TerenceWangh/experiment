@@ -13,7 +13,7 @@ class DepthwiseSeparableConvBlock(tf.keras.layers.Layer):
                filters: int,
                kernel_size: int = 3,
                strides: int = 1,
-               regularize_depthwise = False,
+               regularize_depthwise: bool = False,
                activation: Text = 'relu6',
                kernel_initializer: Text = 'VarianceScaling',
                kernel_regularizer: Optional[
