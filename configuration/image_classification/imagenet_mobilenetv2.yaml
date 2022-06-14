@@ -8,9 +8,9 @@ task:
     num_classes: 1001
     input_size: [224, 224, 3]
     backbone:
-      type: 'resnet'
+      type: 'mobilenet'
       resnet:
-        model_id: 50
+        model_id: 'MobileNetV2'
   losses:
     l2_weight_decay: 0.0001
     one_hot: true
@@ -19,7 +19,7 @@ task:
     tfds_name: 'imagenet2012'
     tfds_split: 'train'
     is_training: true
-    global_batch_size: 128
+    global_batch_size: 256
     dtype: 'float32'
     # Autotuning the prefetch buffer size causes OOMs, so set it to a reasonable
     # static value: 32.
@@ -28,7 +28,7 @@ task:
     tfds_name: 'imagenet2012'
     tfds_split: 'validation'
     is_training: false
-    global_batch_size: 128
+    global_batch_size: 256
     dtype: 'float32'
     drop_remainder: false
     prefetch_buffer_size: 32
