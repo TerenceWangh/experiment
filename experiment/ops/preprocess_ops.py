@@ -19,7 +19,7 @@ def clip_or_pad_to_fixed_size(input_tensor, size, constant_values=0):
       `Tensor` with any dimension.
   size : int
       Number for the first dimension of output Tensor.
-  constant_values : int
+  constant_values : float
       The value assigned to the paddings.
 
   Returns

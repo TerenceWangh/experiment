@@ -25,7 +25,7 @@ class NASFPN(Config):
   """NASFPN config."""
   num_filters: int = 256
   num_repeats: int = 5
-  use_seprable_conv: bool = False
+  use_separable_conv: bool = False
 
 
 @dataclasses.dataclass

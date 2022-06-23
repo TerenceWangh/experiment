@@ -35,7 +35,7 @@ def assert_shape_equal(shape1, shape2):
     return tf.assert_equal(shape1, shape2)
 
 
-def combined_static_and_dynamic_shape(tensor):
+def combined_static_and_dynamic_shape(tensor: tf.Tensor):
   """Returns a list containing static and dynamic values for the dimensions.
 
   Returns a list of static and dynamic values for shape dimensions. This is
@@ -50,7 +50,7 @@ def combined_static_and_dynamic_shape(tensor):
   -------
       A list of size tensor.shape.ndims containing integers or a scalar tensor.
   """
-  s_tensor_shape = tensor.shape().as_list()
+  s_tensor_shape = tensor.shape.as_list()
   d_tensor_shape = tf.shape(input=tensor)
   combined_shape = []
   for index, dim in enumerate(s_tensor_shape):

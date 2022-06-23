@@ -5,7 +5,7 @@ import os
 from typing import List, Optional, Union
 
 from experiment.hyperparams import Config
-from experiment.core.config_definitions import DataConfig
+from experiment.core.config_definitions import DataConfig as BaseDataConfig
 from experiment.core.config_definitions import TaskConfig
 from experiment.core.config_definitions import RuntimeConfig
 from experiment.core.config_definitions import TrainerConfig
@@ -38,7 +38,7 @@ class Parser(Config):
 
 
 @dataclasses.dataclass
-class DataConfig(DataConfig):
+class DataConfig(BaseDataConfig):
   """Input config for training."""
   input_path: str = ''
   global_batch_size: int = 0
@@ -222,9 +222,11 @@ def fasterrcnn_resnetfpn_coco() -> ExperimentConfig:
   config = ExperimentConfig(
       runtime=RuntimeConfig(mixed_precision_dtype='bfloat16'),
       task=MaskRCNNTask(
+          # pylint: disable=line-too-long
           init_checkpoint='gs://cloud-tpu-checkpoints/vision-2.0/resnet50_imagenet/ckpt-28080',
           init_checkpoint_modules='backbone',
           annotation_file=os.path.join(COCO_INPUT_PATH_BASE, 'instances_val2017.json'),
+          # pylint: enable=line-too-long
           model=MaskRCNN(
               num_classes=91,
               input_size=[1024, 1024, 3],

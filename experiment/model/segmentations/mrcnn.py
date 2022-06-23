@@ -161,6 +161,7 @@ class MaskRCNNModel(tf.keras.Model):
         current_rois=intermediate_outputs['current_rois'],
         matched_gt_indices=intermediate_outputs['matched_gt_indices'],
         matched_gt_boxes=intermediate_outputs['matched_gt_boxes'],
+        matched_gt_classes=intermediate_outputs['matched_gt_classes'],
         gt_masks=gt_masks,
         training=training)
     model_outputs.update(model_mask_outputs)
@@ -174,14 +175,13 @@ class MaskRCNNModel(tf.keras.Model):
       features = backbone_features
     return backbone_features, features
 
-  def _call_box_output(self,
-                       images: tf.Tensor,
-                       image_shape: tf.Tensor,
-                       anchor_boxes: Optional[Mapping[str, tf.Tensor]] = None,
-                       gt_boxes: Optional[tf.Tensor] = None,
-                       gt_classes: Optional[tf.Tensor] = None,
-                       training: Optional[bool] = None
-                       ) -> MASK_RCNN_OUTPUT:
+  def _call_box_outputs(self,
+                        images: tf.Tensor,
+                        image_shape: tf.Tensor,
+                        anchor_boxes: Optional[Mapping[str, tf.Tensor]] = None,
+                        gt_boxes: Optional[tf.Tensor] = None,
+                        gt_classes: Optional[tf.Tensor] = None,
+                        training: Optional[bool] = None) -> MASK_RCNN_OUTPUT:
     """Implementation of the Faster-RCNN logic for boxes."""
     model_outputs = {}
 
@@ -208,13 +208,13 @@ class MaskRCNNModel(tf.keras.Model):
           num_scales=self._config_dict['num_scales'],
           aspect_ratios=self._config_dict['aspect_ratios'],
           anchor_size=self._config_dict['anchor_size'],
-          image_size=(image_height, image_width),
-      ).multilevel_boxes
+          image_size=(image_height, image_width)
+      ).multi_level_boxes
 
       for l in anchor_boxes:
         anchor_boxes[l] = tf.tile(
             tf.expand_dims(anchor_boxes[l], axis=0),
-            [tf.shape(images[0], 1, 1, 1)])
+            [tf.shape(images)[0], 1, 1, 1])
 
     # Generate RoIs.
     current_rois, _ = self._roi_generator(
@@ -242,7 +242,7 @@ class MaskRCNNModel(tf.keras.Model):
       all_class_outputs.append(class_outputs)
 
       # Generate ROIs for the next cascade head if there is any.
-      if cascade_num < len(self.roi_sampler) - 1:
+      if cascade_num < len(self._roi_sampler) - 1:
         next_rois = box_ops.decode_boxes(
             tf.cast(box_outputs, tf.float32),
             current_rois,
