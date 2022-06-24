@@ -226,7 +226,8 @@ def _generate_detections_per_image(
       # Sets scores of invalid boxes to -1.
       nmsed_scores_i = tf.where(
           tf.less(tf.range(max_num_detections), [nmsed_num_valid_i]),
-          nmsed_scores_i, -tf.ones_like(nmsed_scores_i))
+          nmsed_scores_i,
+          tf.multiply(-1, tf.ones_like(nmsed_scores_i)))
 
     nmsed_classes_i = tf.fill([max_num_detections], i)
     nmsed_boxes.append(nmsed_boxes_i)

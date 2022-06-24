@@ -73,7 +73,7 @@ def build_maskrcnn(
   roi_generator_config = model_config.roi_generator
   roi_sampler_config = model_config.roi_sampler
   roi_aligner_config = model_config.roi_aligner
-  detection_head_config = model_config.detection_head
+  head_config = model_config.detection_head
   generator_config = model_config.detection_generator
   num_anchors_per_location = (
       len(model_config.anchor.aspect_ratios) * model_config.anchor.num_scales)
@@ -93,12 +93,12 @@ def build_maskrcnn(
 
   detection_head = heads.instance_heads.DetectionHead(
       num_classes=model_config.num_classes,
-      num_convs=detection_head_config.num_convs,
-      num_filters=detection_head_config.num_filters,
-      use_separable_conv=detection_head_config.use_separable_conv,
-      num_fcs=detection_head_config.num_fcs,
-      fc_dims=detection_head_config.fc_dims,
-      class_agnostic_bbox_pred=detection_head_config.class_agnostic_bbox_pred,
+      num_convs=head_config.num_convs,
+      num_filters=head_config.num_filters,
+      use_separable_conv=head_config.use_separable_conv,
+      num_fcs=head_config.num_fcs,
+      fc_dims=head_config.fc_dims,
+      class_agnostic_bbox_pred=head_config.class_agnostic_bbox_pred,
       activation=norm_activation_config.activation,
       use_sync_bn=norm_activation_config.use_sync_bn,
       norm_momentum=norm_activation_config.norm_momentum,
@@ -115,13 +115,12 @@ def build_maskrcnn(
     for cascade_num in range(len(roi_sampler_config.cascade_iou_thresholds)):
       detection_head = heads.instance_heads.DetectionHead(
           num_classes=model_config.num_classes,
-          num_convs=detection_head_config.num_convs,
-          num_filters=detection_head_config.num_filters,
-          use_separable_conv=detection_head_config.use_separable_conv,
-          num_fcs=detection_head_config.num_fcs,
-          fc_dims=detection_head_config.fc_dims,
-          class_agnostic_bbox_pred=detection_head_config
-            .class_agnostic_bbox_pred,
+          num_convs=head_config.num_convs,
+          num_filters=head_config.num_filters,
+          use_separable_conv=head_config.use_separable_conv,
+          num_fcs=head_config.num_fcs,
+          fc_dims=head_config.fc_dims,
+          class_agnostic_bbox_pred=head_config.class_agnostic_bbox_pred,
           activation=norm_activation_config.activation,
           use_sync_bn=norm_activation_config.use_sync_bn,
           norm_momentum=norm_activation_config.norm_momentum,
@@ -224,8 +223,8 @@ def build_maskrcnn(
       mask_head=mask_head,
       mask_sampler=mask_sampler_obj,
       mask_roi_aligner=mask_roi_aligner_obj,
-      class_agnostic_bbox_pred=detection_head_config.class_agnostic_bbox_pred,
-      cascade_class_ensemble=detection_head_config.cascade_class_ensemble,
+      class_agnostic_bbox_pred=head_config.class_agnostic_bbox_pred,
+      cascade_class_ensemble=head_config.cascade_class_ensemble,
       min_level=model_config.min_level,
       max_level=model_config.max_level,
       num_scales=model_config.anchor.num_scales,

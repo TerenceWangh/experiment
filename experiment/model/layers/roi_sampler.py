@@ -141,7 +141,8 @@ class RoISampler(tf.keras.layers.Layer):
     matched_gt_boxes = tf.where(
         background_mask, tf.zeros_like(matched_gt_boxes), matched_gt_boxes)
     matched_gt_indices = tf.where(
-        tf.squeeze(background_mask, -1), -tf.ones_like(matched_gt_indices),
+        tf.squeeze(background_mask, -1),
+        tf.multiply(tf.ones_like(matched_gt_indices), -1),
         matched_gt_indices)
 
     if self._skip_subsampling:

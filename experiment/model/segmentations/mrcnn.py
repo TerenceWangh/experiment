@@ -228,17 +228,23 @@ class MaskRCNNModel(tf.keras.Model):
       regression_weights = self._cascade_layer_to_weights[cascade_num]
       current_rois = next_rois
 
-      (class_outputs, box_outputs, model_outputs, matched_gt_boxes,
-       matched_gt_classes, matched_gt_indices,
-       current_rois) = self._run_frcnn_head(
-            features=decoder_features,
-            rois=current_rois,
-            gt_boxes=gt_boxes,
-            gt_classes=gt_classes,
-            training=training,
-            model_outputs=model_outputs,
-            cascade_num=cascade_num,
-            regression_weights=regression_weights)
+      values = self._run_frcnn_head(
+          features=decoder_features,
+          rois=current_rois,
+          gt_boxes=gt_boxes,
+          gt_classes=gt_classes,
+          training=training,
+          model_outputs=model_outputs,
+          cascade_num=cascade_num,
+          regression_weights=regression_weights)
+
+      class_outputs = values[0]
+      box_outputs = values[1]
+      model_outputs = values[2]
+      matched_gt_boxes = values[3]
+      matched_gt_classes = values[4]
+      matched_gt_indices = values[5]
+      current_rois = values[6]
       all_class_outputs.append(class_outputs)
 
       # Generate ROIs for the next cascade head if there is any.

@@ -26,9 +26,9 @@ class RetinaNetHead(tf.keras.layers.Layer):
                norm_momentum: float = 0.99,
                norm_epsilon: float = 0.001,
                kernel_regularizer: Optional[
-                 tf.keras.regularizers.Regularizer] = None,
+                   tf.keras.regularizers.Regularizer] = None,
                bias_regularizer: Optional[
-                 tf.keras.regularizers.Regularizer] = None,
+                   tf.keras.regularizers.Regularizer] = None,
                num_params_per_anchor: int = 4,
                **kwargs):
     """Initializes a RetinaNet head.

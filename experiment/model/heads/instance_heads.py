@@ -253,9 +253,9 @@ class MaskHead(tf.keras.layers.Layer):
                norm_momentum: float = 0.99,
                norm_epsilon: float = 0.001,
                kernel_regularizer: Optional[
-                 tf.keras.regularizers.Regularizer] = None,
+                   tf.keras.regularizers.Regularizer] = None,
                bias_regularizer: Optional[
-                 tf.keras.regularizers.Regularizer] = None,
+                   tf.keras.regularizers.Regularizer] = None,
                **kwargs):
     """Initializes a detection head.
 
