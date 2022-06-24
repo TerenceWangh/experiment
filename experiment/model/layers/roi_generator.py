@@ -282,9 +282,8 @@ class MultiLevelRoIGenerator(tf.keras.layers.Layer):
             else self._test_pre_nms_top_k,
         pre_nms_score_threshold=self._pre_nms_score_threshold if training \
             else self._test_pre_nms_score_threshold,
-        pre_nms_min_size_threshold=
-            self._pre_nms_min_size_threshold if training \
-            else self._test_pre_nms_min_size_threshold,
+        pre_nms_min_size_threshold=self._pre_nms_min_size_threshold \
+            if training else self._test_pre_nms_min_size_threshold,
         nms_iou_threshold=self._nms_iou_threshold if training \
             else self._test_nms_iou_threshold,
         num_proposals=self._num_proposals if training \

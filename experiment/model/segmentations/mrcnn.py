@@ -86,24 +86,24 @@ class MaskRCNNModel(tf.keras.Model):
     """
     super(MaskRCNNModel, self).__init__(**kwargs)
     self._config_dict = {
-      'backbone': backbone,
-      'decoder': decoder,
-      'rpn_head': rpn_head,
-      'detection_head': detection_head,
-      'roi_generator': roi_generator,
-      'roi_sampler': roi_sampler,
-      'roi_aligner': roi_aligner,
-      'detection_generator': detection_generator,
-      'mask_head': mask_head,
-      'mask_sampler': mask_sampler,
-      'mask_roi_aligner': mask_roi_aligner,
-      'class_agnostic_bbox_pred': class_agnostic_bbox_pred,
-      'cascade_class_ensemble': cascade_class_ensemble,
-      'min_level': min_level,
-      'max_level': max_level,
-      'num_scales': num_scales,
-      'aspect_ratios': aspect_ratios,
-      'anchor_size': anchor_size,
+        'backbone': backbone,
+        'decoder': decoder,
+        'rpn_head': rpn_head,
+        'detection_head': detection_head,
+        'roi_generator': roi_generator,
+        'roi_sampler': roi_sampler,
+        'roi_aligner': roi_aligner,
+        'detection_generator': detection_generator,
+        'mask_head': mask_head,
+        'mask_sampler': mask_sampler,
+        'mask_roi_aligner': mask_roi_aligner,
+        'class_agnostic_bbox_pred': class_agnostic_bbox_pred,
+        'cascade_class_ensemble': cascade_class_ensemble,
+        'min_level': min_level,
+        'max_level': max_level,
+        'num_scales': num_scales,
+        'aspect_ratios': aspect_ratios,
+        'anchor_size': anchor_size,
     }
     self._backbone = backbone
     self._decoder = decoder
@@ -231,14 +231,14 @@ class MaskRCNNModel(tf.keras.Model):
       (class_outputs, box_outputs, model_outputs, matched_gt_boxes,
        matched_gt_classes, matched_gt_indices,
        current_rois) = self._run_frcnn_head(
-          features=decoder_features,
-          rois=current_rois,
-          gt_boxes=gt_boxes,
-          gt_classes=gt_classes,
-          training=training,
-          model_outputs=model_outputs,
-          cascade_num=cascade_num,
-          regression_weights=regression_weights)
+            features=decoder_features,
+            rois=current_rois,
+            gt_boxes=gt_boxes,
+            gt_classes=gt_classes,
+            training=training,
+            model_outputs=model_outputs,
+            cascade_num=cascade_num,
+            regression_weights=regression_weights)
       all_class_outputs.append(class_outputs)
 
       # Generate ROIs for the next cascade head if there is any.

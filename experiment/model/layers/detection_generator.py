@@ -992,9 +992,8 @@ class MultiLevelDetectionGenerator(tf.keras.layers.Layer):
 
     with nms_context:
       if raw_attributes and self._nms_version != 'v1':
-        raise ValueError(
-            'Attribute learning is only supported for NMSv1 but NMS {} is used.'
-                .format(self._nms_version))
+        raise ValueError('Attribute learning is only supported for NMSv1 but '
+                         'NMS {} is used.'.format(self._nms_version))
       if self._nms_version == 'batched':
         nmsed_boxes, nmsed_scores, nmsed_classes, valid_detections = \
             _generate_detections_batched(

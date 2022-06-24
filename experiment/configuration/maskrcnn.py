@@ -194,7 +194,7 @@ class MaskRCNNTask(TaskConfig):
   losses: Losses = Losses()
   init_checkpoint: Optional[str] = None
   init_checkpoint_modules: Union[
-    str, List[str]] = 'all'  # all, backbone, and/or decoder
+      str, List[str]] = 'all'  # all, backbone, and/or decoder
   annotation_file: Optional[str] = None
   per_category_metrics: bool = False
   # If set, we only use masks for the specified class IDs.
