@@ -1,1 +1,2 @@
 from experiment.tasks.image_classification import ImageClassificationTask
+from experiment.tasks.maskrcnn import MaskRCNNTask
