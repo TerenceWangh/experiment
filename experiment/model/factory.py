@@ -12,6 +12,7 @@ from experiment.model.layers import mask_sampler
 from experiment.model.layers import roi_aligner
 from experiment.model.layers import roi_generator
 from experiment.model.layers import roi_sampler
+from experiment.model.layers import detection_generator
 
 from experiment.model import classification_model
 from experiment.model.segmentations import mrcnn
@@ -131,7 +132,7 @@ def build_maskrcnn(
       detection_head_cascade.append(detection_head)
     detection_head = detection_head_cascade
 
-  roi_generator_obj = roi_generator.MultilevelROIGenerator(
+  roi_generator_obj = roi_generator.MultiLevelRoIGenerator(
       pre_nms_top_k=roi_generator_config.pre_nms_top_k,
       pre_nms_score_threshold=roi_generator_config.pre_nms_score_threshold,
       pre_nms_min_size_threshold=(
@@ -148,7 +149,7 @@ def build_maskrcnn(
       use_batched_nms=roi_generator_config.use_batched_nms)
 
   roi_sampler_cascade = []
-  roi_sampler_obj = roi_sampler.ROISampler(
+  roi_sampler_obj = roi_sampler.RoISampler(
       mix_gt_boxes=roi_sampler_config.mix_gt_boxes,
       num_sampled_rois=roi_sampler_config.num_sampled_rois,
       foreground_fraction=roi_sampler_config.foreground_fraction,
@@ -161,7 +162,7 @@ def build_maskrcnn(
   # Initialize additional roi simplers for cascade heads.
   if roi_sampler_config.cascade_iou_thresholds:
     for iou in roi_sampler_config.cascade_iou_thresholds:
-      roi_sampler_obj = roi_sampler.ROISampler(
+      roi_sampler_obj = roi_sampler.RoISampler(
           mix_gt_boxes=False,
           num_sampled_rois=roi_sampler_config.num_sampled_rois,
           foreground_iou_threshold=iou,
@@ -174,7 +175,7 @@ def build_maskrcnn(
       crop_size=roi_aligner_config.crop_size,
       sample_offset=roi_aligner_config.sample_offset)
 
-  detection_generator_obj = heads.detection_generator.DetectionGenerator(
+  detection_generator_obj = detection_generator.DetectionGenerator(
       apply_nms=generator_config.apply_nms,
       pre_nms_top_k=generator_config.pre_nms_top_k,
       pre_nms_score_threshold=generator_config.pre_nms_score_threshold,

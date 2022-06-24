@@ -310,11 +310,11 @@ class COCOGroundtruthGenerator:
         'source_id': source_id,
         'height': decoded_tensors['height'],
         'width': decoded_tensors['width'],
-        'num_detections': tf.shape(decoded_tensors['groundtruth_classes'])[0],
+        'num_detections': tf.shape(decoded_tensors['ground_truth_classes'])[0],
         'boxes': boxes,
-        'classes': decoded_tensors['groundtruth_classes'],
-        'is_crowds': decoded_tensors['groundtruth_is_crowd'],
-        'areas': decoded_tensors['groundtruth_area'],
+        'classes': decoded_tensors['ground_truth_classes'],
+        'is_crowds': decoded_tensors['ground_truth_is_crowd'],
+        'areas': decoded_tensors['ground_truth_area'],
     }
     if self._include_mask:
       groundtruths.update({

@@ -74,7 +74,7 @@ class RPNBoxLoss(object):
     # for instances, the regression targets of 512x512 input with 6 anchors on
     # P2-P6 pyramid is about [0.1, 0.1, 0.2, 0.2].
     self._huber_loss = tf.keras.losses.Huber(
-        delta=huber_loss_delta, reduction=tf.keras.loss.Reduction.SUM)
+        delta=huber_loss_delta, reduction=tf.keras.losses.Reduction.SUM)
 
   def __call__(self, box_outputs, labels):
     """Computes total RPN detection loss.
@@ -121,7 +121,7 @@ class RPNBoxLoss(object):
 class FastrcnnClassLoss(object):
   """Fast R-CNN classification loss function."""
 
-  def __int__(self):
+  def __init__(self):
     self._categorical_crossentropy = tf.keras.losses.CategoricalCrossentropy(
         reduction=tf.keras.losses.Reduction.SUM, from_logits=True)
 
@@ -257,8 +257,9 @@ class FastrcnnBoxLoss(object):
       # The loss is normalized by the number of ones in mask,
       # additional normalizer provided by the user and using 0.01 here to avoid
       # division by 0.
+      mask = tf.cast(mask, tf.float32)
       box_loss /= normalizer * (tf.reduce_sum(mask) + 0.01)
-      return
+      return box_loss
 
 
 class MaskrcnnLoss(object):

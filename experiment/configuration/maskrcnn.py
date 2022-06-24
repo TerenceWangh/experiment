@@ -287,3 +287,70 @@ def fasterrcnn_resnetfpn_coco() -> ExperimentConfig:
       )
   )
   return config
+
+@exp_factory.register_config_factory('maskrcnn_resnetfpn_coco')
+def maskrcnn_resnetfpn_coco() -> ExperimentConfig:
+  """COCO object detection with Mask R-CNN."""
+  steps_per_epoch = 500
+  coco_val_samples = 5000
+  train_batch_size = 64
+  eval_batch_size = 8
+
+  config = ExperimentConfig(
+      runtime=RuntimeConfig(
+          mixed_precision_dtype='bfloat16', enable_xla=True),
+      task=MaskRCNNTask(
+          init_checkpoint='gs://cloud-tpu-checkpoints/vision-2.0'
+                          '/resnet50_imagenet/ckpt-28080',
+          init_checkpoint_modules='backbone',
+          annotation_file=os.path.join(COCO_INPUT_PATH_BASE,
+                                       'instances_val2017.json'),
+          model=MaskRCNN(
+              num_classes=91, input_size=[1024, 1024, 3], include_mask=True),
+          losses=Losses(l2_weight_decay=0.00004),
+          train_data=DataConfig(
+              input_path=os.path.join(COCO_INPUT_PATH_BASE, 'train*'),
+              is_training=True,
+              global_batch_size=train_batch_size,
+              parser=Parser(
+                  aug_rand_hflip=True, aug_scale_min=0.8, aug_scale_max=1.25)),
+          validation_data=DataConfig(
+              input_path=os.path.join(COCO_INPUT_PATH_BASE, 'val*'),
+              is_training=False,
+              global_batch_size=eval_batch_size,
+              drop_remainder=False)),
+      trainer=TrainerConfig(
+          train_steps=22500,
+          validation_steps=coco_val_samples // eval_batch_size,
+          validation_interval=steps_per_epoch,
+          steps_per_loop=steps_per_epoch,
+          summary_interval=steps_per_epoch,
+          checkpoint_interval=steps_per_epoch,
+          optimizer_config=OptimizationConfig({
+              'optimizer': {
+                  'type': 'sgd',
+                  'sgd': {
+                      'momentum': 0.9
+                  }
+              },
+              'learning_rate': {
+                  'type': 'stepwise',
+                  'stepwise': {
+                      'boundaries': [15000, 20000],
+                      'values': [0.12, 0.012, 0.0012],
+                  }
+              },
+              'warmup': {
+                  'type': 'linear',
+                  'linear': {
+                      'warmup_steps': 500,
+                      'warmup_learning_rate': 0.0067
+                  }
+              }
+          })),
+      restrictions=[
+          'task.train_data.is_training != None',
+          'task.validation_data.is_training != None'
+      ])
+  return config
+

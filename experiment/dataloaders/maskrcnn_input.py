@@ -149,13 +149,13 @@ class Parser(BaseParser):
           gt_masks: groundtrugh masks cropped by the bounding box and
             resized to a fixed size determined by mask_crop_size.
     """
-    classes = decoded_tensors['groundtruth_classes']
-    boxes = decoded_tensors['groundtruth_boxes']
+    classes = decoded_tensors['ground_truth_classes']
+    boxes = decoded_tensors['ground_truth_boxes']
     if self._include_mask:
-      masks = decoded_tensors['groundtruth_instance_masks']
+      masks = decoded_tensors['ground_truth_instance_masks']
     else:
       masks = None
-    is_crowds = decoded_tensors['groundtruth_is_crowd']
+    is_crowds = decoded_tensors['ground_truth_is_crowd']
     if self._skip_crowd_during_training:
       num_groundtruths = tf.shape(classes)[0]
       with tf.control_dependencies([num_groundtruths, is_crowds]):
@@ -309,7 +309,7 @@ class Parser(BaseParser):
     image = tf.cast(image, dtype=self._dtype)
 
     # Converts boxes from normalized coordinates to pixel coordinates.
-    boxes = box_ops.denormalize_boxes(data['groundtruth_boxes'], image_shape)
+    boxes = box_ops.denormalize_boxes(data['ground_truth_boxes'], image_shape)
 
     # Compute Anchor boxes.
     input_anchor = anchor.build_anchor_generator(
@@ -329,11 +329,11 @@ class Parser(BaseParser):
         'source_id': decoded_tensors['source_id'],
         'height': decoded_tensors['height'],
         'width': decoded_tensors['width'],
-        'num_detections': tf.shape(decoded_tensors['groundtruth_classes'])[0],
+        'num_detections': tf.shape(decoded_tensors['ground_truth_classes'])[0],
         'boxes': boxes,
-        'classes': decoded_tensors['groundtruth_classes'],
-        'areas': decoded_tensors['groundtruth_area'],
-        'is_crowds': tf.cast(decoded_tensors['groundtruth_is_crowd'], tf.int32),
+        'classes': decoded_tensors['ground_truth_classes'],
+        'areas': decoded_tensors['ground_truth_area'],
+        'is_crowds': tf.cast(decoded_tensors['ground_truth_is_crowd'], tf.int32),
     }
     groundtruths['source_id'] = utils.process_source_id(
         groundtruths['source_id'])

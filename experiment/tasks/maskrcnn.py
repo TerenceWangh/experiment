@@ -10,6 +10,7 @@ from experiment.core import base_task
 from experiment.core import task_factory
 from experiment.configuration import maskrcnn as exp_cfg
 from experiment.dataloaders import maskrcnn_input
+from experiment.dataloaders import tfds_factory
 from experiment.dataloaders import tf_example_decoder
 from experiment.dataloaders import tf_example_label_map_decoder
 from experiment.dataloaders import input_reader_factory
@@ -104,7 +105,14 @@ class MaskRCNNTask(base_task.Task):
                    params,
                    input_context: Optional[tf.distribute.InputContext] = None):
     decoder_cfg = params.decoder.get()
-    if params.decoder.type == 'simple_decoder':
+    if params.tfds_name:
+      if params.tfds_type == 'segmentation':
+        decoder = tfds_factory.get_segmentation_decoder(params.tfds_name)
+      elif params.tfds_type == 'detection':
+        decoder = tfds_factory.get_detection_decoder(params.tfds_name)
+      else:
+        raise ValueError('Unknow decoder type: {}!'.format(params.tfds_type))
+    elif params.decoder.type == 'simple_decoder':
       decoder = tf_example_decoder.TfExampleDecoder(
           include_mask=self._task_config.model.include_mask,
           regenerate_source_id=decoder_cfg.regenerate_source_id,
@@ -152,7 +160,7 @@ class MaskRCNNTask(base_task.Task):
                    model_outputs,
                    aux_losses=None):
     params = self.task_config
-    cascade_ious = params.model.roi_sampler.cascade_iou_threshold
+    cascade_ious = params.model.roi_sampler.cascade_iou_thresholds
     rpn_score_loss_fn = maskrcnn_losses.RPNScoreLoss(
         tf.shape(model_outputs['box_outputs'])[1])
     rpn_box_loss_fn = maskrcnn_losses.RPNBoxLoss(
