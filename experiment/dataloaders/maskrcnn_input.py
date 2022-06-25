@@ -309,7 +309,8 @@ class Parser(BaseParser):
     image = tf.cast(image, dtype=self._dtype)
 
     # Converts boxes from normalized coordinates to pixel coordinates.
-    boxes = box_ops.denormalize_boxes(decoded_tensors['ground_truth_boxes'], image_shape)
+    boxes = box_ops.denormalize_boxes(
+        decoded_tensors['ground_truth_boxes'], image_shape)
 
     # Compute Anchor boxes.
     input_anchor = anchor.build_anchor_generator(
@@ -333,7 +334,8 @@ class Parser(BaseParser):
         'boxes': boxes,
         'classes': decoded_tensors['ground_truth_classes'],
         'areas': decoded_tensors['ground_truth_area'],
-        'is_crowds': tf.cast(decoded_tensors['ground_truth_is_crowd'], tf.int32),
+        'is_crowds': tf.cast(
+            decoded_tensors['ground_truth_is_crowd'], tf.int32),
     }
     groundtruths['source_id'] = utils.process_source_id(
         groundtruths['source_id'])
