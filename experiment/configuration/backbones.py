@@ -91,6 +91,31 @@ class MobileDet(Config):
 
 
 @dataclasses.dataclass
+class Transformer(Config):
+  """Transformer config"""
+  mlp_dim: int = 1
+  num_heads: int = 1
+  num_layers: int = 1
+  attention_dropout_rate: float = 0.0
+  dropout_rate: float = 0.1
+
+
+@dataclasses.dataclass
+class VisionTransformer(Config):
+  """VisionTransformer config."""
+  model_name: str = 'vit-b16'
+  # 'token' or 'gap'. If set to 'token', an extra classification token is added
+  # to sequence.
+  classifier: str = 'token'
+  representation_size: int = 0
+  hidden_size: int = 1
+  patch_size: int = 16
+  transformer: Transformer = Transformer()
+  init_stochastic_depth_rate: float = 0.0
+  original_init: bool = True
+
+
+@dataclasses.dataclass
 class Backbone(OneOfConfig):
   """Configuration for backbones.
   """
@@ -103,3 +128,4 @@ class Backbone(OneOfConfig):
   spinenet_mobile: SpineNetMobile = SpineNetMobile()
   mobilenet: MobileNet = MobileNet()
   mobiledet: MobileDet = MobileDet()
+  vit: VisionTransformer = VisionTransformer()
