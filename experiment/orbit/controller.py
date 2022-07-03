@@ -13,22 +13,47 @@ import tensorflow as tf
 
 
 def _log(message: str):
-  """Log `message` to the `info` log, and also prints to stdout."""
+  """Log `message` to the `info` log."""
   logging.info(message)
-  print(message)
 
 
 logging.ABSLLogger.register_frame_to_skip(__file__, _log.__name__)
 
 
+def get_kv_from_lines(lines: List[str]):
+  kvs = []
+  max_length = 0
+  for line in lines:
+    kv = line.split(':', maxsplit=2)
+    if len(kv) == 1:
+      max_length = max(max_length, len(kv))
+      kvs.append([kv, ''])
+    else:
+      max_length = max(max_length, len(kv[0]))
+      kvs.append(kv)
+
+  out_lines = []
+  max_length += 2
+  for k, v in kvs:
+    out_lines.append('{}{}: {}'.format(
+        k, ' ' * (max_length - len(k)), v))
+  return out_lines
+
+
 def _format_output(output, indent=2):
   """Format `output`, either on one line, or indented across multiple line."""
   formatted = pprint.pformat(output)
-  lines = formatted.splitlines()
+
+  # Remove the '{' and '}'
+  if formatted.startswith('{'):
+    formatted = formatted[1:]
+  if formatted.endswith('}'):
+    formatted = formatted[:-1]
+  lines = get_kv_from_lines(formatted.splitlines())
   if len(lines) == 1:
     return formatted
   lines = [' ' * indent + line for line in lines]
-  return '\n' + '\n'.join(lines)
+  return '\n' + '\n'.join(lines) + '\n'
 
 
 Action = Callable[[runner.Output], None]
