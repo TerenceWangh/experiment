@@ -197,6 +197,7 @@ class Controller:
     if self._trainer is not None:
       self._step_timer = None
       self._steps_per_loop = steps_per_loop
+      self._summary_dir = summary_dir
       self._summary_interval = summary_interval
       self._summary_manager = utils.SummaryManager(
           summary_dir, tf.summary.scalar, global_step=self._global_step)
@@ -236,6 +237,14 @@ class Controller:
     current_step = self._global_step.numpy() # Cache since this is expensive.
     _log('train | step: {:7d} | training until step {}...'.format(
         current_step, steps))
+
+    if current_step == 0:
+      tf.summary.trace_on(graph=True, profile=True)
+      with self._summary_manager.summary_writer().as_default():
+        tf.summary.trace_export(name='model_trace', step=0,
+                                profiler_outdir=self._summary_dir)
+      tf.summary.trace_off()
+
     while current_step < steps:
       # Calculates steps to run for the next train loop.
       num_steps = min(steps - current_step, self._steps_per_loop)
