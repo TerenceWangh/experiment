@@ -146,7 +146,7 @@ def sorted_non_max_suppression_padded(
       A tensor with a shape of [batch_size, anchors].
   boxes : tf.Tensor
       A tensor with a shape of [batch_size, anchors, 4].
-  max_output_size : tf.Tensor
+  max_output_size : tf.Tensor or int
       A scalar integer `Tensor` representing the maximum number of boxes to be
       selected by non max suppression.
   iou_threshold : float
