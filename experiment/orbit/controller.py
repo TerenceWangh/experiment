@@ -13,22 +13,47 @@ import tensorflow as tf
 
 
 def _log(message: str):
-  """Log `message` to the `info` log, and also prints to stdout."""
+  """Log `message` to the `info` log."""
   logging.info(message)
-  print(message)
 
 
 logging.ABSLLogger.register_frame_to_skip(__file__, _log.__name__)
 
 
+def get_kv_from_lines(lines: List[str]):
+  kvs = []
+  max_length = 0
+  for line in lines:
+    kv = line.split(':', maxsplit=2)
+    if len(kv) == 1:
+      max_length = max(max_length, len(kv))
+      kvs.append([kv, ''])
+    else:
+      max_length = max(max_length, len(kv[0]))
+      kvs.append(kv)
+
+  out_lines = []
+  max_length += 2
+  for k, v in kvs:
+    out_lines.append('{}{}: {}'.format(
+        k, ' ' * (max_length - len(k)), v))
+  return out_lines
+
+
 def _format_output(output, indent=2):
   """Format `output`, either on one line, or indented across multiple line."""
   formatted = pprint.pformat(output)
-  lines = formatted.splitlines()
+
+  # Remove the '{' and '}'
+  if formatted.startswith('{'):
+    formatted = formatted[1:]
+  if formatted.endswith('}'):
+    formatted = formatted[:-1]
+  lines = get_kv_from_lines(formatted.splitlines())
   if len(lines) == 1:
     return formatted
   lines = [' ' * indent + line for line in lines]
-  return '\n' + '\n'.join(lines)
+  return '\n' + '\n'.join(lines) + '\n'
 
 
 Action = Callable[[runner.Output], None]
@@ -172,6 +197,7 @@ class Controller:
     if self._trainer is not None:
       self._step_timer = None
       self._steps_per_loop = steps_per_loop
+      self._summary_dir = summary_dir
       self._summary_interval = summary_interval
       self._summary_manager = utils.SummaryManager(
           summary_dir, tf.summary.scalar, global_step=self._global_step)
@@ -211,6 +237,14 @@ class Controller:
     current_step = self._global_step.numpy() # Cache since this is expensive.
     _log('train | step: {:7d} | training until step {}...'.format(
         current_step, steps))
+
+    if current_step == 0:
+      tf.summary.trace_on(graph=True, profile=True)
+      with self._summary_manager.summary_writer().as_default():
+        tf.summary.trace_export(name='model_trace', step=0,
+                                profiler_outdir=self._summary_dir)
+      tf.summary.trace_off()
+
     while current_step < steps:
       # Calculates steps to run for the next train loop.
       num_steps = min(steps - current_step, self._steps_per_loop)

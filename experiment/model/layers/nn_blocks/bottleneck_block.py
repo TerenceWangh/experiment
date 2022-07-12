@@ -5,6 +5,8 @@ import tensorflow as tf
 
 from experiment.model.layers import nn_layers
 from experiment.model import tf_utils
+from experiment.model.layers import nn_layers
+
 
 @tf.keras.utils.register_keras_serializable(package='experiment')
 class BottleneckBlock(tf.keras.layers.Layer):
@@ -200,21 +202,21 @@ class BottleneckBlock(tf.keras.layers.Layer):
     config = super(BottleneckBlock, self).get_config()
     # pylint: disable=bad-whitespace
     config.update({
-        'filters'                   : self._filters,
-        'strides'                   : self._strides,
-        'dilation_rate'             : self._dilation_rate,
-        'use_projection'            : self._use_projection,
-        'se_ratio'                  : self._se_ratio,
-        'resnetd_shortcut'          : self._resnetd_shortcut,
+        'filters': self._filters,
+        'strides': self._strides,
+        'dilation_rate': self._dilation_rate,
+        'use_projection': self._use_projection,
+        'se_ratio': self._se_ratio,
+        'resnetd_shortcut': self._resnetd_shortcut,
         'stochastic_depth_drop_rate': self._stochastic_depth_drop_rate,
-        'kernel_initializer'        : self._kernel_initializer,
-        'kernel_regularizer'        : self._kernel_regularizer,
-        'bias_regularizer'          : self._bias_regularizer,
-        'activation'                : self._activation,
-        'use_sync_bn'               : self._use_sync_bn,
-        'norm_momentum'             : self._norm_momentum,
-        'norm_epsilon'              : self._norm_epsilon,
-        'bn_trainable'              : self._bn_trainable,
+        'kernel_initializer': self._kernel_initializer,
+        'kernel_regularizer': self._kernel_regularizer,
+        'bias_regularizer': self._bias_regularizer,
+        'activation': self._activation,
+        'use_sync_bn': self._use_sync_bn,
+        'norm_momentum': self._norm_momentum,
+        'norm_epsilon': self._norm_epsilon,
+        'bn_trainable': self._bn_trainable,
     })
     # pylint: enable=bad-whitespace
     return config
