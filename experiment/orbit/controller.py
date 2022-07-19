@@ -27,10 +27,10 @@ def get_kv_from_lines(lines: List[str]):
     kv = line.split(':', maxsplit=2)
     if len(kv) == 1:
       max_length = max(max_length, len(kv))
-      kvs.append([kv, ''])
+      kvs.append((kv, ''))
     else:
       max_length = max(max_length, len(kv[0]))
-      kvs.append(kv)
+      kvs.append((kv[0], kv[1]))
 
   out_lines = []
   max_length += 2
@@ -237,13 +237,6 @@ class Controller:
     current_step = self._global_step.numpy() # Cache since this is expensive.
     _log('train | step: {:7d} | training until step {}...'.format(
         current_step, steps))
-
-    if current_step == 0:
-      tf.summary.trace_on(graph=True, profile=True)
-      with self._summary_manager.summary_writer().as_default():
-        tf.summary.trace_export(name='model_trace', step=0,
-                                profiler_outdir=self._summary_dir)
-      tf.summary.trace_off()
 
     while current_step < steps:
       # Calculates steps to run for the next train loop.

@@ -398,6 +398,14 @@ class MaskRCNNModel(tf.keras.Model):
 
     return items
 
+  @property
+  def backbone(self) -> tf.keras.Model:
+    return self._backbone
+
+  @property
+  def decoder(self) -> tf.keras.Model:
+    return self._decoder
+
   def get_config(self) -> Mapping[str, Any]:
     return self._config_dict
 

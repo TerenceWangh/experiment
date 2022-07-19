@@ -19,6 +19,11 @@ def main(_):
   params = train_utils.parse_configuration(FLAGS)
   model_dir = FLAGS.model_dir
 
+  gpus = tf.config.experimental.list_physical_devices('GPU')
+  if gpus:
+    for gpu in gpus:
+      tf.config.experimental.set_memory_growth(gpu, True)
+
   if 'train' in FLAGS.mode:
     # Pure eval modes do not output yaml files. Otherwise continuous eval job
     # may race against the train job for writing the same file.
